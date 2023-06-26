@@ -2,6 +2,7 @@ from django.db import models
 from shortuuid.django_fields import ShortUUIDField
 from django.utils.safestring import mark_safe
 from userauths.models import User
+from django.core.validators import FileExtensionValidator
 
 
 STATUS_CHOCE = (
@@ -35,8 +36,8 @@ class Category(models.Model):
     cid = ShortUUIDField(unique=True, length=10, max_length=20,
                          prefix="cat", alphabet="abcdefghi123456789")
     title = models.CharField(max_length=100, default=None)
-    image = models.ImageField(upload_to="category",
-                              default='category-icon.png')
+    image = models.FileField(upload_to="category",
+                              default='category-icon.png',validators=[FileExtensionValidator(['jpg', 'png','webp','jpeg', 'svg'])])
     is_featured = models.BooleanField(default=False)
 
     class Meta:
@@ -98,7 +99,7 @@ class Product(models.Model):
     pid = ShortUUIDField(unique=True, length=10, max_length=20)
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True,related_name="category")
     # tags = models.ForeignKey(Tags, on_delete=models.SET_NULL, null=True)
 
     title = models.CharField(max_length=100, default=None)
@@ -126,8 +127,8 @@ class Product(models.Model):
         return self.title
 
     def get_percentage(self):
-        new_price = (self.price / self.discount_price) * 100
-        return new_price
+        new_price = (self.discount_price / self.price) * 100
+        return new_price - 100
 
 
 class ProductImages(models.Model):

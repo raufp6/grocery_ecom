@@ -1,0 +1,72 @@
+
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<main class="main pages mb-80">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> Category List
+            </div>
+        </div>
+    </div>
+    <div class="page-content pt-50">
+        <div class="container">
+            <div class="row vendor-grid">
+
+                {% for c in categories %}
+                <div class="col-lg-3 col-md-6 col-12 col-sm-6">
+                    <div class="vendor-wrap mb-40">
+                        <div class="vendor-img-action-wrap">
+                            <div class="vendor-img">
+                                <a href="vendor-details-1.html">
+                                    <img class="default-img" src="{{ c.image.url }}" alt="" />
+                                </a>
+                            </div>
+                            
+                        </div>
+                        <div class="vendor-content-wrap">
+                            <div class="d-flex justify-content-between align-items-end mb-30">
+                                <div>
+                                    
+                                    <h4 class="mb-5"><a href="vendor-details-1.html">{{ c.title }}</a></h4>
+
+                                </div>
+
+                                <div class="mb-10">
+                                    <span class="font-small total-product">{{c.category.count}} product{{c.category.count|pluralize}}</span>
+                                </div>
+                            </div>
+
+                            
+                            <a href="vendor-details-1.html" class="btn btn-xs">View Products <i class="fi-rs-arrow-small-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <!--end vendor card-->
+               
+            </div>
+
+            <!-- <div class="pagination-area mt-20 mb-20">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item">
+                            <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">6</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div> -->
+        </div>
+    </div>
+</main>
+{% endblock content %}
