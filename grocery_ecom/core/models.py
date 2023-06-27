@@ -3,6 +3,7 @@ from shortuuid.django_fields import ShortUUIDField
 from django.utils.safestring import mark_safe
 from userauths.models import User
 from django.core.validators import FileExtensionValidator
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 STATUS_CHOCE = (
@@ -56,7 +57,8 @@ class Vendor(models.Model):
     title = models.CharField(max_length=100, default=None)
     image = models.ImageField(
         upload_to=user_directory_path, default='vendor-icon.png')
-    description = models.TextField(null=True, blank=True)
+    # description = models.TextField(null=True, blank=True)
+    description = RichTextUploadingField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     address = models.CharField(max_length=100, default=None)
     contact = models.CharField(max_length=100, default=None)
@@ -104,10 +106,14 @@ class Product(models.Model):
 
     title = models.CharField(max_length=100, default=None)
     image = models.ImageField(upload_to=user_directory_path, default='product-icon.png')
-    description = models.TextField(null=True, default=None,blank = True)
+    # description = models.TextField(null=True, default=None,blank = True)
+    description = RichTextUploadingField(null=True, default=None,blank = True)
 
     price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
     discount_price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
+    stock_count = models.IntegerField(default=10)
+    mfd = models.DateField(null = True,auto_now_add=False,blank=True)
+    life = models.CharField(max_length=50,default=50)
     status = models.BooleanField(default=True)
     product_status = models.CharField(choices=STATUS, max_length=10, default="in_review")
     status = models.BooleanField(default=True)
@@ -134,7 +140,7 @@ class Product(models.Model):
 class ProductImages(models.Model):
     image = models.ImageField(
         upload_to='product-images', default="product.jpg")
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product,related_name="p_images", on_delete=models.SET_NULL, null=True)
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -30,8 +30,9 @@ def category_list(request):
 # Prodcut Detail
 def product_detail(request,pid):
     product = Product.objects.get(pid=pid)
-
+    p_images = product.p_images.all()
     context = { 
-        'product':product
+        'product':product,
+        'p_images': p_images
     }
     return render(request,'core/product-details.html',context)
