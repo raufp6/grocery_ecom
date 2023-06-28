@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'phonenumber_field',
     # Custom Apps
     'core',
     'userauths',
     'ckeditor',
+    'superadmin',
 ]
 
 MIDDLEWARE = [
@@ -74,6 +76,10 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATE_LOADERS = (
+    'django.template.loaders.core.menu_tags',
+)
+
 WSGI_APPLICATION = 'grocery_ecom.wsgi.application'
 
 # Database
@@ -90,7 +96,13 @@ DATABASES = {
    }
 }
 
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.clickseon.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'connect@clickseon.com'
+EMAIL_HOST_PASSWORD = 'Q&j+4NcEEKdj'
+EMAIL_USE_TLS = False  # Or False if you don't use TLS
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
