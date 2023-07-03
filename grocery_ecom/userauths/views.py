@@ -28,6 +28,9 @@ def user_login(request):
 
         user = authenticate(request, username=email, password=password)
         if user is not None:
+            if user.is_verified is False:
+                messages.error(request,"Your are not verified")
+                return redirect('userauths:login')    
             login(request,user)
             messages.success(request,"You are loggedIn")
             return redirect('core:index')
@@ -40,6 +43,7 @@ def user_login(request):
 
 
 def register_view(request):
+    form = UserRegisterForm()
     if request.method == "POST":
         form = UserRegisterForm(request.POST or None)
         if form.is_valid():
@@ -71,9 +75,6 @@ def register_view(request):
             # login(request,new_user)
             # return redirect("core:index")
 
-
-        
-    form = UserRegisterForm()
     context = {
         'form':form,
     }

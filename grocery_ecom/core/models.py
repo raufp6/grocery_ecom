@@ -34,12 +34,12 @@ def user_directory_path(instance, filename):
 
 
 class Category(models.Model):
-    cid = ShortUUIDField(unique=True, length=10, max_length=20,
-                         prefix="cat", alphabet="abcdefghi123456789")
+    cid = ShortUUIDField(unique=True, length=10, max_length=20,prefix="cat", alphabet="abcdefghi123456789")
     title = models.CharField(max_length=100, default=None)
-    image = models.FileField(upload_to="category",
-                              default='category-icon.png',validators=[FileExtensionValidator(['jpg', 'png','webp','jpeg', 'svg'])])
+    image = models.FileField(upload_to="category",default='category-icon.png',validators=[FileExtensionValidator(['jpg', 'png','webp','jpeg', 'svg'])])
     is_featured = models.BooleanField(default=False)
+    is_available = models.BooleanField(default=True)
+    
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -71,7 +71,7 @@ class Vendor(models.Model):
     class Meta:
         verbose_name_plural = "Vendors"
 
-    def category_image(self):
+    def vendor_image(self):
         return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
 
     def __str__(self):
@@ -98,8 +98,8 @@ class Brand(models.Model):
 
 
 class Product(models.Model):
-    pid = ShortUUIDField(unique=True, length=10, max_length=20)
-
+    # pid = ShortUUIDField(unique=True, length=10, max_length=20)
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True,related_name="category")
     # tags = models.ForeignKey(Tags, on_delete=models.SET_NULL, null=True)
@@ -122,6 +122,7 @@ class Product(models.Model):
     sku = ShortUUIDField(unique=True, length=5, max_length=10,prefix="sku", alphabet="123456789")
     date = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False) 
 
     class Meta:
         verbose_name_plural = "Products"

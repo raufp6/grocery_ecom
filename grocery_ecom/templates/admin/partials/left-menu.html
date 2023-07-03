@@ -17,6 +17,16 @@
                     <span class="text">Dashboard</span>
                 </a>
             </li>
+            <li class="menu-item has-submenu {% is_active request 'superadmin:users_list' %}">
+                <a class="menu-link" href="#">
+                    <i class="icon material-icons md-person"></i>
+                    <span class="text">Account</span>
+                </a>
+                <div class="submenu">
+                    <a href="{% url 'superadmin:users_list'%}">Users List</a>
+                    
+                </div>
+            </li>
             <li class="menu-item has-submenu {% is_active request 'superadmin:category_list' %}">
                 <a class="menu-link" href="{% url 'superadmin:category_list' %}">
                     <i class="icon material-icons md-shopping_bag"></i>
@@ -24,21 +34,16 @@
                 </a>
                 <div class="submenu">
                     <a href="{% url 'superadmin:category_list' %}">Category List</a>
-                    <a href="page-products-grid.html">Product grid</a>
-                    <a href="page-products-grid-2.html">Product grid 2</a>
-                    <a href="page-categories.html">Categories</a>
+                    
                 </div>
             </li>
-            <li class="menu-item has-submenu">
-                <a class="menu-link" href="page-products-list.html">
+            <li class="menu-item has-submenu {% is_active request 'superadmin:product_list' %}">
+                <a class="menu-link" href="#">
                     <i class="icon material-icons md-shopping_bag"></i>
-                    <span class="text">Products</span>
+                    <span class="text">Products Management</span>
                 </a>
                 <div class="submenu">
-                    <a href="page-products-list.html">Product List</a>
-                    <a href="page-products-grid.html">Product grid</a>
-                    <a href="page-products-grid-2.html">Product grid 2</a>
-                    <a href="page-categories.html">Categories</a>
+                    <a href="{% url 'superadmin:product_list'%}">Product List</a>
                 </div>
             </li>
             <li class="menu-item has-submenu">
@@ -63,18 +68,7 @@
                     <a href="page-seller-detail.html">Seller profile</a>
                 </div>
             </li>
-            <li class="menu-item has-submenu">
-                <a class="menu-link" href="page-form-product-1.html">
-                    <i class="icon material-icons md-add_box"></i>
-                    <span class="text">Add product</span>
-                </a>
-                <div class="submenu">
-                    <a href="page-form-product-1.html">Add product 1</a>
-                    <a href="page-form-product-2.html">Add product 2</a>
-                    <a href="page-form-product-3.html">Add product 3</a>
-                    <a href="page-form-product-4.html">Add product 4</a>
-                </div>
-            </li>
+            
             <li class="menu-item has-submenu">
                 <a class="menu-link" href="page-transactions-1.html">
                     <i class="icon material-icons md-monetization_on"></i>
@@ -85,17 +79,7 @@
                     <a href="page-transactions-2.html">Transaction 2</a>
                 </div>
             </li>
-            <li class="menu-item has-submenu">
-                <a class="menu-link" href="#">
-                    <i class="icon material-icons md-person"></i>
-                    <span class="text">Account</span>
-                </a>
-                <div class="submenu">
-                    <a href="page-account-login.html">User login</a>
-                    <a href="page-account-register.html">User registration</a>
-                    <a href="page-error-404.html">Error 404</a>
-                </div>
-            </li>
+            
             <li class="menu-item">
                 <a class="menu-link" href="page-reviews.html">
                     <i class="icon material-icons md-comment"></i>
@@ -105,12 +89,7 @@
             <li class="menu-item">
                 <a class="menu-link" href="page-brands.html"> <i class="icon material-icons md-stars"></i> <span class="text">Brands</span> </a>
             </li>
-            <li class="menu-item">
-                <a class="menu-link" disabled href="#">
-                    <i class="icon material-icons md-pie_chart"></i>
-                    <span class="text">Statistics</span>
-                </a>
-            </li>
+            
         </ul>
         <hr />
         <ul class="menu-aside">

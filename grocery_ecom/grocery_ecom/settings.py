@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'userauths',
     'ckeditor',
     'superadmin',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -86,14 +87,14 @@ WSGI_APPLICATION = 'grocery_ecom.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'grocery_ecom',
-       'USER': 'abdulrauf',
-       'PASSWORD': 'vbnm',
-       'HOST': 'localhost',
-       'PORT': '5432',
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'grocery_ecom',
+        'USER': 'abdulrauf',
+        'PASSWORD': 'vbnm',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -158,7 +159,7 @@ JAZZMIN_SETTINGS = {
 
     'site_title': "Grocery Ecom",
     'site_logo': "assets/imgs/theme/favicon.svg",
-    'site_header' : "ABC"
+    'site_header': "ABC"
 }
 
 
@@ -167,8 +168,8 @@ AUTH_USER_MODEL = 'userauths.User'
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 
 CKEDITOR_CONFIGS = {
-    'default':{
-        'skin':'moono',
-        'codeSnippet_theme':'monokai'
+    'default': {
+        'skin': 'moono',
+        'codeSnippet_theme': 'monokai'
     }
 }

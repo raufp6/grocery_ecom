@@ -1,0 +1,141 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block extrahead %}
+
+{% endblock %}
+{% block content %}
+<section class="content-main">
+    <div class="row">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Add New Product</h2>
+                    <div>
+                        <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                        <button type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Basic</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                    
+                            
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Product title</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="title" name="title" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Full description</label>
+                                <textarea placeholder="Type here" class="form-control ckeditor" name="description" rows="4"></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="mb-4">
+                                        <label class="form-label">Regular price</label>
+                                        <div class="row gx-2">
+                                            <input placeholder="" type="text" name="price" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-4">
+                                        <label class="form-label">Discount price</label>
+                                        <input placeholder="" type="text" name="discount_price" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-4">
+                                        <label class="form-label">Product Stock</label>
+                                        <input placeholder="" type="text" name="stock_count" class="form-control" />
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                            
+                    
+                    </div>
+                </div>
+                <!-- card end// -->
+                <!-- <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Shipping</h4>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Width</label>
+                                        <input type="text" placeholder="inch" class="form-control" id="product_name" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Height</label>
+                                        <input type="text" placeholder="inch" class="form-control" id="product_name" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Weight</label>
+                                <input type="text" placeholder="gam" class="form-control" id="product_name" />
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Shipping fees</label>
+                                <input type="text" placeholder="$" class="form-control" id="product_name" />
+                            </div>
+                        </form>
+                    </div>
+                </div> -->
+                <!-- card end// -->
+            </div>
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Media</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-upload">
+                            <img src="{% static 'admin/assets/imgs/theme/upload.svg' %}" alt="" />
+                            <input class="form-control" type="file" name="image" />
+                        </div>
+                    </div>
+                </div>
+                <!-- card end// -->
+                <div class="card mb-8">
+                    <div class="card-header">
+                        <h4>Category</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row gx-2">
+                            <div class="col-sm-12 mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" name="category">
+                                    <option value="">Select One</option>
+                                    {% for c in categories %}
+                                        <option value="{{c.id}}">{{c.title}}</option>
+                                    {% endfor %}
+                                    
+                                </select>
+                            </div>
+                            
+                            
+                        </div>
+                        <!-- row.// -->
+                    </div>
+                </div>
+                <!-- card end// -->
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

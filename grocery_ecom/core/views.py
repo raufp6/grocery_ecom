@@ -28,8 +28,8 @@ def category_list(request):
     return render(request,'core/categories.html',context)
 
 # Prodcut Detail
-def product_detail(request,pid):
-    product = Product.objects.get(pid=pid)
+def product_detail(request,id):
+    product = Product.objects.get(id=id)
     p_images = product.p_images.all()
     context = { 
         'product':product,
