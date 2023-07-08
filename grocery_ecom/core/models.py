@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from userauths.models import User
 from django.core.validators import FileExtensionValidator
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.db.models.functions import Lower
 
 
 STATUS_CHOCE = (
@@ -38,11 +39,17 @@ class Category(models.Model):
     title = models.CharField(max_length=100, default=None)
     image = models.FileField(upload_to="category",default='category-icon.png',validators=[FileExtensionValidator(['jpg', 'png','webp','jpeg', 'svg'])])
     is_featured = models.BooleanField(default=False)
-    is_available = models.BooleanField(default=True)
+    is_available = models.BooleanField(default=True,null=True)
     
 
     class Meta:
         verbose_name_plural = "Categories"
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         Lower('title'),
+        #         name='title_unique'
+        #     ),
+        # ]
 
     def category_image(self):
         return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
@@ -98,8 +105,8 @@ class Brand(models.Model):
 
 
 class Product(models.Model):
-    # pid = ShortUUIDField(unique=True, length=10, max_length=20)
-    id = models.AutoField(primary_key=True)
+    pid = ShortUUIDField(unique=True, length=10, max_length=20)
+    # id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True,related_name="category")
     # tags = models.ForeignKey(Tags, on_delete=models.SET_NULL, null=True)
@@ -148,6 +155,32 @@ class ProductImages(models.Model):
         verbose_name_plural = "Product Images"
 
 ########################  Cart, Orderitems and Address  #######################
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    session_id = models.CharField(max_length=200,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Cart"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart,related_name="cart_items",on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    qty     = models.PositiveIntegerField(default=1)
+
+
+    class Meta:
+        verbose_name_plural = "Cart Items"
+
+    def sub_total(self):
+        return self.product.price * self.qty
+    
+    def __str__(self):
+        return self.product
+
+
 
 
 class CartOrder(models.Model):

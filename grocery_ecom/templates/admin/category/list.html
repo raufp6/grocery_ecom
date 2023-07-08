@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+
 <section class="content-main">
     <div class="content-header">
         <div>
@@ -20,10 +21,13 @@
                     <form action="" method="POSt" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="mb-4">
-                            <label for="product_name" class="form-label">Name</label>
+                            
+                            <label for="product_name" class="form-label">Title</label>
                             {{ form.title }}
+                            {{ form.errors.title }}
                         </div>
                         <div class="mb-4">
+                            {{ form.errors.image }}
                             <label for="product_slug" class="form-label">Image</label>
                             {{ form.image }}
                         </div>
@@ -31,16 +35,21 @@
                             <label for="product_slug" class="form-label">Is Featured</label>
                             {{ form.is_featured }}
                         </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Is Available</label>
+                            {{ form.is_available }}
+                        </div>
                         
                         
                         <div class="d-grid">
                             <button class="btn btn-primary" type="submil">Create category</button>
+                           
                         </div>
                     </form>
                 </div>
                 <div class="col-md-9">
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover" id="table">
                             <thead>
                                 <tr>
                                     <th class="text-center">
@@ -48,17 +57,18 @@
                                             <input class="form-check-input" type="checkbox" value="" />
                                         </div>
                                     </th>
-                                    <th>ID</th>
+                                    <th>ID </th>
                                     <th>Name</th>
                                     <th></th>
                                     <th>Is Featured</th>
+                                    <th>Status</th>
                                     
                                     <th class="text-end">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for c in categories %}
-                                <tr>
+                                <tr class="record">
                                     <td class="text-center">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="" />
@@ -67,15 +77,15 @@
                                     <td>{{ c.cid }}</td>
                                     <td><b>{{ c.title }}</b></td>
                                     <td><img src="{{ c.image.url }}"/></td>
-                                    <td><span class="badge rounded-pill alert-success">Active</span></td>
+                                    <td><span class="badge rounded-pill {% if c.is_featured %} alert-success {% else %} alert-warning {% endif %}">{% if c.is_featured %} Yes {% else %} No {% endif %}</span></td>
+                                    <td><span class="badge rounded-pill {% if c.is_available %} alert-success {% else %} alert-danger {% endif %}">{% if c.is_available %} Active {% else %} Inactive {% endif %}</span></td>
                                     
                                     
                                     <td class="text-end">
                                         <div class="dropdown">
                                             <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                             <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="">Delete</a>
+                                                <a class="dropdown-item link-edit-category" data-img="{{c.image.url}}" data-id="{{c.id}}" data-featured="{{c.is_featured}}" data-available="{{c.is_available}}" href="{% url 'superadmin:update_category' c.id %}">Edit info</a>
                                             </div>
                                         </div>
                                         <!-- dropdown //end -->

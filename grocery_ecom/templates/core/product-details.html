@@ -53,16 +53,14 @@
                                 </div>
                                 <div class="clearfix product-price-cover">
                                     <div class="product-price primary-color float-left">
-                                        <span class="current-price text-brand">₹{{ product.price }}</span>
+                                        <span class="current-price text-brand">₹{{ product.discount_price }}</span>
                                         <span>
                                             <span class="save-price font-md color3 ml-15">{{ product.get_percentage|floatformat:0 }}% Off</span>
-                                            <span class="old-price font-md ml-15">₹{{ product.discount_price }}</span>
+                                            <span class="old-price font-md ml-15">₹{{ product.price }}</span>
                                         </span>
                                     </div>
                                 </div>
-                                <div class="short-desc mb-30">
-                                    <p class="font-lg">{{ product.description|truncatechars:30 }}</p>
-                                </div>
+                                
                                 <!-- <div class="attr-detail attr-size mb-30">
                                     <strong class="mr-10">Size / Weight: </strong>
                                     <ul class="list-filter size-filter font-small">
@@ -75,12 +73,17 @@
                                 </div> -->
                                 <div class="detail-extralink mb-50">
                                     <div class="detail-qty border radius">
-                                        <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                        <a href="#" class="qty-down" data-id="{{ product.id }}"><i class="fi-rs-angle-small-down"></i></a>
                                         <span class="qty-val">1</span>
-                                        <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                        <a href="#" class="qty-up" data-id="{{ product.id }}"><i class="fi-rs-angle-small-up"></i></a>
                                     </div>
                                     <div class="product-extra-link2">
-                                        <button type="submit" class="button button-add-to-cart"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
+                                        <input type="hidden" class="product-id" value="{{ product.id }}" name="product_id">
+                                        <input type="hidden" class="product-qty-{{ product.id }}" value="1" name="qty">
+                                        <input type="hidden" class="product-selleing-price" value="{{ product.discount_price }}" name="product_price">
+                                        <input type="hidden" class="product-image" value="{{ product.image.url }}" name="product_image">
+                                        <input type="hidden" class="product-title" value="{{ product.title }}" name="product_title">
+                                        <button type="submit" class="button button-add-to-cart" data-price="{{product.price}}" data-sellingprice="{{product.discount_price}}" data-id="{{ product.id }}" data-image="{{ product.image.url }}" data-title="{{ product.title }}" data-link="{% url 'core:add-to-cart' %}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
                                         <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                     </div>
                                 </div>
@@ -106,12 +109,12 @@
                                 <li class="nav-item">
                                     <a class="nav-link active" id="Description-tab" data-bs-toggle="tab" href="#Description">Description</a>
                                 </li>
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link" id="Additional-info-tab" data-bs-toggle="tab" href="#Additional-info">Additional info</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="Vendor-info-tab" data-bs-toggle="tab" href="#Vendor-info">Vendor</a>
-                                </li>
+                                </li> -->
                                 <li class="nav-item">
                                     <a class="nav-link" id="Reviews-tab" data-bs-toggle="tab" href="#Reviews">Reviews (3)</a>
                                 </li>
@@ -119,7 +122,7 @@
                             <div class="tab-content shop_info_tab entry-main-content">
                                 <div class="tab-pane fade show active" id="Description">
                                     <div class="">
-                                        {{ product.description }}
+                                        {{ product.description|safe }}
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="Additional-info">

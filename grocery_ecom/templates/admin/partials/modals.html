@@ -1,0 +1,46 @@
+<div class="modal fade bd-example-modal-lg"  tabindex="-1" aria-labelledby="exampleModalLabel" id="category_edit" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Category Edit</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="" method="POST" enctype="multipart/form-data" id="FormCategoryEdit">
+                {% csrf_token %}
+                <div class="mb-4">
+                    
+                    <label for="product_name" class="form-label">Title</label>
+                    <input type="text" class="form-control" value="" name="title" id="title">
+                    <input type="hidden" name="old_title" id="old_title">
+                    {{ form.errors.title }}
+                </div>
+                <div class="mb-4">
+                    <img src="" id="current_image" alt="">
+                    <label for="product_slug" class="form-label">Image</label>
+                    <input type="file" class="form-control" name="image" id="image">
+                    {{ form.errors.image }}
+                </div>
+                <div class="mb-4">
+                    <label for="product_slug" class="form-label">Is Featured</label>
+                    <input type="checkbox" value="true" name="is_featured" id="is_featured">
+                </div>
+                <div class="mb-4">
+                    <label for="product_slug" class="form-label">Is Available</label>
+                    <select name="is_available" id="is_available" class="form-control">
+                        <option value="True">Yes</option>
+                        <option value="False">No</option>
+                    </select>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+                
+            </form>
+        </div>
+        
+      </div>
+    </div>
+</div>

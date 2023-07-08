@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     # Custom Apps
     'core',
     'userauths',
+    'user',
     'ckeditor',
     'superadmin',
     'widget_tweaks',
+    'mathfilters',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "django_base_url.context_processors.base_url",
             ],
         },
     },
@@ -96,6 +99,8 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+BASE_URL="http://127.0.0.1:8000/"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.clickseon.com'

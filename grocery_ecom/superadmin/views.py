@@ -1,10 +1,12 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.views import View
 from django.contrib.auth.decorators import login_required
 from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,User
 from core.forms import CategoryForm,ProductForm
+from django.core.exceptions import ValidationError
 
 
 #############  Login ###############
@@ -33,23 +35,67 @@ def dashboard(request):
 
 @login_required(login_url="superadmin:login")
 def category_list(request):
+    
+    form = CategoryForm()
     if request.method == 'POST':  
         form = CategoryForm(request.POST, request.FILES)  
-        if form.is_valid():  
+        if Category.objects.filter(title__iexact=request.POST.get('title')).first():
+            messages.error(request, "Category Already Exist!")
+            return redirect('superadmin:category_list')
+        if form.is_valid():
             form.save()  
             
             messages.success(request, "Category added")
-            return redirect('superadmin:login')
+            return redirect('superadmin:category_list')
         else:
-            messages.error(request, "Error")
-        return redirect('superadmin:category_list')
+            print(form.errors)
+            messages.error(request, form.errors)
+        # return redirect('superadmin:category_list')
     categories = Category.objects.all().order_by('-id')
-    form = CategoryForm()
+    
     context = {
         'categories': categories,
         'form':form
     }
     return render(request,'admin/category/list.html',context)
+
+def is_ajax(request):
+        return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+@login_required(login_url="superadmin:login")
+def UpdateCategory(request,pk):
+    if is_ajax(request):
+        category = Category.objects.get(pk=pk)
+        data = {
+            'title' : category.title,
+            'is_featured':category.is_featured,
+            'is_available':category.is_available,
+            'image':category.image
+        }
+        form = CategoryForm(request.POST,request.FILES,initial = data)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            old_title = request.POST.get('old_title')
+            is_featured = form.cleaned_data['is_featured']
+            is_available = form.cleaned_data['is_available']
+            image = request.FILES.get('image')
+            if form.has_changed():
+                current_title = Category.objects.filter(title = title)
+                if old_title != title and Category.objects.filter(title__iexact=title).first():
+                    return JsonResponse({'message':'This Category Already Exist!'})
+                if old_title != title:
+                    category.title = title
+                category.is_featured = is_featured
+                category.is_available = is_available
+                if image is not None:
+                    category.image = image
+                category.save()
+                messages.success(request, "Category updated")
+                return JsonResponse({'message':'success'})
+            return JsonResponse({'message':'No Changes happen!'})
+        return JsonResponse({'message':'Validation error'})
+    return JsonResponse({'message':'Worng rquest'})
+            
 
 
 ############# Users List ###############
@@ -120,21 +166,23 @@ def creat_product(request):
                 messages.error(request,'some fields are empty')
                 return redirect('superadmin:product.create')
         category_instance = Category.objects.get(id=category)
-        print(category_instance)
-        # Product.objects.create(
-        #     title = title,
-        #     # brand=brand_instance,
-        #     category=category_instance,
-        #     description=description,
-        #     price=price,
-        #     discount_price=discount_price,
-        #     stock_count=stock_count,
-        #     image=image
-        # ).save()
+        
+        data = Product(
+            title = title,
+            # brand=brand_instance,
+            # category=category_instance,
+            user = request.user,
+            description=description,
+            price=price,
+            discount_price=discount_price,
+            stock_count=stock_count,
+            image=image
+        )
+        data.save()
         messages.success(request,'Productcreated succefully')
         return redirect('superadmin:product.create')
 
-    categories = Category.objects.all().order_by('-id')
+    categories = Category.objects.filter(is_available = True).order_by('-id')
     form = ProductForm()
     context = {
         'categories': categories,
@@ -162,3 +210,30 @@ def admin_logout(request):
     logout(request)
     messages.success(request, "You are logouted")
     return redirect('superadmin:login')
+
+
+class CategoryUpdate(View):
+    form_class = CategoryForm
+
+    def is_ajax(self,request):
+        return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+    
+    def post(self,request,pk,*args,**kwargs):
+        if self.is_ajax(request):
+            category = Category.objects.get(pk=pk)
+            form = self.form_class(request.POST,request.FILES)
+            if form.is_valid():
+                title = form.cleaned_data['title']
+                is_featured = form.cleaned_data['is_featured']
+                is_available = form.cleaned_data['is_available']
+                image = request.FILES.get('image')
+
+                category.title = title
+                category.is_featured = is_featured
+                category.is_available = is_available
+                if image is not None:
+                    category.image = image
+                category.save()
+                return JsonResponse({'message':'success'})
+            return JsonResponse({'message':'Validation error'})
+            # return JsonResponse({'message':'Worng rquest'})

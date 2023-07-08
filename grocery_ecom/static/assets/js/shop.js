@@ -70,6 +70,7 @@
                 event.preventDefault();
                 qtyval = qtyval + 1;
                 $(this).prev().text(qtyval);
+                $('.product-qty-'+$(this).data('id')).val(qtyval);
             });
             $('.qty-down').on('click', function (event) {
                 event.preventDefault();
