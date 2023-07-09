@@ -6,7 +6,12 @@ const base_url = window.location.origin;
     $(".button-add-to-cart").on('click',function(e){
         let $this = $(this);
         var product_id = $this.data("id");
-        var product_quantity = $('.product-qty-'+product_id).val();
+        if($this.data("qty") == 1){
+            var product_quantity = $this.data("qty");
+        }else{
+            var product_quantity = $('.product-qty-'+product_id).val();
+        }
+        
         var product_price = $this.data("sellingprice");
         var image = $this.data('image');
         var title = $this.data('title');
@@ -50,13 +55,15 @@ const base_url = window.location.origin;
     $(".button-remove-to-cart").on('click',function(e){
         let $this = $(this);
         var product_id = $this.data("id");
+        var cart_id = $this.data("cartid");
         // var product_quantity = $('.product-qty-'+product_id).val();
         
-        console.log(product_id);
+        console.log(cart_id);
 
         var data = {
             'quantity':1,
             'id':product_id,
+            'cart_item_id':cart_id
         };
         $.ajax({
             url:$this.data("link"),
@@ -72,6 +79,43 @@ const base_url = window.location.origin;
                     alerts(resp.message)
                     // $this.html("Item added to cart")
                     $(".cart-items-count").html(resp.totalcartitems)
+                    location.reload()
+                    
+                }else{
+                    alerts(resp.message,'error')
+                }
+            },error:function(resp){
+                alerts("Error Occured",'error');
+            }
+        });
+    });
+    $(".button-delete-from-cart").on('click',function(e){
+        let $this = $(this);
+        var product_id = $this.data("id");
+        var cart_id = $this.data("cartid");
+        // var product_quantity = $('.product-qty-'+product_id).val();
+        
+        console.log(product_id);
+
+        var data = {
+            'id':product_id,
+            'cart_id':cart_id
+        };
+        $.ajax({
+            url:$this.data("link"),
+            type:'GET',
+            data:data,
+            dataType:'json',
+            
+            beforeSend:function(){
+                console.log("Removing product from cart..");
+            },
+            success:function(resp){
+                if(resp.status){
+                    alerts(resp.message)
+                    // $this.html("Item added to cart")
+                    // $(".cart-items-count").html(resp.totalcartitems)
+                    location.reload()
                     
                 }else{
                     alerts(resp.message,'error')

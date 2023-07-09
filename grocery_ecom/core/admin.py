@@ -31,7 +31,7 @@ class AddressAdmin(admin.ModelAdmin):
     list_display = ['user','first_name','last_name','date']
 
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ['cart','product','qty']
+    list_display = ['product','qty']
 
 # class CartAdmin(admin.ModelAdmin):
 #     inlines = [CartItemAdmin]

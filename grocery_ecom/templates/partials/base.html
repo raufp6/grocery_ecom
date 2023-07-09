@@ -247,20 +247,20 @@
                                     <div class="header-action-icon-2">
                                         <a class="mini-cart-icon" href="{% url 'core:cart' %}">
                                             <img alt="Nest" src="{% static 'assets/imgs/theme/icons/icon-cart.svg' %}" />
-                                            <span class="pro-count blue cart-items-count">{{cart_data|length }}</span>
+                                            <span class="pro-count blue cart-items-count">{{ count }}</span>
                                         </a>
                                         <a href="{% url 'core:cart' %}"><span class="lable">Cart</span></a>
                                         {% if cart_data %}
                                         <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                             <ul>
-                                                {% for key,item in cart_data.items %}
+                                                {% for item in cart_data %}
                                                 <li>
                                                     <div class="shopping-cart-img">
-                                                        <a href="#"><img alt="Nest" src="{{ item.image }}" /></a>
+                                                        <a href="#"><img alt="Nest" src="{{ item.product.image.url }}" /></a>
                                                     </div>
                                                     <div class="shopping-cart-title">
-                                                        <h4><a href="#">{{ item.title|truncatechars:20 }}</a></h4>
-                                                        <h4><span>{{ item.qty }} × </span>₹{{ item.price }}</h4>
+                                                        <h4><a href="#">{{ item.product.title|truncatechars:20 }}</a></h4>
+                                                        <h4><span>{{ item.qty }} × </span>₹{{ item.product.discount_price }}</h4>
                                                     </div>
                                                     <div class="shopping-cart-delete">
                                                         <a href="#"><i class="fi-rs-cross-small"></i></a>
@@ -270,7 +270,7 @@
                                             </ul>
                                             <div class="shopping-cart-footer">
                                                 <div class="shopping-cart-total">
-                                                    <h4>Total <span>$ {{ cart_total }}</span></h4>
+                                                    <h4>Total <span>₹ {{ cart_total }}</span></h4>
                                                 </div>
                                                 <div class="shopping-cart-button">
                                                     <a href="{% url 'core:cart' %}" class="outline">View cart</a>
@@ -289,7 +289,7 @@
                                             <ul>
                                                 {% if request.user.is_authenticated %}
                                                 <li>
-                                                    <a href="#"><i class="fi fi-rs-user mr-10"></i>My Account</a>
+                                                    <a href="{% url 'user:account' %}"><i class="fi fi-rs-user mr-10"></i>My Account</a>
                                                 </li>
                                                 <li>
                                                     <a href="#"><i class="fi fi-rs-location-alt mr-10"></i>Order Tracking</a>
@@ -774,6 +774,11 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <script type=text/javascript>toastr.error("{{ error }}")</script>
+            {% endfor %}
+        {% endfor %}
         
     </body>
 </html>

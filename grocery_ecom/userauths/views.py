@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,HttpResponseRedirect
+from core.models import Cart,CartItem
 from userauths.forms import UserRegisterForm
 from django.contrib.auth import login,authenticate,logout
 from django.contrib import messages
@@ -8,6 +9,9 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
 import random
+from core.views import _session_id,merge_carts
+
+
 
 User = settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -32,6 +36,8 @@ def user_login(request):
                 messages.error(request,"Your are not verified")
                 return redirect('userauths:login')    
             login(request,user)
+            # Session cart checking
+            merge_carts(request)        
             messages.success(request,"You are loggedIn")
             return redirect('core:index')
         else:

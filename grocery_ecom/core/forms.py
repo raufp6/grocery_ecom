@@ -1,6 +1,6 @@
 from django.db import models  
 from django import forms
-from core.models import Category,Product
+from core.models import Category,Product,Address
 from django.forms import fields 
 from django.core.validators import FileExtensionValidator 
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -64,3 +64,8 @@ class ProductForm(forms.ModelForm):
                        'type': 'date'  # <--- IF I REMOVE THIS LINE, THE INITIAL VALUE IS DISPLAYED
                       }),
         }
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = "__all__"

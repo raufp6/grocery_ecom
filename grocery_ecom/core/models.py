@@ -12,6 +12,10 @@ STATUS_CHOCE = (
     ("shipped", "Shipped"),
     ("deliverd", "Delivered"),
 )
+ADDRESS_TYPES = (
+    ("home", "Home"),
+    ("office", "Office")
+)
 
 STATUS = (
     ("draft", "Draft"),
@@ -166,16 +170,19 @@ class Cart(models.Model):
         verbose_name_plural = "Cart"
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart,related_name="cart_items",on_delete=models.CASCADE)
+    # cart = models.ForeignKey(Cart,related_name="cart_items",on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty     = models.PositiveIntegerField(default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    session_id = models.CharField(max_length=200,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
     class Meta:
         verbose_name_plural = "Cart Items"
 
     def sub_total(self):
-        return self.product.price * self.qty
+        return self.product.discount_price * self.qty
     
     def __str__(self):
         return self.product
@@ -288,11 +295,10 @@ class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
-    line1 = models.TextField(default=None)
-    line2 = models.TextField(default=None)
+    email = models.EmailField(max_length=100,null=True,blank=True)
+    line1 = models.TextField(default=None,null=True,blank=True)
     pincode = models.CharField(max_length=6)
     phone_number = models.CharField(max_length=20, default=None)
-    type = models.CharField(max_length=10, default="home")
+    type = models.CharField(choices=ADDRESS_TYPES, max_length=10, default="home")
     is_default = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)

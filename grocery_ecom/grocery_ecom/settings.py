@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'superadmin',
     'widget_tweaks',
     'mathfilters',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -75,6 +76,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 "django_base_url.context_processors.base_url",
+                "cart.context_processor.cart_total_amount",
             ],
         },
     },
@@ -140,6 +142,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+CART_SESSION_ID = 'cart'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
