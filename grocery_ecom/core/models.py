@@ -16,6 +16,10 @@ ADDRESS_TYPES = (
     ("home", "Home"),
     ("office", "Office")
 )
+PAYMENT_CHOiCE = (
+    ("cod", "Cod"),
+    ("online", "Online")
+)
 
 STATUS = (
     ("draft", "Draft"),
@@ -200,16 +204,20 @@ class CartOrder(models.Model):
     order_date = models.DateTimeField(auto_now_add=True)
     product_status = models.CharField(
         choices=STATUS_CHOCE, max_length=30, default="processing")
+    
+    payment_type = models.CharField(
+        choices=PAYMENT_CHOiCE, max_length=30, default="cod")
 
     class Meta:
         verbose_name_plural = "Cart Order"
 
 
 class CartOrderItems(models.Model):
-    order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
+    order = models.ForeignKey(CartOrder,related_name="order_items",on_delete=models.CASCADE)
     invoice_no = models.CharField(max_length=200)
-    product_status = models.CharField(max_length=200)
-    item = models.CharField(max_length=200)
+    product_status = models.CharField(
+        choices=STATUS_CHOCE, max_length=30, default="processing")
+    product = models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
     image = models.CharField(max_length=200)
     qty = models.IntegerField(default=0)
     price = models.DecimalField(
@@ -293,12 +301,36 @@ class City(models.Model):
 
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100,null=True,blank=True)
+    last_name = models.CharField(max_length=100,null=True,blank=True)
     email = models.EmailField(max_length=100,null=True,blank=True)
     line1 = models.TextField(default=None,null=True,blank=True)
-    pincode = models.CharField(max_length=6)
-    phone_number = models.CharField(max_length=20, default=None)
+    pincode = models.CharField(max_length=6,null=True,blank=True)
+    mobile = models.CharField(max_length=20, default=None,null=True,blank=True)
     type = models.CharField(choices=ADDRESS_TYPES, max_length=10, default="home")
-    is_default = models.BooleanField(default=False)
-    date = models.DateTimeField(auto_now_add=True)
+    is_default = models.BooleanField(default=False,null=True,blank=True)
+    # date = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    
+    class Meta:
+        verbose_name_plural = "Addresses"
+
+    def __str__(self):
+        return self.first_name
+
+
+class OrderAddress(models.Model):
+    order = models.ForeignKey(CartOrder,related_name="order_address",on_delete=models.SET_NULL, null=True)
+    first_name = models.CharField(max_length=100,null=True,blank=True)
+    last_name = models.CharField(max_length=100,null=True,blank=True)
+    email = models.EmailField(max_length=100,null=True,blank=True)
+    line1 = models.TextField(default=None,null=True,blank=True)
+    pincode = models.CharField(max_length=6,null=True,blank=True)
+    mobile = models.CharField(max_length=20, default=None,null=True,blank=True)
+    type = models.CharField(choices=ADDRESS_TYPES, max_length=10, default="home")
+    
+    class Meta:
+        verbose_name_plural = "Order Addresses"
+
+    def __str__(self):
+        return self.first_name
+

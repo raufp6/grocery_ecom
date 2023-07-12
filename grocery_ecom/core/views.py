@@ -1,7 +1,9 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse
-from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem
+from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress
 from django.template.defaultfilters import slugify
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 # from cart.cart import Cart
 from django.db.models import Q
 
@@ -228,6 +230,7 @@ def delete_cart(request, product_id,cart_item_id):
 
     return JsonResponse({"status":True,"message":"Product removed from cart!","data":request.session['cart_data_obj'],"totalcartitems":len(request.session['cart_data_obj'])})
 
+@login_required(login_url="userauths:login")
 def merge_carts(request):
     print("merging...")
     session_id = request.session.session_key
@@ -238,7 +241,78 @@ def merge_carts(request):
         cart.save()
 
     return True
+
+
+@login_required(login_url="userauths:login")
+def checkout(request):
+    try:
+        cart_items = CartItem.objects.get(user=request.user)
+        addresses = Address.objects.filter(user=request.user)
+        merge_carts(request)  # Merge the session cart with the user's cart
+        context = { 
+            'addresses':addresses
+        }
+        return render(request, 'core/checkout.html', context)
+    except:
+        messages.error(request, "Your cart is empty!")
+        return redirect('core:index')
     
+
+def placeorder(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    if cart_items is None:
+        messages.error(request, "Your cart is empty!")
+        return redirect('core:index')
+    if request.method == 'POST':  
+        shipping_address = request.POST.get('shipping_address')
+        if shipping_address is None:
+            messages.error(request, "Please Select Delivery Address")
+            return redirect('core:checkout')
+        
+        address = Address.objects.get(pk = shipping_address)
+
+        
+        total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+        order = CartOrder.objects.create(user=request.user, price=total_amount)
+        for i in cart_items:
+            order_item = CartOrderItems(
+                order = order,
+                invoice_no = "OD-"+order.orderno,
+                product    = i.product,
+                qty     = i.qty,
+                price   = i.product.discount_price,
+                total   = i.product.discount_price * i.qty,
+                image   = i.product.image.url,                
+                
+            )
+            order_item.save()
+        
+        # Save Shipping address
+        order_address = OrderAddress(
+            order = order,
+            first_name    = address.first_name,
+            last_name    = address.last_name,
+            line1    = address.line1,
+            mobile    = address.mobile,
+            email    = address.email,
+            pincode     = address.pincode,
+            type   = address.type,          
+        )
+        order_address.save()
+        cart_items.delete()
+        messages.success(request, "Your Order placed successfully")
+        return redirect('core:checkout_success',order.orderno)
+    else:
+        return redirect('core:checkout')
+
+
+def checkout_success(request,orderno):
+    
+    order = CartOrder.objects.get(orderno=orderno)
+    context = {
+        'order':order
+    }
+    return render(request, 'core/checkout_success.html',context)
 
         
 

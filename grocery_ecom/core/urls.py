@@ -16,6 +16,9 @@ urlpatterns = [
     path("delete_cart/<int:product_id>/<int:cart_item_id>/",views.delete_cart,name="delete_cart"),
     
     path("cart/",views.cart,name="cart"),
+    path("checkout/",views.checkout,name="checkout"),
+    path("placeorder/",views.placeorder,name="placeorder"),
+    path("checkout/success/<str:orderno>",views.checkout_success,name="checkout_success"),
 
 
 ]

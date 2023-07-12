@@ -28,21 +28,26 @@
                                             <h3 class="mb-0">Address</h3>
                                             <a class="btn  mr-10 mb-sm-15" style="float: right;" href="{% url 'user:add_address' %}"><i class="fi-rs-add mr-10"></i>Add New Address</a>
                                         </div>
+                                        {% for a in addresses %}
                                         <div class="col-lg-6">
                                             <div class="card mb-3 mb-lg-0">
                                                 
                                                 <div class="card-body">
                                                     <address>
-                                                        3522 Interstate<br />
-                                                        75 Business Spur,<br />
-                                                        Sault Ste. <br />Marie, MI 49783
+                                                        {{a.first_name}} {{a.last_name }}<br />
+                                                        {{a.mobile}}<br/>
+                                                        {{a.email}}<br/>
+                                                        Address: {{a.line1}}<br/>
+                                                        {{a.pincode}}
+                                                        
                                                     </address>
-                                                    <p>New York</p>
-                                                    <a href="#" class="btn-small">Edit</a>
+                                                    {% if p.is_default == true %}<p>Default</p>{% endif %}
+                                                    <a href="{% url 'user:edit_address' a.id %}" class="btn-small">Edit</a> | 
+                                                    <a onclick="return confirm('Are you sure?')" href="{% url 'user:delete_address' a.id %}" class="btn-small btn-danger">Delete</a>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+                                        {% endfor %}
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="account-detail" role="tabpanel" aria-labelledby="account-detail-tab">

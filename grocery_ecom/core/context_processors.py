@@ -11,18 +11,22 @@ def default(request):
     if request.user.is_authenticated:
         try:
             cart_items = CartItem.objects.filter(user=request.user)
-            total_amount = sum(item.product.price * item.qty for item in cart_items)
+            total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+            total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
         except:
             cart = None
             cart_items = None
             total_amount = 0
+            total_mrp_amount = 0
     else:
         try:
             cart_items = CartItem.objects.filter(session_id = _session_id(request))
-            total_amount = sum(item.product.price * item.qty for item in cart_items)
+            total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+            total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
         except:
             cart = None
             cart_items = None
+            total_mrp_amount = 0
             total_amount = len(cart_items)
 
 
@@ -72,5 +76,5 @@ def default(request):
         'categories':categories,
         'cart_data':cart_items,
         'cart_total':total_amount,
-        'count':1
+        'total_mrp_amount':total_mrp_amount
     }

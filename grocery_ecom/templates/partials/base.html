@@ -17,6 +17,7 @@
         <!-- Template CSS -->
         <link rel="stylesheet" href="{% static 'assets/css/plugins/animate.min.css' %}" />
         <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+        <link rel="stylesheet" href="{% static 'assets/css/custom.css' %}" />
         <!-- toastr -->
         <link rel="stylesheet" href="{% static 'assets/css/toastr.min.css' %}">
     </head>
@@ -247,7 +248,7 @@
                                     <div class="header-action-icon-2">
                                         <a class="mini-cart-icon" href="{% url 'core:cart' %}">
                                             <img alt="Nest" src="{% static 'assets/imgs/theme/icons/icon-cart.svg' %}" />
-                                            <span class="pro-count blue cart-items-count">{{ count }}</span>
+                                            <span class="pro-count blue cart-items-count">{{ cart_data|length }}</span>
                                         </a>
                                         <a href="{% url 'core:cart' %}"><span class="lable">Cart</span></a>
                                         {% if cart_data %}
@@ -274,7 +275,7 @@
                                                 </div>
                                                 <div class="shopping-cart-button">
                                                     <a href="{% url 'core:cart' %}" class="outline">View cart</a>
-                                                    <a href="#">Checkout</a>
+                                                    <a href="{% url 'core:checkout'%}">Checkout</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -475,8 +476,8 @@
                                                 <h4>Total <span>$383.00</span></h4>
                                             </div>
                                             <div class="shopping-cart-button">
-                                                <a href="#">View cart</a>
-                                                <a href="#">Checkout</a>
+                                                <a href="{% url 'core:cart'%}">View cart</a>
+                                                <a href="{% url 'core:checkout'%}">Checkout</a>
                                             </div>
                                         </div>
                                     </div>
@@ -779,6 +780,9 @@
                 <script type=text/javascript>toastr.error("{{ error }}")</script>
             {% endfor %}
         {% endfor %}
+        {% block page_scripts %}
+
+        {% endblock page_scripts %}
         
     </body>
 </html>

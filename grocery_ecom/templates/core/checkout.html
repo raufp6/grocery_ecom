@@ -1,0 +1,172 @@
+{% extends 'partials/base.html' %}
+{% load mathfilters %}
+{% load static %}
+{% block content %}
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{% url 'core:index'%}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> Checkout
+            </div>
+        </div>
+    </div>
+    <div class="container mb-80 mt-50">
+        <div class="row">
+            <div class="col-lg-8 mb-40">
+                <h1 class="heading-2 mb-10">Checkout</h1>
+                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-7">
+                
+                <div class="row">
+                    <h4 class="mb-30">Select Delivery Address</h4>
+                    <div class="address-">
+                        
+                        <div class="grid-wrapper grid-col-auto">
+                            {% for address in addresses %}   
+                          <label for="radio-card-{{address.id}}" class="radio-card">
+                            <input type="radio" name="shipping_address" id="radio-card-{{address.id}}" value="{{address.id}}" checked  onclick="set_delicery_address(this.value)"/>
+                            <div class="card-content-wrapper">
+                              <span class="check-icon"></span>
+                              <div class="card-content">
+                                
+                                <h4>{{ address.first_name }} {{ address.last_name }}</h4>
+                                <h5>{{ address.email }} | {{ address.mobile }}</h5>
+                                <h5>{{ address.line }} - {{ address.pincode }}</h5>
+                              </div>
+                            </div>
+                          </label>
+                          {% endfor %}
+                          <!-- /.radio-card -->
+        
+                          <!-- /.radio-card -->
+                        </div>
+                        <!-- /.grid-wrapper -->
+                      </div>
+                      <!-- /.container -->
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="border p-40 cart-totals ml-30 mb-50">
+                    <div class="d-flex align-items-end justify-content-between mb-30">
+                        <h4>Order Summary</h4>
+                        <h6 class="text-muted"></h6>
+                    </div>
+                    <div class="divider-2 mb-30"></div>
+                    <div class="table-responsive order_table checkout">
+                        <table class="table no-border">
+                            <tbody>
+                                {% for item in cart_data %}
+                                <!-- <tr>
+                                    <td class="image product-thumbnail"><img src="{% static '{{item.product.image.url}}' %}" alt="#"></td>
+                                    <td>
+                                        <h6 class="w-160 mb-5"><a href="#" class="text-heading">{{item.product.title|truncatechars:20 }}</a></h6></span>
+                                        <div class="product-rate-cover">
+                                            <div class="product-rate d-inline-block">
+                                                <div class="product-rating" style="width:90%">
+                                                </div>
+                                            </div>
+                                            <span class="font-small ml-5 text-muted"> (4.0)</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h6 class="text-muted pl-20 pr-20">x {{item.qty}}</h6>
+                                    </td>
+                                    <td>
+                                        <h4 class="text-brand">₹{{ item.product.discount_price|mul:item.qty }}</h4>
+                                    </td>
+                                </tr> -->
+                                {% endfor %}
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Cart Value</h6>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end">₹{{ total_mrp_amount}}</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Delivery Charge</h6>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end">Free</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">You Saved</h6>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end">₹{{ total_mrp_amount|sub:cart_total }}</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Total amount Payble</h6>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end">₹{{ cart_total}}</h4>
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="payment ml-30">
+                    <h4 class="mb-30">Payment</h4>
+                    <form action="{% url 'core:placeorder' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="payment_option">
+                            <!-- <div class="custome-radio">
+                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="">
+                                <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Direct Bank Transfer</label>
+                            </div> -->
+                            <div class="custome-radio">
+                                <input class="form-check-input" required="" type="radio" name="payment_option" value="cod" id="exampleRadios4" checked>
+                                <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Cash on delivery</label>
+                            </div>
+                            <!-- <div class="custome-radio">
+                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios5" checked="">
+                                <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" value="online" data-target="#paypal" aria-controls="paypal">Online Payment</label>
+                            </div> -->
+                        </div>
+                        <div class="payment-logo d-flex">
+                            <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-paypal.svg' %}" alt="">
+                            <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-visa.svg' %}" alt="">
+                            <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-master.svg' %}" alt="">
+                            <img src="{% static 'assets/imgs/theme/icons/payment-zapper.svg' %}" alt="">
+                        </div>
+                        <input type="hidden" name="shipping_address" value="" id="shipping_address">
+                        <button type="submit" name="checkout" class="btn btn-fill-out btn-block mt-30">Place Order<i class="fi-rs-sign-out ml-15"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content%}
+{% block page_scripts %}
+<script type="text/javascript">
+    $(function() {
+        var shipping_address_id = $('input:radio[name=shipping_address]:checked').val();
+        $("#shipping_address").val(shipping_address_id)
+    });
+
+    function set_delicery_address(shipping_address_id){
+        $("#shipping_address").val(shipping_address_id)
+    }
+</script>
+{% endblock page_scripts %}
