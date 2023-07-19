@@ -128,7 +128,8 @@ class Product(models.Model):
     image = models.ImageField(upload_to=user_directory_path, default='product-icon.png')
     # description = models.TextField(null=True, default=None,blank = True)
     description = RichTextUploadingField(null=True, default=None,blank = True)
-
+    price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
+    discount_price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
     
     stock_count = models.IntegerField(default=10)
     mfd = models.DateField(null = True,auto_now_add=False,blank=True)
