@@ -245,16 +245,17 @@ def merge_carts(request):
 
 @login_required(login_url="userauths:login")
 def checkout(request):
-    try:
-        cart_items = CartItem.objects.get(user=request.user)
+   
+    cart_items = CartItem.objects.filter(user=request.user)
+    if len(cart_items) > 0:
         addresses = Address.objects.filter(user=request.user)
         merge_carts(request)  # Merge the session cart with the user's cart
         context = { 
             'addresses':addresses
         }
         return render(request, 'core/checkout.html', context)
-    except:
-        messages.error(request, "Your cart is empty!")
+    else:
+        messages.error(request, "Your cart is empty")
         return redirect('core:index')
     
 
@@ -286,6 +287,13 @@ def placeorder(request):
                 
             )
             order_item.save()
+            product = get_object_or_404(Product, id=i.product.id)
+            if product.stock_count - i.qty >= 0:
+                product.stock_count -= i.qty
+                product.save()
+            else:
+                messages.error(request, "some products are out of stock")
+                return redirect('core:checkout')        
         
         # Save Shipping address
         order_address = OrderAddress(

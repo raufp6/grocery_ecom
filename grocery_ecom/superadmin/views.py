@@ -144,12 +144,12 @@ def creat_product(request):
 
     if request.method == 'POST':
         image = ''
-        try:
-            image = request.FILES['image']
-        except:
-            if image == '':
-                messages.info(request,"Image field can't be empty")
-                return redirect('superadmin:product.create')
+        # try:
+        #     image = request.FILES['image']
+        # except:
+        #     if image == '':
+        #         messages.info(request,"Image field can't be empty")
+        #         return redirect('superadmin:product.create')
         
         title = request.POST['title']
         category = request.POST['category']
@@ -192,6 +192,7 @@ def creat_product(request):
     return render(request,'admin/product/create.html',context)
 
 
+@login_required(login_url="superadmin:login")
 def add_product(request):
     if request.method == 'POST':  
         form = ProductForm(request.POST, request.FILES)  
@@ -205,6 +206,29 @@ def add_product(request):
         return redirect('superadmin:product.create')
 
 
+@login_required(login_url="superadmin:login")
+def order_list(request):
+    orders = CartOrder.objects.all()
+    context = {
+        'orders': orders,
+    }
+    return render(request,'admin/order/list.html',context)
+
+@login_required(login_url="superadmin:login")
+def order_details(request,id):
+    order = CartOrder.objects.get(pk=id)
+    if request.method == 'POST':  
+        status = request.POST.get('order_status')
+
+        order.product_status = status
+        order.save()
+        messages.success(request, "Order updated")
+    
+    context = {
+        'order': order,
+    }
+    
+    return render(request,'admin/order/details.html',context)
 ############# Logout ###############
 def admin_logout(request):
     logout(request)

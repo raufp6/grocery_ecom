@@ -8,7 +8,7 @@ from django.db.models.functions import Lower
 
 
 STATUS_CHOCE = (
-    ("proccess", "Processing"),
+    ("processing", "Processing"),
     ("shipped", "Shipped"),
     ("deliverd", "Delivered"),
 )
@@ -19,6 +19,12 @@ ADDRESS_TYPES = (
 PAYMENT_CHOiCE = (
     ("cod", "Cod"),
     ("online", "Online")
+)
+
+VARIENT_CHOiCE = (
+    ("text", "Text"),
+    ("color", "Color"),
+    ("image", "Image"),
 )
 
 STATUS = (
@@ -114,7 +120,6 @@ class Brand(models.Model):
 
 class Product(models.Model):
     pid = ShortUUIDField(unique=True, length=10, max_length=20)
-    # id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True,related_name="category")
     # tags = models.ForeignKey(Tags, on_delete=models.SET_NULL, null=True)
@@ -124,16 +129,15 @@ class Product(models.Model):
     # description = models.TextField(null=True, default=None,blank = True)
     description = RichTextUploadingField(null=True, default=None,blank = True)
 
-    price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
-    discount_price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
+    
     stock_count = models.IntegerField(default=10)
     mfd = models.DateField(null = True,auto_now_add=False,blank=True)
     life = models.CharField(max_length=50,default=50)
     status = models.BooleanField(default=True)
-    product_status = models.CharField(choices=STATUS, max_length=10, default="in_review")
+    product_status = models.CharField(choices=STATUS, max_length=10, default="published")
     status = models.BooleanField(default=True)
     in_stock = models.BooleanField(default=True)
-    featured = models.BooleanField(default=False)
+    featured = models.BooleanField(default=True)
     sku = ShortUUIDField(unique=True, length=5, max_length=10,prefix="sku", alphabet="123456789")
     date = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
@@ -152,6 +156,21 @@ class Product(models.Model):
         new_price = (self.discount_price / self.price) * 100
         return new_price - 100
 
+class ProductItem(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,default=None,null=True,blank=True)
+    title = models.CharField(max_length=100, default=None)
+    image = models.ImageField(upload_to=user_directory_path, default='product-icon.png')
+    stock_count = models.IntegerField(default=10)
+    
+    product_status = models.CharField(choices=STATUS, max_length=10, default="published")
+    status = models.BooleanField(default=True)
+    in_stock = models.BooleanField(default=True)
+    sku = ShortUUIDField(unique=True, length=5, max_length=10,prefix="sku", alphabet="123456789")
+    date = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+    
+
 
 class ProductImages(models.Model):
     image = models.ImageField(
@@ -161,6 +180,30 @@ class ProductImages(models.Model):
 
     class Meta:
         verbose_name_plural = "Product Images"
+
+
+class Varient(models.Model):
+    name = models.CharField(max_length=200,default=None,null=True,blank=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True,related_name="category")
+    type = models.CharField(choices=VARIENT_CHOiCE, max_length=10, default="text")
+
+    class Meta:
+        verbose_name_plural = "Varients"
+
+    def __str__(self):
+        return self.name
+
+class VarientValue(models.Model):
+    varient = models.ForeignKey(Varient,on_delete=models.SET_NULL, null=True,related_name="varient")
+    value = models.CharField(max_length=200,default=None,null=True,blank=True)
+    color_code = models.CharField(max_length=200,default=None,null=True,blank=True)
+    image = models.ImageField(upload_to='varient-images', default=None)
+
+    class Meta:
+        verbose_name_plural = "Varient Values"
+
+    def varient_image(self):
+        return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
 
 ########################  Cart, Orderitems and Address  #######################
 
@@ -319,7 +362,7 @@ class Address(models.Model):
 
 
 class OrderAddress(models.Model):
-    order = models.ForeignKey(CartOrder,related_name="order_address",on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey(CartOrder,on_delete=models.SET_NULL, null=True)
     first_name = models.CharField(max_length=100,null=True,blank=True)
     last_name = models.CharField(max_length=100,null=True,blank=True)
     email = models.EmailField(max_length=100,null=True,blank=True)

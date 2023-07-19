@@ -46,15 +46,15 @@
                     <a href="{% url 'superadmin:product_list'%}">Product List</a>
                 </div>
             </li>
-            <li class="menu-item has-submenu">
+            <li class="menu-item has-submenu {% is_active request 'superadmin:order_list' %}">
                 <a class="menu-link" href="page-orders-1.html">
                     <i class="icon material-icons md-shopping_cart"></i>
                     <span class="text">Orders</span>
                 </a>
                 <div class="submenu">
-                    <a href="page-orders-1.html">Order list 1</a>
-                    <a href="page-orders-2.html">Order list 2</a>
-                    <a href="page-orders-detail.html">Order detail</a>
+                    <a href="{% url 'superadmin:order_list'%}">Order list</a>
+                    <!-- <a href="page-orders-2.html">Order list 2</a>
+                    <a href="page-orders-detail.html">Order detail</a> -->
                 </div>
             </li>
             <li class="menu-item has-submenu">

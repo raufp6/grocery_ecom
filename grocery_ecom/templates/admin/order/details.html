@@ -1,0 +1,177 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order detail</h2>
+            <p>Details for Order ID: {{ order.orderno }}</p>
+        </div>
+    </div>
+    <div class="card">
+        <header class="card-header">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                    <span> <i class="material-icons md-calendar_today"></i> <b>Wed, Aug 13, 2020, 4:34PM</b> </span> <br />
+                    <small class="text-muted">Order ID: 3453012</small>
+                </div>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                        <select class="form-select d-inline-block mb-lg-0 mr-5 mw-200" name="order_status">
+                            <option value="">Change status</option>
+                            <option value="processing" {% if order.product_status == 'processing' %}selected {% endif %}>Proccessing</option>
+                            <option value="shipped" {% if order.product_status == 'shipped' %}selected {% endif %}>Shipped</option>
+                            <option value="delivered" {% if order.product_status == 'delivered' %}selected {% endif %}>Delivered</option>
+                            <option value="completed" {% if order.product_status == 'completed' %}selected {% endif %}>Completed</option>
+                            <option value="canceled" {% if order.product_status == 'canceled' %}selected {% endif %}>Canceled</option>
+                        </select>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                        <!-- <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a> -->
+                    </div>
+                </form>
+
+            </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row mb-50 mt-20 order-info-wrap">
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-person"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="mb-1">
+                                {{order.user.first_name}} {{order.user.last_name}} <br />
+                                {{order.user.username}} <br />
+                                {{order.user.mobile}}
+                            </p>
+                            
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-local_shipping"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Order info</h6>
+                            <p class="mb-1">
+                                Shipping: Fargo express <br />
+                                Pay method:cod <br />
+                            </p>
+                            
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-place"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Deliver to</h6>
+                            <p class="mb-1">
+                                {{order.order_address.line1}}<br />
+                                City: Tashkent, Uzbekistan <br />Block A, House 123, Floor 2 <br />
+                                Po Box 10000
+                            </p>
+                            
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+            </div>
+            <!-- row // -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="40%">Product</th>
+                                    <th width="20%">Unit Price</th>
+                                    <th width="20%">Quantity</th>
+                                    <th width="20%" class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.order_items.all %}
+                                <tr>
+                                    <td>
+                                        <a class="itemside" href="#">
+                                            <div class="left">
+                                                <img src="{{item.image}}" width="40" height="40" class="img-xs" alt="Item" />
+                                            </div>
+                                            <div class="info">{{ item.product.title }}</div>
+                                        </a>
+                                    </td>
+                                    <td>₹{{item.price}}</td>
+                                    <td>{{item.qty}}</td>
+                                    <td class="text-end">₹{{item.total}}</td>
+                                </tr>
+                                {% endfor %}
+                                
+                                
+                                <tr>
+                                    <td colspan="4">
+                                        <article class="float-end">
+                                            <dl class="dlist">
+                                                <dt>Subtotal:</dt>
+                                                <dd>₹{{order.price}}</dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Shipping cost:</dt>
+                                                <dd>0</dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Grand total:</dt>
+                                                <dd><b class="h5">₹{{order.price}}</b></dd>
+                                            </dl>
+                                            <!-- <dl class="dlist">
+                                                <dt class="text-muted">Status:</dt>
+                                                <dd>
+                                                    <span class="badge rounded-pill alert-success text-success">Payment done</span>
+                                                </dd>
+                                            </dl> -->
+                                        </article>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- table-responsive// -->
+                </div>
+                <!-- col// -->
+                <div class="col-lg-1"></div>
+                <div class="col-lg-4">
+                    <!-- <div class="box shadow-sm bg-light">
+                        <h6 class="mb-15">Payment info</h6>
+                        <p>
+                            <img src="{% static 'admin/assets/imgs/card-brands/2.png' %}" class="border" height="20" /> Master Card **** **** 4768 <br />
+                            Business name: Grand Market LLC <br />
+                            Phone: +1 (800) 555-154-52
+                        </p>
+                    </div> -->
+                    <!-- <div class="h-25 pt-4">
+                        <div class="mb-3">
+                            <label>Notes</label>
+                            <textarea class="form-control" name="notes" id="notes" placeholder="Type some note"></textarea>
+                        </div>
+                        <button class="btn btn-primary">Save note</button>
+                    </div> -->
+                </div>
+                <!-- col// -->
+            </div>
+        </div>
+        <!-- card-body end// -->
+    </div>
+    <!-- card end// -->
+</section>
+{% endblock %}

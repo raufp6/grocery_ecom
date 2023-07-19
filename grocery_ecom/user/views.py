@@ -1,10 +1,12 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse
 from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem
+from userauths.models import User
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from core.forms import AddressForm
+from userauths.forms import UserPasswordSetForm
 
 @login_required(login_url="userauths:login")
 def account(request):
@@ -117,14 +119,80 @@ def delete_address(request,id):
 
 @login_required(login_url="userauths:login")
 def orders(request):
+    orders = CartOrder.objects.filter(user=request.user)
     context = { 
-        
+        'orders':orders
     }
-    return render(request,'core/user_account/address.html',context)
+    return render(request,'core/user_account/orders.html',context)
+
+
+@login_required(login_url="userauths:login")
+def order_details(request,id):
+    
+    order = CartOrder.objects.get(pk = id)
+    context = { 
+        'order':order
+    }
+
+    return render(request,'core/user_account/order_details.html',context)
+
+
 
 @login_required(login_url="userauths:login")
 def profile(request):
+    user = User.objects.get(pk = request.user.id)
     context = { 
-        
+     'user':user   
     }
-    return render(request,'core/user_account/address.html',context)
+    if request.method == 'POST':  
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        if first_name == "" or last_name == "":
+            messages.error(request, "Please fill all required fields")
+            return redirect('user:profile')
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        messages.success(request, "Profile updated")
+        return redirect('user:profile')
+    return render(request,'core/user_account/profile.html',context)
+
+@login_required(login_url="userauths:login")
+def password_change(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UserPasswordSetForm(user,request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Password Chanaged")
+            return redirect('user:password_change')
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request,error)
+            return redirect('user:password_change')
+
+
+
+    form = UserPasswordSetForm(user)
+        
+    context = {
+        'form':form
+    }
+            
+    return render(request,'core/user_account/password_change.html',context)
+
+def reset_password_change(request):
+    user = request.user
+    form = UserPasswordSetForm(user)
+    if request.method == 'POST':
+        email = request.session.get('email')
+        try:
+            user = User.objects.get(username=email)
+        except:
+            messages.warning(request,f"User with {email} dose not exist.")
+            return redirect("userauths:forgot_password")
+    context = {
+        'form':form
+    }
+            
+    return render(request,'core/user_account/password_change.html',context)

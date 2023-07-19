@@ -114,6 +114,17 @@ def verify_otp(request):
     return render(request,'userauths/verify_otp.html')
 
 
+def password_reset(request):
+    if request.method == 'POST':
+        email = request.session.get('email')
+        try:
+            user = User.objects.get(username=email)
+        except:
+            messages.warning(request,f"User with {email} dose not exist.")
+            return redirect("userauths:forgot_password")
+            
+    return render(request,'userauths/forgot_password.html')
+
 
 def user_logout(request):
     logout(request)
