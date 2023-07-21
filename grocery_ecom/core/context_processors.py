@@ -11,8 +11,13 @@ def default(request):
     if request.user.is_authenticated:
         try:
             cart_items = CartItem.objects.filter(user=request.user)
-            total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
-            total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
+            for item in cart_items:
+                product_item = item.product.items.get(is_default=True)
+                total_amount =+ product_item.discount_price
+                total_mrp_amount =+ product_item.price
+
+            # total_amount = sum(item.product.items.discount_price * item.qty for item in cart_items)
+            # total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
         except:
             cart = None
             cart_items = None
@@ -27,8 +32,8 @@ def default(request):
             cart = None
             cart_items = None
             total_mrp_amount = 0
-            total_amount = len(cart_items)
-
+            total_amount = 0
+    # print(cart_items)
 
 
     # quantity = 0

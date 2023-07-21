@@ -1,16 +1,22 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse
-from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress
+from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 # from cart.cart import Cart
 from django.db.models import Q
+from pprint import pprint
+import pickle
 
 def index(request):
-    products = Product.objects.filter(featured=True,product_status="published")
+    products = Product.objects.filter(featured=True,product_status="published",items__is_default=True)
+    products_items = ProductItem.objects.filter(is_deleted = False,is_default=True,product__featured=True).order_by('-id')
+    
+    # for p in products:
+    #     print(p.product_item.all())
     context = { 
-        'products':products
+        'products':products_items
     }
     return render(request,'core/index.html',context)
 
@@ -34,19 +40,26 @@ def category_list(request):
 # Prodcut Detail
 def product_detail(request,id,slug):
     product = Product.objects.get(id=id)
+    product_item = product.items.filter(is_default=True)
     p_images = product.p_images.all()
+    
     context = { 
         'product':product,
+        'product_item':product_item,
         'p_images': p_images
     }
     return render(request,'core/product-details.html',context)
 
 def product_detail_new(request,pid,slug):
-    product = Product.objects.get(pid=pid)
+    product = Product.objects.get(pid=pid,items__is_default=True)
     p_images = product.p_images.all()
+    results = []
+    product_item = product.items.get(is_default=True)
+    
     context = { 
         'product':product,
-        'p_images': p_images
+        'p_images': p_images,
+        'product_item':product_item
     }
     return render(request,'core/product-details.html',context)
 

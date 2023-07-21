@@ -37,14 +37,16 @@
                     
                 </div>
             </li>
-            <li class="menu-item has-submenu {% is_active request 'superadmin:product_list' %}">
+            <li class="menu-item has-submenu {% is_active request 'superadmin:product_list' %} {% is_active request 'superadmin:product.create' %} {% is_active request 'superadmin:product_varients' %} ">
                 <a class="menu-link" href="#">
                     <i class="icon material-icons md-shopping_bag"></i>
                     <span class="text">Products Management</span>
                 </a>
                 <div class="submenu">
                     <a href="{% url 'superadmin:product_list'%}">Product List</a>
+                    <a href="{% url 'superadmin:product_varients'%}">Product Varients</a>
                 </div>
+                
             </li>
             <li class="menu-item has-submenu {% is_active request 'superadmin:order_list' %}">
                 <a class="menu-link" href="page-orders-1.html">

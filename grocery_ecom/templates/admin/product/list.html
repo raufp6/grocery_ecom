@@ -63,7 +63,7 @@
                                 </div>
                             </a>
                         </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"><span>₹{{p.discount_price}} / ₹{{p.price}}</span></div>
+                        <!-- <div class="col-lg-2 col-sm-2 col-4 col-price"><span>₹{{p.discount_price}} / ₹{{p.price}}</span></div> -->
                         <div class="col-lg-2 col-sm-2 col-4 col-status">
                             <span class="badge rounded-pill alert-success">{{p.product_status}}</span>
                         </div>
@@ -71,11 +71,19 @@
                             <span class="badge rounded-pill alert-warning">{{p.category.title}}</span>
                         </div>
                         <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2021</span>
+                            <span>{{p.date|date:"M, d, Y"}}</span>
                         </div>
                         <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand"> <i class="material-icons md-edit"></i> Edit </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded"> <i class="material-icons md-delete_forever"></i> Delete </a>
+                            
+                            <div class="dropdown">
+                                <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                <div class="dropdown-menu">
+                                    <a href="{% url 'superadmin:product_edit' p.id %}" class="dropdown-item link-edit-category"> <i class="material-icons md-edit"></i> Edit </a>        
+                                    <a href="{% url 'superadmin:product_varient_manage' p.id %}" class="dropdown-item link-edit-category"> Product Varients </a>
+                                    <a href="{% url 'superadmin:product_images' p.id %}" class="dropdown-item link-edit-category"> Image Gallery </a>
+                                    <a href="#" class="dropdown-item link-edit-category"> <i class="material-icons md-delete_forever"></i> Delete </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- row .// -->

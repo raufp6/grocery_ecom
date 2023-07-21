@@ -1,0 +1,146 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block extrahead %}
+
+{% endblock %}
+{% block content %}
+<section class="content-main">
+    <div class="row">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Update Product</h2>
+                    <div>
+                        <a href="{% url 'superadmin:product_list'%}" class="btn btn-light rounded font-sm mr-5 text-body hover-up">Back</a>
+                        <button type="submit" class="btn btn-md rounded font-sm hover-up">Update</button>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Basic</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                    
+                            
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Product title</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="title" name="title" value="{{product.title}}"/>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Full description</label>
+                                <textarea placeholder="Type here" class="form-control ckeditor" name="description" rows="4">{{product.description}}</textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="mb-4">
+                                        <label class="form-label">Regular price</label>
+                                        <div class="row gx-2">
+                                            <input placeholder="" type="text" name="price" class="form-control" value="{{product_item.price}}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-4">
+                                        <label class="form-label">Discount price</label>
+                                        <input placeholder="" type="text" name="discount_price" class="form-control" value="{{product_item.discount_price}}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-4">
+                                        <label class="form-label">Product Stock</label>
+                                        <input placeholder="" type="number" name="stock_count" class="form-control" value="{{product_item.stock_count}}" />
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                            
+                    
+                    </div>
+                </div>
+                <!-- card end// -->
+                <div class="card mb-4">
+                    <!-- <div class="card-header">
+                        <h4>Shipping</h4>
+                    </div> -->
+                    <div class="card-body">
+                        
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label for="mfd" class="form-label">Manufacture Date</label>
+                                        <input type="date" name="mfd" id="mfd" class="form-control" value="{{ product.mfd }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label for="life" class="form-label">Life</label>
+                                        <input type="text" name="life" id="life" class="form-control" value="{{ product.life }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="mb-4">
+                                <label for="product_name" class="form-label">Weight</label>
+                                <input type="text" placeholder="gam" class="form-control" id="product_name" />
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Shipping fees</label>
+                                <input type="text" placeholder="$" class="form-control" id="product_name" />
+                            </div> -->
+                        
+                    </div>
+                </div>
+                <!-- card end// -->
+            </div>
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Media</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-upload">
+                            {% if product.image == "" %}
+                            <img src="{% static 'admin/assets/imgs/theme/upload.svg' %}" alt="" />
+                            {%else %}
+                            <img src="{{ product.image.url }}" alt="" />
+                            {% endif %}
+                            <input class="form-control" type="file" name="image" placeholder="Change Image" />
+                        </div>
+                    </div>
+                </div>
+                <!-- card end// -->
+                <div class="card mb-8">
+                    <div class="card-header">
+                        <h4>Category</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row gx-2">
+                            <div class="col-sm-12 mb-3">
+                                <label class="form-label">Category </label>
+                                <select class="form-select" name="category">
+                                    <option value="">Select One</option>
+                                    {% for c in categories %}
+                                        <option value="{{c.id}}" 
+                                            {% if c.id == product.category_id %} selected {% endif %}>{{c.title}}</option>
+                                    {% endfor %}
+                                    
+                                </select>
+                            </div>
+                            
+                            
+                        </div>
+                        <!-- row.// -->
+                    </div>
+                </div>
+                <!-- card end// -->
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

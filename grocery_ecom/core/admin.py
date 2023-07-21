@@ -1,12 +1,16 @@
 from django.contrib import admin
-from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem
+from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,ProductItem
 
 class ProductImagesAdmin(admin.TabularInline):
     model = ProductImages
 
+# class ProductItemAdmin(admin.TabularInline):
+#     model = ProductItem
+#     extra = 1
+
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImagesAdmin]
-    list_display = ['user','title','product_image','price','category','in_stock','product_status']
+    list_display = ['user','title','product_image','category','product_status']
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['title','category_image']

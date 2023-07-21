@@ -21,8 +21,18 @@ urlpatterns = [
     path("order/details/<int:id>", views.order_details, name="order_details"),
 
     path("product_list/", views.product_list, name="product_list"),
-    path("product/create/", views.creat_product, name="product.create"),
-    path("add_product/", views.add_product, name="add_product"),
+    path("product/create/", views.create_product, name="product.create"),
+    path("product/edit/<int:id>/", views.product_edit, name="product_edit"),
+    path("product/images/<int:id>/", views.product_images, name="product_images"),
+    path("product/image/delete/<int:id>/<int:product_id>/", views.delete_product_image, name="delete_product_image"),
+
+    path("product/varients/<int:id>/", views.product_varients_manage, name="product_varient_manage"),
+    path("product/varients/values/<int:id>/", views.varients_values_manage, name="varients_values_manage"),
+    path("product/varients/values/combination/<int:id>/", views.varients_values_combination, name="varients_values_combination"),
+    # path("add_product/", views.add_product, name="add_product"),
+
+    path("product_varients/", views.product_varients, name="product_varients"),
+    path("varient_values/<int:id>/", views.varient_values, name="varient_values"),
     path('logout/', views.admin_logout, name='logout'),
 
 ]

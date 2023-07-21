@@ -1,0 +1,53 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Product Images</h2>
+        </div>
+        <!-- <div>
+            <a href="#" class="btn btn-light rounded font-md">Export</a>
+            <a href="#" class="btn btn-light rounded font-md">Import</a>
+            <a href="#" class="btn btn-primary btn-sm rounded">Create new</a>
+        </div> -->
+    </div>
+    <div class="card mb-4">
+        
+        <div class="card-body">
+            <div class="row gx-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 row-cols-xxl-5">
+                {% for i in images %}
+                <div class="col">
+                    <div class="card card-product-grid">
+                        <a href="#" class="img-wrap"> <img src="{{ i.image.url }}" alt="Product" /> </a>
+                        <div class="info-wrap">
+                            <a href="{% url 'superadmin:delete_product_image' i.id id %}" class="btn btn-sm font-sm btn-light rounded"> <i class="material-icons md-delete_forever"></i> Delete </a>
+                        </div>
+                    </div>
+                    <!-- card-product  end// -->
+                </div>
+                <!-- col.// -->
+                {% endfor %}
+                <div class="col">
+                    <div class="card card-product-grid">
+                        <a href="#" class="img-wrap"> <img src="{% static 'admin/assets/imgs/theme/upload.svg' %}" alt="Product" /> </a>
+                        <form action="" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="info-wrap">
+                                <input class="form-control" type="file" name="image" placeholder="Change Image" />
+                                <button type="submit" class="btn btn-sm font-sm btn-light rounded"> upload </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- card-product  end// -->
+                </div>
+                
+            </div>
+            <!-- row.// -->
+        </div>
+        <!-- card-body end// -->
+    </div>
+    <!-- card end// -->
+</section>
+{% endblock %}

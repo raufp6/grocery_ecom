@@ -1,0 +1,51 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Product Varients Values</h2>
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-8">
+                    <form action="{% url 'superadmin:varients_values_combination' product_id %}" method="GET" ></form>
+                    {% for v in varients %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">{{v.name}}</h5>
+                            <hr>
+                            {% for vi in v.varient.all %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="varient_value_{{v.name|slugify}}" value="{{vi.id}}">
+                                <label class="form-check-label" for="product-cat"> {{vi.value}} </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="d-grid col-2 right">
+                        <button class="btn btn-primary" type="submil">Next</button>
+                       
+                    </div>
+                    </form>
+                    
+                    <!-- card end// -->
+                </div>
+                
+                <!-- .col// -->
+            </div>
+            <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+    </div>
+    <!-- card .// -->
+</section>
+{% endblock %}

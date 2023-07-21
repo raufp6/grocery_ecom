@@ -1,0 +1,90 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Product Varient Values of {{varient.name}}</h2>
+            
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    
+                    <form action="" method="POSt">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            
+                            <label for="value" class="form-label">Varient Value</label>
+                            <input type="text" placeholder="Value" name="value" id="value" class="form-control">
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button class="btn btn-primary" type="submil">Create Varient Value</button>
+                           
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-9">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </th>
+                                    <th>ID </th>
+                                    <th>Name</th>
+                                    
+                                    
+                                    
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in varients %}
+                                <tr class="record">
+                                    <td class="text-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </td>
+                                    <td>{{ c.id }}</td>
+                                    <td><b>{{ c.value }}</b></td>
+                                    
+                                    
+                                    
+                                    
+                                    <td class="text-end">
+                                        <div class="dropdown">
+                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item link-edit-category" data-id="{{c.id}}"  href="{% url 'superadmin:update_category' c.id %}">Edit info</a>
+                                            </div>
+                                        </div>
+                                        <!-- dropdown //end -->
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- .col// -->
+            </div>
+            <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+    </div>
+    <!-- card .// -->
+</section>
+{% endblock %}
