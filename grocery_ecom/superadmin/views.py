@@ -4,9 +4,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,User,Varient,VarientValue
+from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,User,Varient,VarientValue,ProductVarientConfigeration
 from core.forms import CategoryForm,ProductForm,VarientForm
 from django.core.exceptions import ValidationError
+import itertools
 
 
 #############  Login ###############
@@ -317,18 +318,32 @@ def delete_product_image(request,id,product_id):
     
     return redirect('superadmin:product_images',product_id)
 
-@login_required(login_url="superadmin:login")
-def add_product(request):
-    if request.method == 'POST':  
-        form = ProductForm(request.POST, request.FILES)  
-        if form.is_valid():  
-            form.save()  
+# @login_required(login_url="superadmin:login")
+# def add_product(request):
+#     if request.method == 'POST':  
+#         form = ProductForm(request.POST, request.FILES)  
+#         if form.is_valid():  
+#             form.save()  
             
-            messages.success(request, "Product added")
-        else:
-            messages.error(request, "Please check")
+#             messages.success(request, "Product added")
+#         else:
+#             messages.error(request, "Please check")
         
-        return redirect('superadmin:product.create')
+#         return redirect('superadmin:product.create')
+
+
+
+# Product Variations
+@login_required(login_url="superadmin:login")
+def product_variations(request,id):
+    product = Product.objects.get(pk = id)
+    
+    products_items = product.items.filter(is_default=False)
+    
+    context = {
+        'products': products_items,
+    }
+    return render(request,'admin/product/variations.html',context)
     
 # Product Varients
 @login_required(login_url="superadmin:login")
@@ -422,28 +437,93 @@ def varients_values_manage(request,id):
 @login_required(login_url="superadmin:login")
 def varients_values_combination(request,id):
     
-    varient_values = []
+    varient_values = {}
+    varient_values_combinations = {}
     if request.method == 'GET':  
-        varients_ids = request.GET.getlist('varient')
-        varients = Varient.objects.filter(id__in=varients_ids)
-        # print(varients)
-        for id in varient_values:
-            varients = VarientValue.objects.values(varient = id)
-            varient_values[varients] = varients
-        
+        varients_ids = request.GET.getlist('varient[]')
+        for i in varients_ids:
+            varient_values[i] = request.GET.getlist('varient_value['+i+']')
+        # print(varients_ids)
         # print(varient_values)
 
-        # for i in varients:
-        #     vv = i.varient.all()
-        #     for j in vv:
-        #         print(j.value)
-
+    product = Product.objects.get(pk=id)
+    product_item = product.items.get(is_default=True)
+    combinations = list(itertools.product(varient_values[varients_ids[0]], varient_values[varients_ids[1]]))
+    html = ''
+    k = 0
+    print(combinations)
+    for item in combinations:
+        k+=1
+        combo_values = convertTuple(item)
+        # combo_values = combo_values.replace("(",'')
+        # combo_values = combo_values.replace(")",'')
+        # combo_values = combo_values.replace("'",'')
+        # combo_values = combo_values.replace(" ",'')
+        html += '<tr>'
+        html += '<input type="hidden" name="option_values_comb" value="'+combo_values+'">'
+        html += '<td><input type="text" class="form-control" name="product_item_title" value="'+product.title+'"></td><td><input type="text" class="form-control" name="product_item_price" value="'+str(product_item.price)+'"></td><td><input type="text" class="form-control" name="product_item_dicount_price" value="'+str(product_item.discount_price)+'"></td><td><input type="text" class="form-control" name="product_item_stock" value="'+str(product_item.stock_count)+'"></td>'
+        html +='</tr>'
     context = {
-        'varients': varients,
         'varient_values':varient_values,
-        'product_id':id
+        'product_id':id,
+        'product':product,
+        'combinations':combinations,
+        'html':html
     }
     return render(request,'admin/product/varient_values_combination_manage.html',context)
+
+
+
+def convertTuple(tup):
+    # initialize an empty string
+    str = ''
+    for item in tup:
+        str = str + "," + item
+    return str[1:]
+
+# Product Varient Value Combination
+@login_required(login_url="superadmin:login")
+def generate_varients(request,id):
+    if request.method == 'GET':
+        option_values_comb = request.GET.getlist('option_values_comb')
+        product_item_title = request.GET.getlist('product_item_title')
+        product_item_price = request.GET.getlist('product_item_price')
+        product_item_dicount_price = request.GET.getlist('product_item_dicount_price')
+        product_item_stock = request.GET.getlist('product_item_stock')
+    
+    prd = Product.objects.get(id=id)
+    for i in range(len(option_values_comb)):
+        print(option_values_comb[i])
+        # print(list(option_values_comb[i]))
+        varient_values_li = list(option_values_comb[i].split(","))
+        print(type(varient_values_li))
+        print(varient_values_li)
+
+        product_item = ProductItem(
+            title   = product_item_title[i]+"-",
+            product =   prd,
+            price   =   product_item_price[i],
+            discount_price  =   product_item_dicount_price[i],
+            stock_count =   product_item_stock[i],
+            image   =   prd.image,
+            user = request.user,
+            is_default  = False
+        )
+        product_item.save()
+        for k in varient_values_li:
+            # k = k.replace("'",'')
+            print(k)
+            # print(type(int(k)))
+            # print(option_values_comb[i])
+            product_conf = ProductVarientConfigeration(
+                product_item = product_item,
+                varient_value_id = k
+            )
+            product_conf.save()
+
+
+    # print(type(option_values_comb[0]))
+    return HttpResponse(option_values_comb)
 
 
 

@@ -1,0 +1,55 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Product Varients</h2>
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <form action="{% url 'superadmin:generate_varients' product_id %}" method="GET" >
+                            
+                            <table class="table" id="table">
+                                <thead>
+                                    <tr>
+                                        
+                                        <th>Product Name </th>
+                                        <th>Price</th>
+                                        <th>Discount Price</th>
+                                        <th>Stock Quantity</th>
+                                        
+                                        
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{ html|safe }}
+                                </tbody>
+                                
+                            </table>
+                            <div class="d-grid col-2 right">
+                                <button class="btn btn-primary" type="submil">Save</button>
+                               
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- .col// -->
+            </div>
+            <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+    </div>
+    <!-- card .// -->
+</section>
+{% endblock %}
