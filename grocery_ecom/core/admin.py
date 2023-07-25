@@ -12,6 +12,12 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImagesAdmin]
     list_display = ['user','title','product_image','category','product_status']
 
+
+class VariationAdmin(admin.ModelAdmin):
+    list_display = ['product','variation_category','variation_value','is_active']
+    list_editable = ('is_active',)
+    list_filter = ('product','variation_category','variation_value','is_active')
+
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['title','category_image']
 
@@ -49,5 +55,5 @@ admin.site.register(ProductReview,ProductReviewAdmin)
 admin.site.register(WhishList,WhishListAdmin)
 admin.site.register(Address,AddressAdmin)
 admin.site.register(CartItem,CartItemAdmin)
-admin.site.register(Variation)
+admin.site.register(Variation,VariationAdmin)
 

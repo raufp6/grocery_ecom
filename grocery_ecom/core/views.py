@@ -10,13 +10,13 @@ from pprint import pprint
 import pickle
 
 def index(request):
-    products = Product.objects.filter(featured=True,product_status="published",items__is_default=True)
-    products_items = ProductItem.objects.filter(is_deleted = False,is_default=True,product__featured=True).order_by('-id')
+    products = Product.objects.filter(featured=True,product_status="published")
+    # products_items = ProductItem.objects.filter(is_deleted = False,is_default=True,product__featured=True).order_by('-id')
     
     # for p in products:
     #     print(p.product_item.all())
     context = { 
-        'products':products_items
+        'products':products
     }
     return render(request,'core/index.html',context)
 
@@ -38,28 +38,14 @@ def category_list(request):
     return render(request,'core/categories.html',context)
 
 # Prodcut Detail
-def product_detail(request,id,slug):
-    product = Product.objects.get(id=id)
-    product_item = product.items.filter(is_default=True)
-    p_images = product.p_images.all()
-    
-    context = { 
-        'product':product,
-        'product_item':product_item,
-        'p_images': p_images
-    }
-    return render(request,'core/product-details.html',context)
 
-def product_detail_new(request,pid,slug):
-    product = Product.objects.get(pid=pid,items__is_default=True)
+def product_detail(request,pid,slug):
+    product = Product.objects.get(pid=pid)
     p_images = product.p_images.all()
-    results = []
-    product_item = product.items.get(is_default=True)
     
     context = { 
         'product':product,
         'p_images': p_images,
-        'product_item':product_item
     }
     return render(request,'core/product-details.html',context)
 

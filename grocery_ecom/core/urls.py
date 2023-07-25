@@ -6,7 +6,7 @@ app_name = "core"
 urlpatterns = [
     path("",views.index,name="index"),
     path("products/",views.product_list,name="product_list"),
-    path("pd/<pid>/<str:slug>/",views.product_detail_new,name="product_detail"),
+    path("pd/<pid>/<str:slug>/",views.product_detail,name="product_detail"),
     path("categories/",views.category_list,name="category_list"),
     
     #Cart

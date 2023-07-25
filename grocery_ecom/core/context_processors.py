@@ -5,7 +5,7 @@ from core.views import _session_id,merge_carts
 def default(request):
     # All active categories
     categories = Category.objects.filter(is_available=True)
-    
+    total_mrp_amount = 0
     total_amount = 0
     merge_carts(request)  # Merge the session cart with the user's cart
     if request.user.is_authenticated:

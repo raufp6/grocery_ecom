@@ -198,23 +198,34 @@ class ProductImages(models.Model):
     class Meta:
         verbose_name_plural = "Product Images"
 
+
+
+class VariationManager(models.Manager):
+    def colors(self):
+        return super(VariationManager,self).filter(variation_category='color',is_active = True)
+    
+    def sizes(self):
+        return super(VariationManager,self).filter(variation_category='size',is_active = True)
+
 variation_category_choice = (
     ('color','Color'),
     ('size','Size'),
 )
 
 class Variation(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name="product_vatiations", null=True)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE, null=True)
     variation_category = models.CharField(max_length=100,choices=variation_category_choice)
     variation_value = models.CharField(max_length=100,null=True)
     is_active = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_created=True)
 
+    objects = VariationManager()
+
 
     class Meta:
         verbose_name_plural = "Variations"
 
-    def __str__(self):
+    def __unicode__(self):
         return self.product
 
 

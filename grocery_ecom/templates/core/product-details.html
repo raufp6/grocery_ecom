@@ -61,24 +61,39 @@
                                 </div>
                                 <div class="clearfix product-price-cover">
                                     <div class="product-price primary-color float-left">
-                                        <span class="current-price text-brand">₹{{ product_item.discount_price }}</span>
+                                        <span class="current-price text-brand">₹{{ product.discount_price }}</span>
                                         <span>
-                                            <span class="save-price font-md color3 ml-15">{{ product_item.get_percentage|floatformat:0 }}% Off</span>
-                                            <span class="old-price font-md ml-15">₹{{ product_item.price }}</span>
+                                            <span class="save-price font-md color3 ml-15">{{ product.get_percentage|floatformat:0 }}% Off</span>
+                                            <span class="old-price font-md ml-15">₹{{ product.price }}</span>
                                         </span>
                                     </div>
                                 </div>
                                 
-                                <!-- <div class="attr-detail attr-size mb-30">
-                                    <strong class="mr-10">Size / Weight: </strong>
-                                    <ul class="list-filter size-filter font-small">
+                                <div class="attr-detail attr-size mb-30">
+                                    <strong class="mr-10">Color: </strong>
+                                    <!-- <ul class="list-filter size-filter font-small">
                                         <li><a href="#">50g</a></li>
                                         <li class="active"><a href="#">60g</a></li>
                                         <li><a href="#">80g</a></li>
                                         <li><a href="#">100g</a></li>
                                         <li><a href="#">150g</a></li>
-                                    </ul>
-                                </div> -->
+                                    </ul> -->
+                                    <select class="form-control" name="color">
+                                        <option value="" disabled selected>Choose Color</option>
+                                        {% for i in product.variation_set.colors %}
+                                            <option value="{{ i.variation_value | lower}}">{{ i.variation_value | capfirst}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="attr-detail attr-size mb-30">
+                                    <strong class="mr-10">Size: </strong>
+                                    <select class="form-control" name="size">
+                                        <option value="" disabled selected>Choose Size</option>
+                                        {% for i in product.variation_set.sizes %}
+                                            <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                                 <div class="detail-extralink mb-50">
                                     <div class="detail-qty border radius">
                                         <a href="#" class="qty-down" data-id="{{ product.id }}"><i class="fi-rs-angle-small-down"></i></a>
@@ -92,7 +107,7 @@
                                         <input type="hidden" class="product-image" value="{{ product.image.url }}" name="product_image">
                                         <input type="hidden" class="product-title" value="{{ product.title }}" name="product_title">
                                         <button type="submit" class="button button-add-to-cart" data-price="{{product.price}}" data-qty="0" data-sellingprice="{{product.discount_price}}" data-id="{{ product.id }}" data-image="{{ product.image.url }}" data-title="{{ product.title }}" data-link="{% url 'core:add-to-cart' %}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
-                                        <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                        <!-- <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a> -->
                                     </div>
                                 </div>
                                 <div class="font-xs">
