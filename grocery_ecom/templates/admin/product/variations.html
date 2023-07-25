@@ -10,13 +10,15 @@
         <div>
             <!-- <a href="#" class="btn btn-light rounded font-md">Export</a>
             <a href="#" class="btn btn-light rounded font-md">Import</a> -->
-            <a href="{% url 'superadmin:product.create' %}" class="btn btn-primary btn-sm rounded">Create new</a>
+            <a href="{% url 'superadmin:product_varient_manage' product.id %}" class="btn btn-primary btn-sm rounded">Add Variations</a>
         </div>
     </div>
     <div class="card mb-4">
         
         <!-- card-header end// -->
         <div class="card-body">
+            
+
             {% if products is not None%}
                 {% for p in products %}
                 <article class="itemlist">
@@ -39,6 +41,19 @@
                         <!-- <div class="col-lg-2 col-sm-2 col-4 col-price"><span>₹{{p.discount_price}} / ₹{{p.price}}</span></div> -->
                         <div class="col-lg-2 col-sm-2 col-4 col-status">
                             <span class="badge rounded-pill alert-success">{{p.product_status}}</span>
+                        </div>
+                        <div class="col-lg-2">
+                            
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-status">
+                            {% for prd_v in p.product.prd_varient.values %}
+                                {{ product_variations_dic|get_item:prd_v.varient_id }}
+                            {% endfor %}
+                            {% for pv in p.prd_varient_values.values %}
+                                {{ product_variation_value_dic|get_item:pv.varient_value_id }},
+                                
+                            {% endfor %}
+
                         </div>
                         <div class="col-lg-2 col-sm-2 col-4 col-status">
                             <span class="badge rounded-pill alert-warning">{{p.category.title}}</span>

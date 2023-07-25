@@ -221,14 +221,23 @@ class VarientValue(models.Model):
 
     def varient_image(self):
         return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
-    
+
+class ProductVarientLink(models.Model):
+    varient = models.ForeignKey(Varient,on_delete=models.SET_NULL,related_name="prd_varient_item", null=True)
+    product = models.ForeignKey(Product,on_delete=models.SET_NULL,related_name="prd_varient", null=True)
+
+    class Meta:
+        verbose_name_plural = "Product Varient Link"
 
 class ProductVarientConfigeration(models.Model):
-    varient_value = models.ForeignKey(VarientValue,on_delete=models.SET_NULL, null=True)
-    product_item = models.ForeignKey(ProductItem,on_delete=models.SET_NULL, null=True)
+    varient_value = models.ForeignKey(VarientValue,on_delete=models.SET_NULL,related_name="prd_varient_values_label", null=True)
+    product_item = models.ForeignKey(ProductItem,on_delete=models.SET_NULL,related_name="prd_varient_values", null=True)
 
     class Meta:
         verbose_name_plural = "Product Varient Configerations"
+
+
+
 
 ########################  Cart, Orderitems and Address  #######################
 
