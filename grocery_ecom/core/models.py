@@ -127,17 +127,17 @@ class Product(models.Model):
     image = models.ImageField(upload_to="products", default='product-icon.png')
     # description = models.TextField(null=True, default=None,blank = True)
     description = RichTextUploadingField(null=True, default=None,blank = True)
-    # price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
-    # discount_price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
-    # stock_count = models.IntegerField(default=10)
+    price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
+    discount_price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
+    stock_count = models.IntegerField(default=10)
     mfd = models.DateField(null = True,auto_now_add=False,blank=True)
     life = models.CharField(max_length=50,default=50)
     status = models.BooleanField(default=True)
     product_status = models.CharField(choices=STATUS, max_length=10, default="published")
     status = models.BooleanField(default=True)
-    # in_stock = models.BooleanField(default=True)
+    in_stock = models.BooleanField(default=True)
     featured = models.BooleanField(default=True)
-    # sku = ShortUUIDField(unique=True, length=5, max_length=10,prefix="sku", alphabet="123456789")
+    sku = ShortUUIDField(unique=True, length=5, max_length=10,prefix="sku", alphabet="123456789")
     date = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
     is_deleted = models.BooleanField(default=False) 
@@ -151,9 +151,9 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
-    # def get_percentage(self):
-    #     new_price = (self.discount_price / self.price) * 100
-    #     return new_price - 100
+    def get_percentage(self):
+        new_price = (self.discount_price / self.price) * 100
+        return new_price - 100
 
 class ProductItem(models.Model):
     piid = ShortUUIDField(unique=True, length=10, max_length=20)
@@ -197,6 +197,25 @@ class ProductImages(models.Model):
 
     class Meta:
         verbose_name_plural = "Product Images"
+
+variation_category_choice = (
+    ('color','Color'),
+    ('size','Size'),
+)
+
+class Variation(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name="product_vatiations", null=True)
+    variation_category = models.CharField(max_length=100,choices=variation_category_choice)
+    variation_value = models.CharField(max_length=100,null=True)
+    is_active = models.BooleanField(default=True)
+    created_date = models.DateTimeField(auto_created=True)
+
+
+    class Meta:
+        verbose_name_plural = "Variations"
+
+    def __str__(self):
+        return self.product
 
 
 class Varient(models.Model):
