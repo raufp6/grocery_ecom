@@ -40,6 +40,10 @@ class WhishListAdmin(admin.ModelAdmin):
 class AddressAdmin(admin.ModelAdmin):
     list_display = ['user','first_name','last_name']
 
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['cart_id']
+
+
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ['product','qty']
 
@@ -54,6 +58,7 @@ admin.site.register(CartOrderItems,CartOrderItemsAdmin)
 admin.site.register(ProductReview,ProductReviewAdmin)
 admin.site.register(WhishList,WhishListAdmin)
 admin.site.register(Address,AddressAdmin)
+admin.site.register(Cart,CartAdmin)
 admin.site.register(CartItem,CartItemAdmin)
 admin.site.register(Variation,VariationAdmin)
 

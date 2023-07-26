@@ -62,35 +62,35 @@ def _session_id(request):
         cart = request.session.create()
     return cart
 
-def add_cart_(request,product_id,qty=1):
+def add_cart_(request):
+    
+    product_id  = request.GET['id']
+    qty = request.GET['quantity']
+    price = request.GET['price']
     product = Product.objects.get(id = product_id)
-    # try:
-    #     # cart = Cart.objects.get(session_id=_session_id(request))
-    #     cart_item = CartItem.objects.get(product=product, session_id=_session_id(request))
+    try:
+        cart = Cart.objects.get(cart_id=_session_id(request))
         
-    # except CartItem.DoesNotExist:
-    #     if request.user.is_authenticated:
-    #         cart = CartItem.objects.create(
-    #             user = request.user,
-    #             product = product,
-    #             qty = 1
-    #         )
-    #     else:
-    #         cart = CartItem.objects.create(
-    #             session_id = _session_id(request),
-    #             product = product,
-    #             qty = 1
-    #         )
-    # cart.save()
+    except Cart.DoesNotExist:
+        if request.user.is_authenticated:
+            cart = Cart.objects.create(
+                cart_id = _session_id(request),
+                user = request.user,
+            )
+        else:
+            cart = Cart.objects.create(
+                cart_id = _session_id(request)
+            )
+    cart.save()
 
     try:
-        cart_item = CartItem.objects.get(product=product, session_id=_session_id(request))
+        cart_item = CartItem.objects.get(product=product, cart=cart)
         if ((product.stock_count)-(cart_item.qty + int(qty))) < 0:
             response = {
                 'status':False,
                 'message':'Out of Stock'
             }
-            return response
+            return JsonResponse(response)
         cart_item.qty += int(qty)
         cart_item.save()
     except CartItem.DoesNotExist:
@@ -99,25 +99,28 @@ def add_cart_(request,product_id,qty=1):
                 'status':False,
                 'message':'Out of Stock'
             }
-            return response
+            return JsonResponse(response)
         if request.user.is_authenticated:
             cart_item = CartItem.objects.create(
+                cart = cart,
                 product = product,
                 qty = qty, 
                 user = request.user
             )
         else:
-            cart = CartItem.objects.create(
-                session_id = _session_id(request),
+            cart_item = CartItem.objects.create(
+                cart = cart,
                 product = product,
                 qty = qty
             )
         cart_item.save()
-        response = {
-            'status':True,
-            'message':'added'
-        }
-        return response
+
+    response = {
+        'status':True,
+        'message':'added',
+        'totalcartitems':CartItem.objects.filter(cart=cart).count()
+    }
+    return JsonResponse(response)    
 
 def add_cart(request, product_id,qty=1):
     product = Product.objects.get(id=product_id)
