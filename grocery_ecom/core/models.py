@@ -304,44 +304,73 @@ class CartItem(models.Model):
         return self.product
 
 
+class Payment(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    payment_id = models.CharField(max_length=100)
+    payment_method = models.CharField(max_length=100)
+    amount_paid = models.CharField(max_length=100)
+    status = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.payment_id
 
 class CartOrder(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    orderno = ShortUUIDField(unique=True, length=10,
-                             max_length=20, prefix="od", alphabet="1234567890")
-    price = models.DecimalField(
-        max_digits=100, decimal_places=2, default=None)
+    orderno = ShortUUIDField(unique=True, length=10,max_length=20, prefix="od", alphabet="1234567890")
+    payment = models.ForeignKey(Payment,on_delete=models.SET_NULL,null=True,blank=True)
+    price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
     paid_status = models.BooleanField(default=False)
     order_date = models.DateTimeField(auto_now_add=True)
-    product_status = models.CharField(
-        choices=STATUS_CHOCE, max_length=30, default="processing")
-    
-    payment_type = models.CharField(
-        choices=PAYMENT_CHOiCE, max_length=30, default="cod")
+    product_status = models.CharField(choices=STATUS_CHOCE, max_length=30, default="processing")
+    payment_type = models.CharField(choices=PAYMENT_CHOiCE, max_length=30, default="cod")
+    razorpay_order_id = models.CharField(max_length=100,blank=True)
+    is_ordered = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Cart Order"
+    
+    def __str__(self):
+        return self.orderno
 
 
 class CartOrderItems(models.Model):
     order = models.ForeignKey(CartOrder,related_name="order_items",on_delete=models.CASCADE)
     invoice_no = models.CharField(max_length=200)
-    product_status = models.CharField(
-        choices=STATUS_CHOCE, max_length=30, default="processing")
+    product_status = models.CharField(choices=STATUS_CHOCE, max_length=30, default="processing")
+    variations  = models.ManyToManyField(Variation,blank=True) 
+    package_size = models.CharField(max_length=100,blank=True,null=True)
     product = models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
     image = models.CharField(max_length=200)
     qty = models.IntegerField(default=0)
-    price = models.DecimalField(
-        max_digits=100, decimal_places=2, default=None)
-    total = models.DecimalField(
-        max_digits=100, decimal_places=2, default=None)
+    price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
+    total = models.DecimalField(max_digits=100, decimal_places=2, default=None)
 
     class Meta:
         verbose_name_plural = "Cart Order Items"
 
     def order_image(self):
         return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.image))
+    
+class OrderAddress(models.Model):
+    order = models.ForeignKey(CartOrder,on_delete=models.SET_NULL, null=True)
+    first_name = models.CharField(max_length=100,null=True,blank=True)
+    last_name = models.CharField(max_length=100,null=True,blank=True)
+    email = models.EmailField(max_length=100,null=True,blank=True)
+    line1 = models.TextField(default=None,null=True,blank=True)
+    pincode = models.CharField(max_length=6,null=True,blank=True)
+    mobile = models.CharField(max_length=20, default=None,null=True,blank=True)
+    type = models.CharField(choices=ADDRESS_TYPES, max_length=10, default="home")
+    
+    class Meta:
+        verbose_name_plural = "Order Addresses"
+
+    def __str__(self):
+        return self.first_name
+    
+
+
+
 
 ########################  Product Review  #######################
 
@@ -430,19 +459,5 @@ class Address(models.Model):
         return self.first_name
 
 
-class OrderAddress(models.Model):
-    order = models.ForeignKey(CartOrder,on_delete=models.SET_NULL, null=True)
-    first_name = models.CharField(max_length=100,null=True,blank=True)
-    last_name = models.CharField(max_length=100,null=True,blank=True)
-    email = models.EmailField(max_length=100,null=True,blank=True)
-    line1 = models.TextField(default=None,null=True,blank=True)
-    pincode = models.CharField(max_length=6,null=True,blank=True)
-    mobile = models.CharField(max_length=20, default=None,null=True,blank=True)
-    type = models.CharField(choices=ADDRESS_TYPES, max_length=10, default="home")
-    
-    class Meta:
-        verbose_name_plural = "Order Addresses"
 
-    def __str__(self):
-        return self.first_name
 

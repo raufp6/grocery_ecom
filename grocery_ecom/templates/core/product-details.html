@@ -92,7 +92,9 @@
                                 <input type="hidden" name="product_has_variation" id="product_has_variation" value="1">
                                 {% else %}
                                 <input type="hidden" name="product_has_variation" id="product_has_variation" value="0">
+                                <input type="hidden" class="package_size-{{ product.id }}"  value="None">
                                 {% endif %}
+                                {% if product.stock_count != 0 %}
                                 <div class="detail-extralink mb-50">
                                     <div class="detail-qty border radius">
                                         <a href="#" class="qty-down" data-id="{{ product.id }}"><i class="fi-rs-angle-small-down"></i></a>
@@ -105,10 +107,15 @@
                                         <input type="hidden" class="product-selleing-price" value="{{ product.discount_price }}" name="product_price">
                                         <input type="hidden" class="product-image" value="{{ product.image.url }}" name="product_image">
                                         <input type="hidden" class="product-title" value="{{ product.title }}" name="product_title">
+                                        
                                         <button type="submit" class="button button-add-to-cart" data-price="{{product.price}}" data-qty="0" data-sellingprice="{{product.discount_price}}" data-id="{{ product.id }}" data-image="{{ product.image.url }}" data-title="{{ product.title }}" data-link="{% url 'core:add-to-cart' %}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
+                                        
                                         <!-- <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a> -->
                                     </div>
                                 </div>
+                                {% else %}
+                                    <p  class="stock-status out-stock" >Out of stock</p>
+                                {% endif %}
                                 <div class="font-xs">
                                     <ul class="mr-50 float-start">
                                         <li class="mb-5">Type: <span class="text-brand">Organic</span></li>

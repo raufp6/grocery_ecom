@@ -112,6 +112,7 @@ EMAIL_HOST_PASSWORD = 'Q&j+4NcEEKdj'
 EMAIL_USE_TLS = False  # Or False if you don't use TLS
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -181,3 +182,15 @@ CKEDITOR_CONFIGS = {
         'codeSnippet_theme': 'monokai'
     }
 }
+
+RAZOR_KEY_ID = 'rzp_test_leI1L95BAvDti6'
+RAZOR_KEY_SECRET = '6aEgifzH2KZWighVlsgLkMGA'
+
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    'https://razorpay.com',  # Add more domains if needed
+]
+
+CORS_ALLOW_CREDENTIALS = True

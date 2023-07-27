@@ -1,0 +1,145 @@
+{% extends 'partials/base.html' %}
+{% load mathfilters %}
+{% load static %}
+{% block content %}
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{% url 'core:index'%}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> Payment
+            </div>
+        </div>
+    </div>
+    <div class="container mb-80 mt-50">
+        <div class="row">
+            <div class="col-lg-8 mb-40">
+                <h1 class="heading-2 mb-10">Make Payment</h1>
+                
+            </div>
+        </div>
+        <div class="row">
+            
+            <div class="col-lg-5">
+                <div class="border p-40 cart-totals ml-30 mb-50">
+                    <div class="d-flex align-items-end justify-content-between mb-30">
+                        <h4>Order Summary</h4>
+                        <h6 class="text-muted"></h6>
+                    </div>
+                    <div class="divider-2 mb-30"></div>
+                    <div class="table-responsive order_table checkout">
+                        <table class="table no-border">
+                            <tbody>
+                                
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Cart Value</h6>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end">₹{{ total_mrp_amount}}</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Delivery Charge</h6>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end">Free</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">You Saved</h6>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end">₹{{ total_mrp_amount|sub:cart_total }}</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Total amount Payble</h6>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end">₹{{ cart_total}}</h4>
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="payment ml-30">
+                    
+                    <form action="#" method="POST">
+                        <button type="button" id="pay-btn" name="payment" class="btn btn-fill-out btn-block mt-30">Make Payment<i class="fi-rs-sign-out ml-15"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content%}
+{% block page_scripts %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+       
+      // Enter the Key ID generated from the Dashboard
+      key: "{{ razorpay_merchant_key }}",
+       
+      // Amount is in currency subunits.
+      // Default currency is INR. Hence,
+      // 50000 refers to 50000 paise
+      amount: "{{ razorpay_amount }}",
+      currency: "{{ currency }}",
+      redirect:true,
+       
+      // Your/store name.
+      name: "Dj Razorpay",
+       
+      // Pass the `id` obtained in the response of Step 1
+      order_id: "{{ razorpay_order_id }}",
+      callback_url: "http://127.0.0.1:8000/paymenthandler/",
+      prefill: {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9999999999"
+        },
+        notes: {
+            "address": "Razorpay Corporate Office"
+        },
+        theme: {
+            "color": "#3399cc"
+        }
+    };
+     
+    // initialise razorpay with the options.
+    var rzp1 = new Razorpay(options);
+     
+    // add event listener to the payment button.
+    
+    
+
+    rzp1.on('payment.failed', function (response){
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+    });
+    document.getElementById('pay-btn').onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    };
+  </script>
+{% endblock page_scripts %}

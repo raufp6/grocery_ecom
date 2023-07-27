@@ -119,7 +119,7 @@ def delete_address(request,id):
 
 @login_required(login_url="userauths:login")
 def orders(request):
-    orders = CartOrder.objects.filter(user=request.user)
+    orders = CartOrder.objects.filter(user=request.user).order_by('-id')
     context = { 
         'orders':orders
     }

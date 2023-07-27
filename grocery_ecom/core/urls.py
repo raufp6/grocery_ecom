@@ -18,7 +18,10 @@ urlpatterns = [
     path("cart/",views.cart,name="cart"),
     path("checkout/",views.checkout,name="checkout"),
     path("placeorder/",views.placeorder,name="placeorder"),
-    path("checkout/success/<str:orderno>",views.checkout_success,name="checkout_success"),
+    path("order/payment/<str:orderno>/",views.payment,name="payment"),
+    path("paymenthandler/",views.paymenthandler,name="paymenthandler"),
+    # path("payment_success/",views.payment_success,name="payment_success"),
+    path("checkout/success/<str:orderno>/",views.checkout_success,name="checkout_success"),
 
 
 ]

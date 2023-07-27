@@ -1,13 +1,14 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse,JsonResponse,HttpResponseBadRequest
 from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress,Variation
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 # from cart.cart import Cart
 from django.db.models import Q
-from pprint import pprint
-import pickle
+import razorpay,json
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 
 def index(request):
     products = Product.objects.filter(featured=True,product_status="published")
@@ -70,16 +71,19 @@ def add_cart_(request):
     product_variation = []
     product_id  = request.GET['id']
     qty         = request.GET['quantity']
-    size        = request.GET['package_size']
+    if request.GET['package_size']:
+        size        = request.GET['package_size']
+    else:
+        size = None
     # color       = request.GET['color']
 
     product = Product.objects.get(id = product_id)
-    
-    try:
-        variation = Variation.objects.get(product=product,variation_category__iexact = 'package_size',variation_value__iexact = size)
-        product_variation.append(variation)
-    except:
-        pass
+    if size is not None:
+        try:
+            variation = Variation.objects.get(product=product,variation_category__iexact = 'package_size',variation_value__iexact = size)
+            product_variation.append(variation)
+        except:
+            pass
     
 
     try:
@@ -110,21 +114,25 @@ def add_cart_(request):
             ex_var_list.append(list(existing_varaiation))
             id.append(item.id)
 
-
-        if product_variation in ex_var_list:
-            # increase the item quanity
-            index = ex_var_list.index(product_variation) 
-            item_id = id[index]
-            item = CartItem.objects.get(product = product,id = item_id)
-            item.qty += int(qty)
-            item.save()
+        if size is not None:
+            if product_variation in ex_var_list:
+                # increase the item quanity
+                index = ex_var_list.index(product_variation) 
+                item_id = id[index]
+                item = CartItem.objects.get(product = product,id = item_id)
+                item.qty += int(qty)
+                item.save()
+            else:
+                item = CartItem.objects.create(product=product,cart=cart,qty = qty)
+                if len(product_variation) > 0:
+                    item.variations.clear()
+                    item.variations.add(*product_variation)
+                    item.save()
         else:
-            item = CartItem.objects.create(product=product,cart=cart,qty = qty)
-            if len(product_variation) > 0:
-                item.variations.clear()
-                item.variations.add(*product_variation)
+            cart_item.qty += int(qty)
+            cart_item.save()
                     
-            item.save()
+            
 
 
         # if ((product.stock_count)-(cart_item.qty + int(qty))) < 0:
@@ -147,10 +155,10 @@ def add_cart_(request):
             product = product,
             qty = qty
         )
-            
-        if len(product_variation) > 0:
-            cart_item.variations.clear()
-            cart_item.variations.add(*product_variation)
+        if size is not None:    
+            if len(product_variation) > 0:
+                cart_item.variations.clear()
+                cart_item.variations.add(*product_variation)
                 
         cart_item.save()
 
@@ -288,8 +296,12 @@ def checkout(request):
         return redirect('core:index')
     
 
+ 
+
+@login_required(login_url="userauths:login")
 def placeorder(request):
-    cart_items = CartItem.objects.filter(user=request.user)
+    cart = Cart.objects.get(user=request.user)
+    cart_items = CartItem.objects.filter(cart=cart)
     if cart_items is None:
         messages.error(request, "Your cart is empty!")
         return redirect('core:index')
@@ -303,7 +315,8 @@ def placeorder(request):
 
         
         total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
-        order = CartOrder.objects.create(user=request.user, price=total_amount)
+        payment_type = request.POST.get('payment_option')
+        order = CartOrder.objects.create(user=request.user, price=total_amount,payment_type=payment_type)
         for i in cart_items:
             order_item = CartOrderItems(
                 order = order,
@@ -316,6 +329,12 @@ def placeorder(request):
                 
             )
             order_item.save()
+            cart_item = CartItem.objects.get(id=i.id)
+            product_variations = cart_item.variations.all()
+            order_item = CartOrderItems.objects.get(id=order_item.id)
+            order_item.variations.set(product_variations)
+            order_item.save()
+
             product = get_object_or_404(Product, id=i.product.id)
             if product.stock_count - i.qty >= 0:
                 product.stock_count -= i.qty
@@ -336,15 +355,118 @@ def placeorder(request):
             type   = address.type,          
         )
         order_address.save()
+    
+        
+        if payment_type == 'online':
+            return redirect('core:payment',order.orderno)
+            
+        
+
         cart_items.delete()
         messages.success(request, "Your Order placed successfully")
         return redirect('core:checkout_success',order.orderno)
     else:
         return redirect('core:checkout')
 
+# authorize razorpay client with API Keys.
+razorpay_client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+@login_required(login_url="userauths:login")
+def payment(request,orderno):
+    try:
+        oreder = CartOrder.objects.get(orderno = orderno)
+    except:
+        messages.error(request,"Your order have some problem!")
+        return redirect("core:cart")
+    context = {
+        'order':oreder
+    }
+    currency = 'INR'
+    amount = float(oreder.price)*100  # Rs. 200
+
+    
+    # Create a Razorpay Order
+    razorpay_order = razorpay_client.order.create(dict(amount=amount,
+                                                    currency=currency,
+                                                    payment_capture='1'))
+
+    # order id of newly created order.
+    razorpay_order_id = razorpay_order['id']
+    oreder.razorpay_order_id = razorpay_order_id
+    oreder.save()
+
+    callback_url = "http://" + "127.0.0.1:8000" + "/paymenthandler/",
+
+    # we need to pass these details to frontend.
+    context['razorpay_order_id'] = razorpay_order_id
+    context['razorpay_merchant_key'] = settings.RAZOR_KEY_ID
+    context['razorpay_amount'] = amount
+    context['currency'] = currency
+    context['callback_url'] = callback_url
+    return render(request, 'core/payment.html',context)
+
+
+
+@csrf_exempt
+def paymenthandler(request):
+ 
+    # only accept POST request.
+    if request.method == "POST":
+        try:
+           
+            # get the required parameters from post request.
+            payment_id = request.POST.get('razorpay_payment_id', '')
+            razorpay_order_id = request.POST.get('razorpay_order_id', '')
+            signature = request.POST.get('razorpay_signature', '')
+            params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            }
+            order = CartOrder.objects.get(razorpay_order_id = razorpay_order_id)
+            # verify the payment signature.
+            result = razorpay_client.utility.verify_payment_signature(
+                params_dict)
+            if result:
+                
+                try:
+                    order.is_ordered = True
+                    order.paid_status = True
+                    order.save()
+                    # capture the payemt
+                    # razorpay_client.payment.capture(payment_id, amount)
+                    # cart = Cart.objects.get(user=request.user)
+                    # cart_items = CartItem.objects.filter(cart=cart)
+                    # cart_items.delete()
+                    print("suuuu")
+                    # render success page on successful caputre of payment
+                    messages.success(request,"Your Order placed!")
+                    return redirect("core:checkout_success",order.orderno)
+                except:
+ 
+                    # if there is an error while capturing payment.
+                    messages.error(request,"Some error occured! 1")
+                    return redirect("core:payment",order.orderno)
+            else:
+                print("error 1")
+                # if signature verification fails.
+                messages.error(request,"Some error occured! 2")
+                return redirect("core:payment",order.orderno)
+        except:
+ 
+            # if we don't find the required parameters in POST data
+            print("error 2")
+            return redirect("core:payment",order.orderno)
+    else:
+        print("error 3")
+       # if other than POST request is made.
+        messages.error(request,"Some error occured! 3")
+        return redirect("core:payment",order.orderno)
+
 
 def checkout_success(request,orderno):
-    
+    cart = Cart.objects.get(user=request.user)
+    cart_items = CartItem.objects.filter(cart=cart)
+    cart_items.delete()
     order = CartOrder.objects.get(orderno=orderno)
     context = {
         'order':order

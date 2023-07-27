@@ -130,18 +130,16 @@
                     <form action="{% url 'core:placeorder' %}" method="POST">
                         {% csrf_token %}
                         <div class="payment_option">
-                            <!-- <div class="custome-radio">
-                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="">
-                                <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Direct Bank Transfer</label>
-                            </div> -->
+                            <div class="custome-radio">
+                                <input class="form-check-input" required="" type="radio" name="payment_option" value="online" id="exampleRadios3" checked="">
+                                <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Razorpay</label>
+                            </div>
                             <div class="custome-radio">
                                 <input class="form-check-input" required="" type="radio" name="payment_option" value="cod" id="exampleRadios4" checked>
                                 <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Cash on delivery</label>
                             </div>
-                            <!-- <div class="custome-radio">
-                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios5" checked="">
-                                <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" value="online" data-target="#paypal" aria-controls="paypal">Online Payment</label>
-                            </div> -->
+                            
+                            
                         </div>
                         <div class="payment-logo d-flex">
                             <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-paypal.svg' %}" alt="">
