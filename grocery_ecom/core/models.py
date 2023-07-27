@@ -205,11 +205,10 @@ class VariationManager(models.Manager):
         return super(VariationManager,self).filter(variation_category='color',is_active = True)
     
     def sizes(self):
-        return super(VariationManager,self).filter(variation_category='size',is_active = True)
+        return super(VariationManager,self).filter(variation_category='package_size',is_active = True)
 
 variation_category_choice = (
-    ('color','Color'),
-    ('size','Size'),
+    ('package_size','Package Size'),
 )
 
 class Variation(models.Model):
@@ -217,7 +216,7 @@ class Variation(models.Model):
     variation_category = models.CharField(max_length=100,choices=variation_category_choice)
     variation_value = models.CharField(max_length=100,null=True)
     is_active = models.BooleanField(default=True)
-    created_date = models.DateTimeField(auto_created=True)
+    created_date = models.DateTimeField(auto_created=True,null=True)
 
     objects = VariationManager()
 
@@ -225,8 +224,8 @@ class Variation(models.Model):
     class Meta:
         verbose_name_plural = "Variations"
 
-    def __unicode__(self):
-        return self.product
+    def __str__(self):
+        return self.variation_value
 
 
 class Varient(models.Model):
@@ -287,10 +286,12 @@ class Cart(models.Model):
 class CartItem(models.Model):
     cart        = models.ForeignKey(Cart,related_name="cart_items",on_delete=models.CASCADE,blank=True,null=True)
     product     = models.ForeignKey(Product, on_delete=models.CASCADE,blank=True,null=True)
+    variations  = models.ManyToManyField(Variation,blank=True) 
     qty         = models.PositiveIntegerField(default=1)
     user        = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     session_id  = models.CharField(max_length=200,null=True,blank=True)
     created_at  = models.DateTimeField(auto_now_add=True)
+    is_active   = models.BooleanField(default=True)
 
 
     class Meta:

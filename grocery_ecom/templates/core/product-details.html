@@ -70,7 +70,7 @@
                                 </div>
                                 
                                 <div class="attr-detail attr-size mb-30">
-                                    <strong class="mr-10">Color: </strong>
+                                    <!-- <strong class="mr-10">Color: </strong> -->
                                     <!-- <ul class="list-filter size-filter font-small">
                                         <li><a href="#">50g</a></li>
                                         <li class="active"><a href="#">60g</a></li>
@@ -78,22 +78,21 @@
                                         <li><a href="#">100g</a></li>
                                         <li><a href="#">150g</a></li>
                                     </ul> -->
-                                    <select class="form-control" name="color">
-                                        <option value="" disabled selected>Choose Color</option>
-                                        {% for i in product.variation_set.colors %}
-                                            <option value="{{ i.variation_value | lower}}">{{ i.variation_value | capfirst}}</option>
-                                        {% endfor %}
-                                    </select>
                                 </div>
+                                {% if product.variation_set.all %}
                                 <div class="attr-detail attr-size mb-30">
-                                    <strong class="mr-10">Size: </strong>
-                                    <select class="form-control" name="size">
-                                        <option value="" disabled selected>Choose Size</option>
+                                    <strong class="mr-10">Package Size: </strong>
+                                    <select class="form-control package_size-{{ product.id }}" name="size" id="size" required>
+                                        <option value="" disabled selected>Choose package size</option>
                                         {% for i in product.variation_set.sizes %}
                                             <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
+                                <input type="hidden" name="product_has_variation" id="product_has_variation" value="1">
+                                {% else %}
+                                <input type="hidden" name="product_has_variation" id="product_has_variation" value="0">
+                                {% endif %}
                                 <div class="detail-extralink mb-50">
                                     <div class="detail-qty border radius">
                                         <a href="#" class="qty-down" data-id="{{ product.id }}"><i class="fi-rs-angle-small-down"></i></a>

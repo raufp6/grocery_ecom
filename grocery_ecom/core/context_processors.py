@@ -7,17 +7,13 @@ def default(request):
     categories = Category.objects.filter(is_available=True)
     total_mrp_amount = 0
     total_amount = 0
-    merge_carts(request)  # Merge the session cart with the user's cart
+    # merge_carts(request)  # Merge the session cart with the user's cart
     if request.user.is_authenticated:
         try:
-            cart_items = CartItem.objects.filter(user=request.user)
-            for item in cart_items:
-                product_item = item.product.items.get(is_default=True)
-                total_amount =+ product_item.discount_price
-                total_mrp_amount =+ product_item.price
-
-            # total_amount = sum(item.product.items.discount_price * item.qty for item in cart_items)
-            # total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
+            cart = Cart.objects.get(user_id = request.user)
+            cart_items = CartItem.objects.filter(cart = cart)
+            total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+            total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
         except:
             cart = None
             cart_items = None
@@ -25,7 +21,8 @@ def default(request):
             total_mrp_amount = 0
     else:
         try:
-            cart_items = CartItem.objects.filter(session_id = _session_id(request))
+            cart = Cart.objects.get(cart_id = _session_id(request))
+            cart_items = CartItem.objects.filter(cart = cart)
             total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
             total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
         except:

@@ -45,7 +45,7 @@ class CartAdmin(admin.ModelAdmin):
 
 
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ['product','qty']
+    list_display = ['product','qty','is_active']
 
 # class CartAdmin(admin.ModelAdmin):
 #     inlines = [CartItemAdmin]

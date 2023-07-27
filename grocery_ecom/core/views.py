@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse
-from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress
+from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress,Variation
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -50,9 +50,13 @@ def product_detail(request,pid,slug):
     return render(request,'core/product-details.html',context)
 
 def cart(request):
-    
+    try: 
+        cart = Cart.objects.get(cart_id = _session_id(request))
+        cart_items = CartItem.objects.filter(cart=cart,is_active = True)
+    except:
+        cart_items = None
     context = { 
-        
+        'cart_items':cart_items
     }
     return render(request,'core/cart.html',context)
 
@@ -63,11 +67,21 @@ def _session_id(request):
     return cart
 
 def add_cart_(request):
-    
+    product_variation = []
     product_id  = request.GET['id']
-    qty = request.GET['quantity']
-    price = request.GET['price']
+    qty         = request.GET['quantity']
+    size        = request.GET['package_size']
+    # color       = request.GET['color']
+
     product = Product.objects.get(id = product_id)
+    
+    try:
+        variation = Variation.objects.get(product=product,variation_category__iexact = 'package_size',variation_value__iexact = size)
+        product_variation.append(variation)
+    except:
+        pass
+    
+
     try:
         cart = Cart.objects.get(cart_id=_session_id(request))
         
@@ -83,41 +97,66 @@ def add_cart_(request):
             )
     cart.save()
 
-    try:
-        cart_item = CartItem.objects.get(product=product, cart=cart)
-        if ((product.stock_count)-(cart_item.qty + int(qty))) < 0:
-            response = {
-                'status':False,
-                'message':'Out of Stock'
-            }
-            return JsonResponse(response)
-        cart_item.qty += int(qty)
-        cart_item.save()
-    except CartItem.DoesNotExist:
+
+    is_cart_items_exist = CartItem.objects.filter(product=product,cart=cart).exists()
+    if is_cart_items_exist:
+        # cart_item = CartItem.objects.get(product=product, cart=cart)
+        cart_item = CartItem.objects.filter(product=product, cart=cart)
+        
+        ex_var_list = []
+        id = []
+        for item in cart_item:
+            existing_varaiation = item.variations.all()
+            ex_var_list.append(list(existing_varaiation))
+            id.append(item.id)
+
+
+        if product_variation in ex_var_list:
+            # increase the item quanity
+            index = ex_var_list.index(product_variation) 
+            item_id = id[index]
+            item = CartItem.objects.get(product = product,id = item_id)
+            item.qty += int(qty)
+            item.save()
+        else:
+            item = CartItem.objects.create(product=product,cart=cart,qty = qty)
+            if len(product_variation) > 0:
+                item.variations.clear()
+                item.variations.add(*product_variation)
+                    
+            item.save()
+
+
+        # if ((product.stock_count)-(cart_item.qty + int(qty))) < 0:
+        #     response = {
+        #         'status':False,
+        #         'message':'Out of Stock'
+        #     }
+        #     return JsonResponse(response)
+        # cart_item.qty += int(qty)
+       
+    else:
         if ((product.stock_count)- int(qty)) < 0:
             response = {
                 'status':False,
                 'message':'Out of Stock'
             }
             return JsonResponse(response)
-        if request.user.is_authenticated:
-            cart_item = CartItem.objects.create(
-                cart = cart,
-                product = product,
-                qty = qty, 
-                user = request.user
-            )
-        else:
-            cart_item = CartItem.objects.create(
-                cart = cart,
-                product = product,
-                qty = qty
-            )
+        cart_item = CartItem.objects.create(
+            cart = cart,
+            product = product,
+            qty = qty
+        )
+            
+        if len(product_variation) > 0:
+            cart_item.variations.clear()
+            cart_item.variations.add(*product_variation)
+                
         cart_item.save()
 
     response = {
         'status':True,
-        'message':'added',
+        'message':'Product added to Cart',
         'totalcartitems':CartItem.objects.filter(cart=cart).count()
     }
     return JsonResponse(response)    
@@ -213,24 +252,11 @@ def delete_cart(request, product_id,cart_item_id):
     product = get_object_or_404(Product, id=product_id)
     # cart = get_object_or_404(Product, cart_item_id=cart_item_id)
 
-    if 'cart_data_obj' in request.session:
-        if str(product_id) in request.session['cart_data_obj']:
-            cart_data = request.session['cart_data_obj']
-            del cart_data[str(product_id)]
-            cart_data.update(cart_data)
-            request.session['cart_data_obj'] = cart_data
-
-
-    # if request.user.is_authenticated:
-    #     cart = Cart.objects.get(user=request.user)
-    # else:
-    #     cart = Cart.objects.get(session_id=_session_id(request))
-
     cart_item = CartItem.objects.filter(product=product, id=cart_item_id)
     cart_item.delete()
     
 
-    return JsonResponse({"status":True,"message":"Product removed from cart!","data":request.session['cart_data_obj'],"totalcartitems":len(request.session['cart_data_obj'])})
+    return JsonResponse({"status":True,"message":"Product removed from cart!"})
 
 @login_required(login_url="userauths:login")
 def merge_carts(request):
@@ -248,7 +274,8 @@ def merge_carts(request):
 @login_required(login_url="userauths:login")
 def checkout(request):
    
-    cart_items = CartItem.objects.filter(user=request.user)
+    cart = Cart.objects.get(user_id = request.user)
+    cart_items = CartItem.objects.filter(cart = cart)
     if len(cart_items) > 0:
         addresses = Address.objects.filter(user=request.user)
         merge_carts(request)  # Merge the session cart with the user's cart
