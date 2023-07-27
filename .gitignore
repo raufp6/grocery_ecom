@@ -8,6 +8,8 @@ media
 
 # Backup files # 
 *.bak 
+*.backups
+**/.DS_Store
 
 # If you are using PyCharm # 
 # User-specific stuff
