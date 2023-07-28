@@ -1,0 +1,39 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order detail</h2>
+            <p>Details for Order ID: {{ order.orderno }}</p>
+        </div>
+    </div>
+    <div class="card">
+        <header class="card-header">
+            <div class="row align-items-center">
+                
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="col-lg-6 col-md-6 ">
+                        <label for="">Reason for Cancelation: {{ request_item.reason }}</label>
+                    </div>
+                    <div class="col-lg-6 col-md-6 ms-auto">
+                        <select class="form-select d-inline-block mb-lg-0 mr-5 mw-200" name="status">
+                            <option value="">Change status</option>
+                            
+                            <option value="pending" {% if request_item.status == 'pending' %}selected {% endif %}>Pending</option>
+                            <option value="canceled" {% if request_item.status == 'canceled' %}selected {% endif %}>Canceled</option>
+                        </select>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                        <a class="btn btn-secondary print ms-2" href="{% url 'superadmin:order_details' request_item.order_item.order.id %}">Back</a>
+                    </div>
+                </form>
+
+            </div>
+        </header>
+        
+    </div>
+    <!-- card end// -->
+</section>
+{% endblock %}

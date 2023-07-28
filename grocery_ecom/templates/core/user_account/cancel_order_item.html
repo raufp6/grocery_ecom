@@ -31,7 +31,8 @@
                                     <header class="card-header">
                                         <div class="row align-items-center">
                                             <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
-                                                <span> <i class="material-icons md-calendar_today"></i> <b>{{order.order_date|date:"M,d ,Y h:i A"}}</b> </span> <br />
+                                                <span> <i class="material-icons md-calendar_today"></i> <b>Wed, Aug 13, 2020, 4:34PM</b> </span> <br />
+                                                <small class="text-muted">Order ID: 3453012</small>
                                             </div>
                                             
                             
@@ -89,11 +90,9 @@
                                                     </div>
                                                 </article>
                                             </div>
-                                            {% if order.price != 0 %}
                                             <div class="col-md-12">
                                                 <a href="{% url 'user:cancel_order' order.id %}" class="btn btn-fill-out submit submit-auto-width">I want Cancel this order</a>
                                             </div>
-                                            {% endif %}
                                             <!-- col// -->
                                         </div>
                                         <!-- row // -->
@@ -125,32 +124,11 @@
                                                                                 {% endfor %}
                                                                             {% endif %}
                                                                         </div>
-                                                                        {% if item.cancellation.all %}
-                                                                            
-                                                                            {% if item.cancellation.first.status == 'pending'%}
-                                                                                <span style="color: red;">Cancelation Pending</span>
-                                                                            {% else %}
-                                                                                <span style="color: red;">Canceled </span>
-                                                                                
-                                                                            {% endif %}
-                                                                        {% endif %}
                                                                     </a>
                                                                 </td>
-                                                                <td>
-                                                                    {% if item.cancellation.all %}
-                                                                        <del>₹{{item.price}}</del>
-                                                                    {% else %}
-                                                                        ₹{{item.price}}
-                                                                    {% endif %}
-                                                                </td>
+                                                                <td>₹{{item.price}}</td>
                                                                 <td>{{item.qty}}</td>
-                                                                <td class="text-end">
-                                                                    {% if item.cancellation.all %}
-                                                                        <del>₹{{item.total}}</del>
-                                                                    {% else %}
-                                                                        ₹{{item.total}}
-                                                                    {% endif %}
-                                                                </td>
+                                                                <td class="text-end">₹{{item.total}}</td>
                                                             </tr>
                                                             {% endfor %}
                                                             
@@ -160,7 +138,6 @@
                                                                     <article class="float-end">
                                                                         <dl class="dlist">
                                                                             <dt>Subtotal:</dt>
-                                                                            
                                                                             <dd>₹{{order.price}}</dd>
                                                                         </dl>
                                                                         <dl class="dlist">

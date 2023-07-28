@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User, Varient, VarientValue, ProductVarientConfigeration, ProductVarientLink
+from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User, Varient, VarientValue, ProductVarientConfigeration, ProductVarientLink,OrderCancellationReason,OrderCancellation
 from core.forms import CategoryForm, ProductForm, VarientForm
 from django.core.exceptions import ValidationError
 import itertools
@@ -607,7 +607,7 @@ def generate_varients(request, id):
 # Order List
 @login_required(login_url="superadmin:login")
 def order_list(request):
-    orders = CartOrder.objects.all()
+    orders = CartOrder.objects.all().order_by('-id')
     context = {
         'orders': orders,
     }
@@ -630,6 +630,28 @@ def order_details(request, id):
     }
 
     return render(request, 'admin/order/details.html', context)
+
+
+# Order Cancelation Request
+@login_required(login_url="superadmin:login")
+def order_cancel_request(request, id):
+    request_item = OrderCancellation.objects.get(pk=id)
+
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        request_item.status = status
+        request_item.save()
+        messages.success(request, "Order updated")
+        
+
+        
+
+    context = {
+        'request_item': request_item,
+    }
+
+    return render(request, 'admin/order/cancel_request.html', context)
+
 ############# Logout ###############
 
 

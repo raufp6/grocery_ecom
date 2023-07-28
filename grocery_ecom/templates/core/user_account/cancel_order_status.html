@@ -1,0 +1,66 @@
+{% extends 'partials/base.html' %}
+{% load mathfilters %}
+{% load static %}
+{% block content %}
+<main class="main pages">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> Pages <span></span> My Account
+            </div>
+        </div>
+    </div>
+    <div class="page-content pt-150 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 m-auto">
+                    <div class="row">
+                        <div class="col-md-3">
+                            {% include "core/user_account/left_menu.html" %}
+                        </div>
+                        <div class="col-md-9">
+                            <section class="content-main">
+                                <div class="content-header">
+                                    <div>
+                                        <h2 class="content-title card-title">Cancel Order</h2>
+                                        <hr>
+                                        <p>Canceled Items</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <header class="card-header">
+                                        <div class="row align-items-center">
+                                            <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                                                <span> <i class="material-icons md-calendar_today"></i> <b>{{order_item.order.order_date|date:"M,d ,Y h:i A"}}</b> </span> <br />
+                                                <small class="text-muted">Order ID: {{order_item.order.orderno}}</small>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <div class="info">{{ order_item.product.title }}</div>
+                                                <div class="info" style="color: rgb(58, 53, 53);">
+                                                    {% if order_item.variations.all %}
+                                                        {% for v in order_item.variations.all %}
+                                                            {{v.variation_category | capfirst }} : {{v.variation_value | capfirst}} <br>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                {{cancel_rquest.status | capfirst }}
+                                            </div>
+                                            
+                            
+                                        </div>
+                                    </header>
+                                    
+                                </div>
+                                
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content %}

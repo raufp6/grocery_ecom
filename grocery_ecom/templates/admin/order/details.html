@@ -118,6 +118,15 @@
                                                 {% endif %}
                                             </div>
                                         </a>
+                                        {% if item.cancellation.all %}
+                                            {% if item.cancellation.first.status == 'pending'%}
+                                                <span style="color: red;">Requested for Cancelation Pending</span>
+                                                <a href="{% url 'superadmin:order_cancel_request' item.cancellation.first.id %}">View Request</a>
+                                            {% else %}
+                                                <span style="color: red;">Canceled </span>
+                                                
+                                            {% endif %}
+                                        {% endif %}
                                     </td>
                                     <td>₹{{item.price}}</td>
                                     <td>{{item.qty}}</td>

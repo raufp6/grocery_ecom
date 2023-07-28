@@ -11,6 +11,9 @@ STATUS_CHOCE = (
     ("processing", "Processing"),
     ("shipped", "Shipped"),
     ("deliverd", "Delivered"),
+    ("canceled", "Canceled"),
+    ("returned", "Returned"),
+    ("completed", "Completed"),
 )
 ADDRESS_TYPES = (
     ("home", "Home"),
@@ -33,6 +36,10 @@ STATUS = (
     ("rejected", "Rejected"),
     ("in_review", "In Review"),
     ("published", "Published")
+)
+CANCELATION_STATUS = (
+    ("pending", "Pending"),
+    ("accepted", "Accepted"),
 )
 
 RATING = (
@@ -326,6 +333,7 @@ class CartOrder(models.Model):
     payment_type = models.CharField(choices=PAYMENT_CHOiCE, max_length=30, default="cod")
     razorpay_order_id = models.CharField(max_length=100,blank=True)
     is_ordered = models.BooleanField(default=False)
+    is_ordered = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Cart Order"
@@ -367,7 +375,24 @@ class OrderAddress(models.Model):
 
     def __str__(self):
         return self.first_name
+
+class OrderCancellationReason(models.Model):
+    reason = models.CharField(max_length=255)
+    status =models.BooleanField(default=True)
+    timestamp = models.DateTimeField(auto_now_add=True)  
+
+    def __str__(self):
+        return self.reason  
+
+class OrderCancellation(models.Model):
+    order_item = models.ForeignKey(CartOrderItems,related_name="cancellation",on_delete=models.CASCADE)
+    reason = models.ForeignKey(OrderCancellationReason, on_delete=models.SET_NULL,blank=True,null=True)
+    status = models.CharField(choices=CANCELATION_STATUS,default='pending')
+    timestamp = models.DateTimeField(auto_now_add=True)
     
+
+    def __str__(self):
+        return self.order_item.product.title  
 
 
 

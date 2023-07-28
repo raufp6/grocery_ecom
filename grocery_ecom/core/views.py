@@ -460,7 +460,7 @@ def paymenthandler(request):
         print("error 3")
        # if other than POST request is made.
         messages.error(request,"Some error occured! 3")
-        return redirect("core:payment",order.orderno)
+        return redirect("core:index")
 
 
 def checkout_success(request,orderno):

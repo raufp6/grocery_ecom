@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import Category,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Address,Cart,CartItem,Variation,Payment
+from core.models import Category,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Address,Cart,CartItem,Variation,Payment,OrderCancellationReason,OrderCancellation
 
 class ProductImagesAdmin(admin.TabularInline):
     model = ProductImages
@@ -66,4 +66,6 @@ admin.site.register(Address,AddressAdmin)
 admin.site.register(Cart,CartAdmin)
 admin.site.register(CartItem,CartItemAdmin)
 admin.site.register(Variation,VariationAdmin)
+admin.site.register(OrderCancellationReason)
+admin.site.register(OrderCancellation)
 

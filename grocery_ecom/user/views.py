@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse
-from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem
+from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderCancellationReason,OrderCancellation
 from userauths.models import User
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
@@ -135,6 +135,59 @@ def order_details(request,id):
     }
 
     return render(request,'core/user_account/order_details.html',context)
+
+
+@login_required(login_url="userauths:login")
+def cancel_order(request,id):
+    reasons = OrderCancellationReason.objects.all()
+    order = CartOrder.objects.get(pk = id)
+    context = { 
+        'order':order,
+        'reasons':reasons
+    }
+
+    return render(request,'core/user_account/cancel_order.html',context)
+
+@login_required(login_url="userauths:login")
+def cancel_order_item(request,id):
+    
+    order_item = CartOrderItems.objects.get(id = id)
+    order = CartOrder.objects.get(pk = order_item.order.id)
+    # order_items_count = CartOrderItems.objects.filter(order = order).count()
+    reason_id = request.GET.get('reson_of_cancel')
+    reason = OrderCancellationReason.objects.get(pk = reason_id)
+    if order_item.order.payment_type == 'cod':
+
+        try:
+            cancel_request = OrderCancellation.objects.get(order_item = id)
+            cancel_request.reason = reason
+            cancel_request.status = 'pending'
+            cancel_request.save()
+        except OrderCancellation.DoesNotExist:
+            cancel_request = OrderCancellation.objects.create(
+                order_item = order_item,
+                reason = reason
+            )
+            cancel_request.save()
+            order.price -= order_item.total
+            order.save()
+        messages.success(request,"Your order was successfully canceled!")
+        return redirect("user:cancel_order_status",id)
+    context = { 
+        'order':order_item
+    }
+
+    return render(request,'core/user_account/cancel_order_item.html',context)
+
+@login_required(login_url="userauths:login")
+def cancel_order_status(request,id):
+    order_item = CartOrderItems.objects.get(id = id)
+    cancel_rquest = OrderCancellation.objects.get(order_item = id)
+    context={
+        'order_item':order_item,
+        'cancel_rquest':cancel_rquest
+    }
+    return render(request,'core/user_account/cancel_order_status.html',context)
 
 
 

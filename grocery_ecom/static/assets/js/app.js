@@ -137,3 +137,17 @@ function alerts(message,type='success'){
     }
     
 }
+function expand_body_div(id)
+{   
+    $("option:selected").removeAttr("selected");
+    $(".card-body").hide();
+    $('#cancel_order_item_cancel_button_'+id).hide()
+    $("#cancel_order_item_body_"+id).show();
+}
+function order_cancel_reason_change(val,item_id){
+    if(val != ""){
+        $('#cancel_order_item_cancel_button_'+item_id).show()   
+    }else{
+        $('#cancel_order_item_cancel_button_'+item_id).hide()   
+    }
+}
