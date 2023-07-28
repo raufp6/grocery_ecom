@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse,HttpResponseBadRequest
-from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress,Variation
+from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress,Variation,Coupon
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -9,6 +9,7 @@ from django.db.models import Q
 import razorpay,json
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from django.utils import timezone
 
 def index(request):
     products = Product.objects.filter(featured=True,product_status="published")
@@ -56,7 +57,12 @@ def cart(request):
         cart_items = CartItem.objects.filter(cart=cart,is_active = True)
     except:
         cart_items = None
+
+    if not cart.coupon:
+        request.session['discount_amount'] = 0
+    print(request.session['discount_amount'])
     context = { 
+        'cart':cart,
         'cart_items':cart_items
     }
     return render(request,'core/cart.html',context)
@@ -122,6 +128,7 @@ def add_cart_(request):
                 item = CartItem.objects.get(product = product,id = item_id)
                 item.qty += int(qty)
                 item.save()
+                request.session['order_total'] += item.qty * item.product.discount_price
             else:
                 item = CartItem.objects.create(product=product,cart=cart,qty = qty)
                 if len(product_variation) > 0:
@@ -280,13 +287,40 @@ def merge_carts(request):
 
 
 @login_required(login_url="userauths:login")
+def apply_coupon(request):
+    if request.method == 'POST':
+        coupon_code = request.POST.get('coupon_code')
+        try:
+            coupon = Coupon.objects.get(code=coupon_code, active=True, valid_from__lte=timezone.now(), valid_to__gte=timezone.now())
+        except Coupon.DoesNotExist:
+            messages.error(request,"Invalid coupon code. Please try again.")
+            return redirect('core:cart')
+
+        # Apply the discount here (you may have an order model to store this information).
+        # For simplicity, let's assume the order total is stored in the session.
+        cart = Cart.objects.get(user = request.user)
+        cart_items = CartItem.objects.filter(cart = cart)
+        cart.coupon = coupon
+        cart.save()
+        order_total = sum(item.product.discount_price * item.qty for item in cart_items)
+        discount_amount = float(order_total) * (float(coupon.discount) / 100)
+        request.session['discount_amount'] = discount_amount
+    
+    messages.success(request,"coupon code added")
+    return redirect('core:cart')  # Replace 'checkout' with your checkout page URL.
+
+@login_required(login_url="userauths:login")
 def checkout(request):
-   
-    cart = Cart.objects.get(user_id = request.user)
-    cart_items = CartItem.objects.filter(cart = cart)
+    try:
+        cart = Cart.objects.get(user_id = request.user)
+        cart_items = CartItem.objects.filter(cart = cart)
+    except:
+        messages.error(request, "Your cart is empty")
+        return redirect('core:index')
+    
     if len(cart_items) > 0:
         addresses = Address.objects.filter(user=request.user)
-        merge_carts(request)  # Merge the session cart with the user's cart
+        # merge_carts(request)  # Merge the session cart with the user's cart
         context = { 
             'addresses':addresses
         }
@@ -355,13 +389,18 @@ def placeorder(request):
             type   = address.type,          
         )
         order_address.save()
-    
+        if cart.coupon:
+            coupon = Coupon.objects.get(pk=cart.coupon.id)
+            order.coupon = coupon
+            order.coupon_discount = request.session['discount_amount']
+            order.save()
         
         if payment_type == 'online':
             return redirect('core:payment',order.orderno)
             
         
-
+        cart.coupon = None
+        cart.save()
         cart_items.delete()
         messages.success(request, "Your Order placed successfully")
         return redirect('core:checkout_success',order.orderno)
@@ -466,6 +505,8 @@ def paymenthandler(request):
 def checkout_success(request,orderno):
     cart = Cart.objects.get(user=request.user)
     cart_items = CartItem.objects.filter(cart=cart)
+    cart.coupon = None
+    cart.save()
     cart_items.delete()
     order = CartOrder.objects.get(orderno=orderno)
     context = {

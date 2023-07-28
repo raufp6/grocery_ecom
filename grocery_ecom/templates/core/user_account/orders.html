@@ -44,7 +44,11 @@
                                                             <td>#{{order.orderno}}</td>
                                                             <td>{{order.order_date|date:"M,d ,Y"}}</td>
                                                             <td>{{order.product_status}}</td>
-                                                            <td>₹{{order.price}}</td>
+                                                            {% if order.coupon_discount %}
+                                                            <td>₹ {{order.price | sub:order.coupon_discount}}</td>
+                                                            {% else %}
+                                                                <td>₹ {{order.price}}</td>
+                                                            {% endif %}
                                                             <td><a href="{% url 'user:order_details' order.id %}" class="btn-small d-block">View</a></td>
                                                         </tr>
                                                         {% endfor %}

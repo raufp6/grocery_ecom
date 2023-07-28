@@ -5,6 +5,8 @@ from userauths.models import User
 from django.core.validators import FileExtensionValidator
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.db.models.functions import Lower
+from django.utils import timezone
+from datetime import date
 
 
 STATUS_CHOCE = (
@@ -277,11 +279,25 @@ class ProductVarientConfigeration(models.Model):
 
 ########################  Cart, Orderitems and Address  #######################
 
+class Coupon(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    discount = models.FloatField()
+    valid_from = models.DateTimeField(default=timezone.now)
+    valid_to = models.DateTimeField()
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.code
+    
+    def is_expired(self):
+        return self.valid_to < date.today()
+
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     cart_id = models.CharField(max_length=250,blank=True)
     session_id = models.CharField(max_length=200,null=True,blank=True)
+    coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -306,6 +322,12 @@ class CartItem(models.Model):
 
     def sub_total(self):
         return self.product.discount_price * self.qty
+    
+    def sub_total_with_offer(self):
+        return int((self.sub_total()) - ( self.sub_total() * self.product.offer.off_percent / 100))
+    
+    def sub_total_with_offer_category(self):
+        return int((self.sub_total()) - ( self.sub_total() * self.product.category.offer.off_percent / 100))
     
     def __unicode__(self):
         return self.product
@@ -332,7 +354,8 @@ class CartOrder(models.Model):
     product_status = models.CharField(choices=STATUS_CHOCE, max_length=30, default="processing")
     payment_type = models.CharField(choices=PAYMENT_CHOiCE, max_length=30, default="cod")
     razorpay_order_id = models.CharField(max_length=100,blank=True)
-    is_ordered = models.BooleanField(default=False)
+    coupon = models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True,blank=True)
+    coupon_discount = models.DecimalField(null=True,blank=True,max_digits=100,decimal_places=2,)
     is_ordered = models.BooleanField(default=False)
 
     class Meta:
@@ -397,6 +420,7 @@ class OrderCancellation(models.Model):
 
 
 
+    
 ########################  Product Review  #######################
 
 
