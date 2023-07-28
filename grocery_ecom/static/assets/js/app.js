@@ -122,6 +122,37 @@ const base_url = window.location.origin;
             }
         });
     });
+    $(".button-add-to-whishlist").on('click',function(e){
+        let $this = $(this);
+        var product_id = $this.data("id");
+        
+        var data = {
+            'id':product_id,
+        };
+        $.ajax({
+            url:$this.data("link"),
+            type:'GET',
+            data:data,
+            dataType:'json',
+            
+            beforeSend:function(){
+                console.log("Adding product to wishlist..");
+            },
+            success:function(resp){
+                if(resp.status){
+                    alerts(resp.message)
+                    $(".wishlist-items-count").html(resp.whish_list_count)
+                    
+                }else{
+                    alerts(resp.message,'error')
+                }
+            },error:function(resp){
+                alerts("Error Occured",'error');
+            }
+        });
+        
+    });
+    
 
  
        

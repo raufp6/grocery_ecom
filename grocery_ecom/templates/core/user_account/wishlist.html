@@ -1,0 +1,89 @@
+{% extends 'partials/base.html' %}
+{% load mathfilters %}
+{% load static %}
+{% block content %}
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{% url 'core:index'%}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> Wishlist
+            </div>
+        </div>
+    </div>
+    <div class="container mb-80 mt-50">
+        {% if products is not none and products|length != 0%}
+        <div class="row">
+            <div class="col-lg-8 mb-40">
+                <h1 class="heading-2 mb-10">Your Wishlist</h1>
+                <div class="d-flex justify-content-between">
+                    <h6 class="text-body">There are <span class="text-brand">{{ products|length }}</span> products in your wishlist</h6>
+                    <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Wishlist</a></h6>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="table-responsive shopping-summery">
+                    <table class="table table-wishlist">
+                        <thead>
+                            <tr class="main-heading">
+                                
+                                <th scope="col" colspan="2">Product</th>
+                                <th scope="col"> Price</th>
+                                <th scope="col" class="end">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in products %}
+                            <tr class="pt-30">
+                                
+                                <td class="image product-thumbnail pt-40"><img src="{{ item.product.image.url }}" alt="#"></td>
+                                <td class="product-des product-name">
+                                    <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="">{{item.product.title|truncatechars:20 }}</a></h6>
+                                    
+                                </td>
+                                <td class="price" data-title="Price">
+                                    <h4 class="text-body">₹{{item.product.discount_price}} </h4>
+                                </td>
+                                
+                                
+                                <td class="action text-center" data-title="Remove"><a href="{% url 'core:delete_wishlist_item' item.id %}" class="text-body" ><i class="fi-rs-trash"></i></a></td>
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="divider-2 mb-30"></div>
+                <!-- <div class="cart-action d-flex justify-content-between">
+                    <a class="btn "><i class="fi-rs-arrow-left mr-10"></i>Continue Shopping</a>
+                    <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-refresh mr-10"></i>Update Cart</a>
+                </div> -->
+                
+            </div>
+            
+        </div>
+        {% else %}
+        <section class="newsletter mb-15 wow animate__animated animate__fadeIn">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="position-relative newsletter-inner">
+                            <div class="newsletter-content">
+                                <h2 class="mb-20">
+                                    Let's fill the empty Basket
+                                </h2>
+                                <a class="btn" href="{% url 'core:index' %}">Continue Shopping</a>
+                                
+                            </div>
+                            <img src="{% static 'assets/imgs/banner/banner-9.png' %}" alt="newsletter" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</main>
+{% endblock content%}

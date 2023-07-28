@@ -15,6 +15,13 @@ urlpatterns = [
     path("remove_cart/",views.remove_cart,name="remove_cart"),
     path("delete_cart/<int:product_id>/<int:cart_item_id>/",views.delete_cart,name="delete_cart"),
     path("cart/",views.cart,name="cart"),
+
+    # Whishlist
+    path("add_to_wishlist/",views.add_to_wishlist,name="add-to-whishlist"),
+    path("wishlist/",views.view_wishlist,name="wishlist"),
+    path("wishlist/remove/<int:id>/",views.delete_wishlist_item,name="delete_wishlist_item"),
+
+    
     
     # Apply coupon
     path("cart/apply_coupon/",views.apply_coupon,name="apply_coupon"),

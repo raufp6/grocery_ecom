@@ -110,7 +110,7 @@
                                         
                                         <button type="submit" class="button button-add-to-cart" data-price="{{product.price}}" data-qty="0" data-sellingprice="{{product.discount_price}}" data-id="{{ product.id }}" data-image="{{ product.image.url }}" data-title="{{ product.title }}" data-link="{% url 'core:add-to-cart' %}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
                                         
-                                        <!-- <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a> -->
+                                        <a aria-label="Add To Wishlist" class="action-btn hover-up button-add-to-whishlist" data-id="{{ product.id }}" href="#" data-link="{% url 'core:add-to-whishlist' %}"><i class="fi-rs-heart"></i></a>
                                     </div>
                                 </div>
                                 {% else %}

@@ -13,10 +13,7 @@ from django.utils import timezone
 
 def index(request):
     products = Product.objects.filter(featured=True,product_status="published")
-    # products_items = ProductItem.objects.filter(is_deleted = False,is_default=True,product__featured=True).order_by('-id')
     
-    # for p in products:
-    #     print(p.product_item.all())
     context = { 
         'products':products
     }
@@ -44,6 +41,9 @@ def category_list(request):
 def product_detail(request,pid,slug):
     product = Product.objects.get(pid=pid)
     p_images = product.p_images.all()
+    # wishlist = WhishList.objects.get(user=request.user)
+    # wishlist_products = wishlist.products.filter(product_id = product.id)
+    # print(wishlist_products)
     
     context = { 
         'product':product,
@@ -72,6 +72,46 @@ def _session_id(request):
     if not cart:
         cart = request.session.create()
     return cart
+
+# Add to wishlist
+@login_required(login_url="userauths:login")
+def add_to_wishlist(request):
+    product_id  = request.GET['id']
+
+    if request.user.is_authenticated:
+        product = Product.objects.get(pk=product_id)
+        wishlist, created = WhishList.objects.get_or_create(user=request.user,product = product)
+        response = {
+            'status':True,
+            'message':'Product added to wishlist',
+            'whish_list_count':1
+        }
+        return JsonResponse(response)
+    else:
+        # Redirect to login page or display an error message.
+        return redirect('userauths:login')
+
+
+@login_required(login_url="userauths:login")
+def view_wishlist(request):
+    
+    products = WhishList.objects.filter(user=request.user)
+    
+    context = {'products': products}
+    return render(request, 'core/user_account/wishlist.html', context)
+
+
+@login_required(login_url="userauths:login")
+def delete_wishlist_item(request,id):
+    
+    wishlist_item = WhishList.objects.get(id=id)
+
+    wishlist_item.delete()
+    messages.success(request,"Product removed from wishlist!")
+    return redirect("core:wishlist")
+    
+
+
 
 def add_cart_(request):
     product_variation = []

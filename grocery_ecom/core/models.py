@@ -445,6 +445,7 @@ class ProductReview(models.Model):
 class WhishList(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    # products = models.ManyToManyField(Product)
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
