@@ -4,8 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User, Varient, VarientValue, ProductVarientConfigeration, ProductVarientLink,OrderCancellationReason,OrderCancellation
-from core.forms import CategoryForm, ProductForm, VarientForm
+from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User, Varient, VarientValue, ProductVarientConfigeration, ProductVarientLink,OrderCancellationReason,OrderCancellation,Coupon
+from core.forms import CategoryForm, ProductForm, VarientForm,CouponForm
 from django.core.exceptions import ValidationError
 import itertools
 from django.template.defaulttags import register
@@ -231,7 +231,7 @@ def product_edit(request, id):
 
     product = Product.objects.get(pk=id)
     # product = Product.objects.get(pk=id,items__is_default=True)
-    product_item = product.items.get(is_default=True)
+    
     # print(product.items)
 
     if request.method == 'POST':
@@ -260,19 +260,13 @@ def product_edit(request, id):
         # brand=brand_instance,
         product.category = category_instance
         product.description = description
-        # price=price,
-        # discount_price=discount_price,
-        # stock_count=stock_count,
+        price=price,
+        discount_price=discount_price,
+        stock_count=stock_count,
         product.image = image
 
         product.save()
 
-        product_item.title = title
-        product_item.price = price
-        product_item.discount_price = discount_price
-        product_item.stock_count = stock_count
-        product_item.image = image
-        product_item.save()
         messages.success(request, 'Product updated succefully')
         return redirect('superadmin:product_edit', id)
 
@@ -281,8 +275,7 @@ def product_edit(request, id):
     context = {
         'categories': categories,
         'form': form,
-        'product': product,
-        'product_item': product_item
+        'product': product
     }
 
     return render(request, 'admin/product/edit.html', context)
@@ -330,19 +323,60 @@ def delete_product_image(request, id, product_id):
 
     return redirect('superadmin:product_images', product_id)
 
-# @login_required(login_url="superadmin:login")
-# def add_product(request):
-#     if request.method == 'POST':
-#         form = ProductForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
+# Coupon Management
+@login_required(login_url="superadmin:login")
+def coupons(request):
+    if request.method == 'POST':
+        form = CouponForm(request.POST)
+        if form.is_valid():
+            form.save()
 
-#             messages.success(request, "Product added")
-#         else:
-#             messages.error(request, "Please check")
+            messages.success(request, "Coupon added")
+        else:
+            messages.error(request, "Please check")
 
-#         return redirect('superadmin:product.create')
+        return redirect('superadmin:coupons')
+    
+    coupons = Coupon.objects.all().order_by('-id')
+    form = CouponForm()
+    context = {
+        'coupons':coupons,
+        'form':form
+    }
+    return render(request, 'admin/offer/coupons.html', context)
 
+@login_required(login_url="superadmin:login")
+def coupon_update(request,id):
+    coupon = Coupon.objects.get(id=id)
+    if request.method == 'POST':
+        form = CouponForm(request.POST)
+        if form.is_valid():
+            coupon.code = form.cleaned_data['code']
+            coupon.discount = form.cleaned_data['discount']
+            coupon.valid_from = form.cleaned_data['valid_from']
+            coupon.valid_to = form.cleaned_data['valid_to']
+            coupon.active = form.cleaned_data['active']
+            coupon.save()
+            print(form.cleaned_data['code'])
+
+            messages.success(request, "Coupon added")
+        else:
+            messages.error(request, "Please check")
+
+        return redirect('superadmin:coupons')
+    data = {
+        'code':coupon.code,
+        'discount':coupon.discount,
+        'valid_from':coupon.valid_from,
+        'valid_to':coupon.valid_to,
+        'active':coupon.active
+    }
+    form = CouponForm(initial=data)
+    context = {
+        'coupon':coupon,
+        'form':form
+    }
+    return render(request, 'admin/offer/update_coupon.html', context)
 
 # Product Variations
 @login_required(login_url="superadmin:login")

@@ -21,6 +21,10 @@ urlpatterns = [
     path("order/details/<int:id>", views.order_details, name="order_details"),
     path("order/cancel_request/<int:id>/", views.order_cancel_request, name="order_cancel_request"),
 
+    # Offer Management
+    path("coupons/list/", views.coupons, name="coupons"),
+    path("coupon/update/<int:id>/", views.coupon_update, name="update_coupon"),
+
     path("product_list/", views.product_list, name="product_list"),
     path("product/create/", views.create_product, name="product.create"),
     path("product/edit/<int:id>/", views.product_edit, name="product_edit"),

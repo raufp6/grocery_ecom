@@ -1,0 +1,64 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Coupons</h2>
+            <p>Add, edit or delete a Coupons</p>
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    
+                    <form action="" method="POSt" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            
+                            <label for="product_name" class="form-label">Coupon Code</label>
+                            {{ form.code }}
+                            {{ form.errors.code }}
+                        </div>
+                        
+                        
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Discount(%)</label>
+                            {{ form.discount }}
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Valid from</label>
+                            <input type="date" name="valid_from">
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Valid to</label>
+                            <input type="date" name="valid_to" value="{{coupon.valid_to}}">
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Is Active</label>
+                            {{ form.active }}
+                        </div>
+                        
+                        
+                        <div class="d-grid">
+                            <button class="btn btn-primary" type="submil">Update</button>
+                           
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- .col// -->
+            </div>
+            <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+    </div>
+    <!-- card .// -->
+</section>
+{% endblock %}

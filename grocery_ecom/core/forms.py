@@ -1,6 +1,6 @@
 from django.db import models
 from django import forms
-from core.models import Category, Product, Address,ProductItem,Varient
+from core.models import Category, Product, Address,ProductItem,Varient,Coupon
 from django.forms import fields
 from django.core.validators import FileExtensionValidator
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -66,6 +66,28 @@ class VarientForm(forms.ModelForm):
         fields = ['name','type']
 
         # fields = "__all__"
+
+class CouponForm(forms.ModelForm):
+    code = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'placeholder': "Coupon Code", 'class': "form-control"}),
+        error_messages={
+            'required': "Please Enter Coupon Code"
+        },
+    )
+    discount = forms.DecimalField(
+        widget=forms.TextInput(
+            attrs={'placeholder': "Discount", 'class': "form-control"}),
+        error_messages={
+            'required': "Please Enter Discount"
+        },
+    )
+    
+    
+
+    class Meta:
+        model = Coupon
+        fields = ['code','discount','valid_from','valid_to','active']
 
         
 
