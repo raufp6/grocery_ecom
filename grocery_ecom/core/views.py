@@ -27,6 +27,18 @@ def product_list(request):
     }
     return render(request,'core/products.html',context)
 
+def search(request):
+    products = Product.objects.filter(product_status="published")
+    query = request.GET['query']
+    if query:
+        products = Product.objects.filter(Q(description__icontains = query) | Q(title__icontains = query))
+    if request.GET['c']:
+        products = Product.objects.filter(category=request.GET['c'])
+    context = { 
+        'products':products,
+        'query':query
+    }
+    return render(request,'core/products.html',context)
 
 def category_list(request):
     categories = Category.objects.all()
@@ -44,7 +56,6 @@ def product_detail(request,pid,slug):
     # wishlist = WhishList.objects.get(user=request.user)
     # wishlist_products = wishlist.products.filter(product_id = product.id)
     # print(wishlist_products)
-    
     context = { 
         'product':product,
         'p_images': p_images,
@@ -168,7 +179,7 @@ def add_cart_(request):
                 item = CartItem.objects.get(product = product,id = item_id)
                 item.qty += int(qty)
                 item.save()
-                request.session['order_total'] += item.qty * item.product.discount_price
+                # request.session['order_total'] += item.qty * item.product.discount_price
             else:
                 item = CartItem.objects.create(product=product,cart=cart,qty = qty)
                 if len(product_variation) > 0:
@@ -388,17 +399,36 @@ def placeorder(request):
         address = Address.objects.get(pk = shipping_address)
 
         
-        total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+        # total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+        total_amount = 0
+        for item in  cart_items:
+            try:
+                if item.product.category.offer:
+                    total_amount += item.qty * item.product.get_offer_price_by_category()
+            except:
+                total_amount += item.product.discount_price * item.qty
+
         payment_type = request.POST.get('payment_option')
         order = CartOrder.objects.create(user=request.user, price=total_amount,payment_type=payment_type)
         for i in cart_items:
+            try:
+                if i.product.category.offer:
+                    product_price = i.product.get_offer_price_by_category()
+            except:
+                product_price = i.product.discount_price
+            product_sub_total = product_price * i.qty
+            # print(type(product_price))
+            # return HttpResponse(type(product_sub_total))
+            
+
+            
             order_item = CartOrderItems(
                 order = order,
                 invoice_no = "OD-"+order.orderno,
                 product    = i.product,
                 qty     = i.qty,
-                price   = i.product.discount_price,
-                total   = i.product.discount_price * i.qty,
+                price   = float(product_price),
+                total   = float(product_sub_total),
                 image   = i.product.image.url,                
                 
             )

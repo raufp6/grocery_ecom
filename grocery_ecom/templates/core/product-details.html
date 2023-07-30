@@ -61,7 +61,12 @@
                                 </div>
                                 <div class="clearfix product-price-cover">
                                     <div class="product-price primary-color float-left">
-                                        <span class="current-price text-brand">₹{{ product.discount_price }}</span>
+                                        {% if product.category.offer %}
+                                            <span class="current-price text-brand">₹{{ product.get_offer_price_by_category }}</span>
+                                        {% else %}
+                                            <span class="current-price text-brand">₹{{ product.discount_price }}</span>
+                                        {% endif %}
+                                        
                                         <span>
                                             <span class="save-price font-md color3 ml-15">{{ product.get_percentage|floatformat:0 }}% Off</span>
                                             <span class="old-price font-md ml-15">₹{{ product.price }}</span>

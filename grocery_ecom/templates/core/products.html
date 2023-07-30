@@ -9,7 +9,7 @@
                     <div class="col-xl-3">
                         <h1 class="mb-15">Products</h1>
                         <div class="breadcrumb">
-                            <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                            <a href="{% url 'core:index' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
                             <span></span> Products 
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                         <div class="product-cart-wrap mb-30">
                             <div class="product-img-action-wrap">
                                 <div class="product-img product-img-zoom">
-                                    <a href="shop-product-right.html">
+                                    <a href="{% url 'core:product_detail' product.pid product.title|slugify %}">
                                         <img class="default-img" src="{{ product.image.url }}" alt="" />
                                                 <img class="hover-img" src="{{ product.image.url }}" alt="" />
                                     </a>
@@ -88,9 +88,9 @@
                             </div>
                             <div class="product-content-wrap">
                                 <div class="product-category">
-                                    <a href="shop-grid-right.html">{{ product.category.title }}</a>
+                                    <a href="{% url 'core:product_detail' product.pid product.title|slugify %}">{{ product.category.title }}</a>
                                 </div>
-                                <h2><a href="shop-product-right.html">{{ product.title }}</a></h2>
+                                <h2><a href="{% url 'core:product_detail' product.pid product.title|slugify %}">{{ product.title }}</a></h2>
                                 <div class="product-rate-cover">
                                     <div class="product-rate d-inline-block">
                                         <div class="product-rating" style="width: 90%"></div>
@@ -100,11 +100,16 @@
                                 
                                 <div class="product-card-bottom">
                                     <div class="product-price">
-                                        <span>${{ product.discount_price }}</span>
-                                        <span class="old-price">${{ product.price }}</span>
+                                        {% if product.category.offer %}
+                                            <span >₹{{ product.get_offer_price_by_category }}</span>
+                                        {% else %}
+                                            <span>₹{{ product.discount_price }}</span>
+                                        {% endif %}
+                                        
+                                        <span class="old-price">₹{{ product.price }}</span>
                                     </div>
                                     <div class="add-cart">
-                                        <a class="add" href="shop-cart.html"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                        <a class="add" href=""><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
                                     </div>
                                 </div>
                             </div>
@@ -121,21 +126,12 @@
                 <div class="sidebar-widget widget-category-2 mb-30">
                     <h5 class="section-title style-1 mb-30">Category</h5>
                     <ul>
+                        {% for c in categories %}
                         <li>
-                            <a href="shop-grid-right.html"> <img src="{% static 'assets/imgs/theme/icons/category-1.svg' %}" alt="" />Milks & Dairies</a><span class="count">30</span>
+                            <a href="{% url 'core:search'%}?c={{c.id}}&query="> <img src="{{ c.image.url }}" alt="" />{{c.title}}</a><span class="count">30</span>
                         </li>
-                        <li>
-                            <a href="shop-grid-right.html"> <img src="{% static 'assets/imgs/theme/icons/category-2.svg' %}" alt="" />Clothing</a><span class="count">35</span>
-                        </li>
-                        <li>
-                            <a href="shop-grid-right.html"> <img src="{% static 'assets/imgs/theme/icons/category-3.svg' %}" alt="" />Pet Foods </a><span class="count">42</span>
-                        </li>
-                        <li>
-                            <a href="shop-grid-right.html"> <img src="{% static 'assets/imgs/theme/icons/category-4.svg' %}" alt="" />Baking material</a><span class="count">68</span>
-                        </li>
-                        <li>
-                            <a href="shop-grid-right.html"> <img src="{% static 'assets/imgs/theme/icons/category-5.svg' %}" alt="" />Fresh Fruit</a><span class="count">87</span>
-                        </li>
+                        {% endfor %}
+                        
                     </ul>
                 </div>
                 <!-- Fillter By Price -->
@@ -179,56 +175,6 @@
                     <a href="shop-grid-right.html" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i> Fillter</a>
                 </div>
                 <!-- Product sidebar Widget -->
-                <div class="sidebar-widget product-sidebar mb-30 p-30 bg-grey border-radius-10">
-                    <h5 class="section-title style-1 mb-30">New products</h5>
-                    <div class="single-post clearfix">
-                        <div class="image">
-                            <img src="{% static 'assets/imgs/shop/thumbnail-3.jpg' %}" alt="#" />
-                        </div>
-                        <div class="content pt-10">
-                            <h5><a href="shop-product-detail.html">Chen Cardigan</a></h5>
-                            <p class="price mb-0 mt-5">$99.50</p>
-                            <div class="product-rate">
-                                <div class="product-rating" style="width: 90%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="single-post clearfix">
-                        <div class="image">
-                            <img src="{% static 'assets/imgs/shop/thumbnail-4.jpg' %}" alt="#" />
-                        </div>
-                        <div class="content pt-10">
-                            <h6><a href="shop-product-detail.html">Chen Sweater</a></h6>
-                            <p class="price mb-0 mt-5">$89.50</p>
-                            <div class="product-rate">
-                                <div class="product-rating" style="width: 80%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="single-post clearfix">
-                        <div class="image">
-                            <img src="{% static 'assets/imgs/shop/thumbnail-5.jpg' %}" alt="#" />
-                        </div>
-                        <div class="content pt-10">
-                            <h6><a href="shop-product-detail.html">Colorful Jacket</a></h6>
-                            <p class="price mb-0 mt-5">$25</p>
-                            <div class="product-rate">
-                                <div class="product-rating" style="width: 60%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="banner-img wow fadeIn mb-lg-0 animated d-lg-block d-none">
-                    <img src="{% static 'assets/imgs/banner/banner-11.png' %}" alt="" />
-                    <div class="banner-text">
-                        <span>Oganic</span>
-                        <h4>
-                            Save 17% <br />
-                            on <span class="text-brand">Oganic</span><br />
-                            Juice
-                        </h4>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

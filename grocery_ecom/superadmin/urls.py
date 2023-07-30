@@ -24,6 +24,7 @@ urlpatterns = [
     # Offer Management
     path("coupons/list/", views.coupons, name="coupons"),
     path("coupon/update/<int:id>/", views.coupon_update, name="update_coupon"),
+    path("category_offers/", views.category_offers, name="category_offers"),
 
     path("product_list/", views.product_list, name="product_list"),
     path("product/create/", views.create_product, name="product.create"),

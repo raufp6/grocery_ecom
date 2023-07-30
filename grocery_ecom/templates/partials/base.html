@@ -229,9 +229,9 @@
                         </div>
                         <div class="header-right">
                             <div class="search-style-2">
-                                <form action="#">
-                                    
-                                    <input type="text" placeholder="Search for items..." />
+                                <form action="{% url 'core:search' %}" method="get">
+                                    <input type="hidden" name="c" value="">
+                                    <input type="text" name="query" value="{{ query }}" placeholder="Search for items..." />
                                 </form>
                             </div>
                             <div class="header-action-right">
@@ -337,7 +337,7 @@
                                         <ul style="width: 100%;">
                                             {% for c in categories %}
                                             <li>
-                                                <a href=""> <img src="{{ c.image.url }}" alt="" />{{ c.title }}</a>
+                                                <a href="{% url 'core:search'%}?c={{c.id}}&query="> <img src="{{ c.image.url }}" alt="" />{{ c.title }}</a>
                                             </li>
                                             {% endfor %}
                                         </ul>
@@ -502,8 +502,9 @@
                 </div>
                 <div class="mobile-header-content-area">
                     <div class="mobile-search search-style-3 mobile-header-border">
-                        <form action="#">
-                            <input type="text" placeholder="Search for items…" />
+                        <form action="{% url 'core:search' %}" method="get">
+                            <input type="text" name="query" placeholder="Search for items…" />
+                            <input type="hidden" name="c" value="">
                             <button type="submit"><i class="fi-rs-search"></i></button>
                         </form>
                     </div>

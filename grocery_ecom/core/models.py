@@ -7,6 +7,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.db.models.functions import Lower
 from django.utils import timezone
 from datetime import date
+from django.core.exceptions import ValidationError
 
 
 STATUS_CHOCE = (
@@ -56,6 +57,17 @@ RATING = (
 def user_directory_path(instance, filename):
     return 'user_{0}/{1}'.format(instance.user.id, filename)
 
+
+def validate_expiry_date(value):
+    min_date = date.today()
+    if value < min_date:
+        raise ValidationError(
+            (f"Expiry date cannot be earlier than {min_date}.")
+            )
+    
+
+
+    
 
 class Category(models.Model):
     cid = ShortUUIDField(unique=True, length=10, max_length=20,prefix="cat", alphabet="abcdefghi123456789")
@@ -163,6 +175,9 @@ class Product(models.Model):
     def get_percentage(self):
         new_price = (self.discount_price / self.price) * 100
         return new_price - 100
+    
+    def get_offer_price_by_category(self):
+        return int(self.discount_price - (self.discount_price * self.category.offer.off_percent / 100))
 
 class ProductItem(models.Model):
     piid = ShortUUIDField(unique=True, length=10, max_length=20)
@@ -507,6 +522,17 @@ class Address(models.Model):
 
     def __str__(self):
         return self.first_name
+    
+
+class Offer(models.Model):
+    name = models.CharField(max_length=50)
+    off_percent = models.PositiveIntegerField()
+    start_date = models.DateField(validators=[validate_expiry_date])
+    category = models.OneToOneField(Category, on_delete=models.SET_NULL,blank=True,null=True)
+    end_date = models.DateField()
+
+    def __str__(self) -> str:
+        return self.name
 
 
 

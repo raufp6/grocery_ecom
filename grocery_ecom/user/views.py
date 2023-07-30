@@ -156,23 +156,23 @@ def cancel_order_item(request,id):
     # order_items_count = CartOrderItems.objects.filter(order = order).count()
     reason_id = request.GET.get('reson_of_cancel')
     reason = OrderCancellationReason.objects.get(pk = reason_id)
-    if order_item.order.payment_type == 'cod':
+    # if order_item.order.payment_type == 'cod':
 
-        try:
-            cancel_request = OrderCancellation.objects.get(order_item = id)
-            cancel_request.reason = reason
-            cancel_request.status = 'pending'
-            cancel_request.save()
-        except OrderCancellation.DoesNotExist:
-            cancel_request = OrderCancellation.objects.create(
-                order_item = order_item,
-                reason = reason
-            )
-            cancel_request.save()
-            order.price -= order_item.total
-            order.save()
-        messages.success(request,"Your order was successfully canceled!")
-        return redirect("user:cancel_order_status",id)
+    try:
+        cancel_request = OrderCancellation.objects.get(order_item = id)
+        cancel_request.reason = reason
+        cancel_request.status = 'pending'
+        cancel_request.save()
+    except OrderCancellation.DoesNotExist:
+        cancel_request = OrderCancellation.objects.create(
+            order_item = order_item,
+            reason = reason
+        )
+        cancel_request.save()
+        order.price -= order_item.total
+        order.save()
+    messages.success(request,"Your order was successfully canceled!")
+    return redirect("user:cancel_order_status",id)
     context = { 
         'order':order_item
     }

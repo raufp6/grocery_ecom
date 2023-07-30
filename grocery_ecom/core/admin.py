@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import Category,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Address,Cart,CartItem,Variation,Payment,OrderCancellationReason,OrderCancellation,Coupon
+from core.models import Category,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Address,Cart,CartItem,Variation,Payment,OrderCancellationReason,OrderCancellation,Coupon,Offer
 
 class ProductImagesAdmin(admin.TabularInline):
     model = ProductImages
@@ -54,6 +54,9 @@ class CartItemAdmin(admin.ModelAdmin):
 class CouponAdmin(admin.ModelAdmin):
     list_display = ['code','discount','valid_from','valid_to','active']
 
+
+class OfferAdmin(admin.ModelAdmin):
+    list_display = ['name','off_percent','start_date','end_date']
 # class CartAdmin(admin.ModelAdmin):
 #     inlines = [CartItemAdmin]
 #     list_display = ['cart','user','product','qty']
@@ -72,4 +75,5 @@ admin.site.register(Variation,VariationAdmin)
 admin.site.register(OrderCancellationReason)
 admin.site.register(OrderCancellation)
 admin.site.register(Coupon,CouponAdmin)
+admin.site.register(Offer,OfferAdmin)
 

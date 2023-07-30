@@ -7,12 +7,20 @@ def default(request):
     categories = Category.objects.filter(is_available=True)
     total_mrp_amount = 0
     total_amount = 0
+    category_offer = 0
     # merge_carts(request)  # Merge the session cart with the user's cart
     if request.user.is_authenticated:
         try:
             cart = Cart.objects.get(user_id = request.user)
             cart_items = CartItem.objects.filter(cart = cart)
-            total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+            # total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+            for item in  cart_items:
+                try:
+                    if item.product.category.offer:
+                        total_amount += item.qty * item.product.get_offer_price_by_category()
+                        category_offer += item.product.discount_price - item.product.get_offer_price_by_category()
+                except:
+                    total_amount += item.product.discount_price * item.qty
             total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
         except:
             cart = None
@@ -23,7 +31,12 @@ def default(request):
         try:
             cart = Cart.objects.get(cart_id = _session_id(request))
             cart_items = CartItem.objects.filter(cart = cart)
-            total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+            # total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+            for item in  cart_items:
+                if item.product.category.offer:
+                    total_amount += item.qty *item.product.get_offer_price_by_category
+                else:
+                    total_amount += item.product.discount_price * item.qty
             total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
         except:
             cart = None
@@ -50,5 +63,6 @@ def default(request):
         'discount_amount':discount_amount,
         'final_amount':final_amount,
         'total_mrp_amount':total_mrp_amount,
-        'saved_amount':saved_amount
+        'saved_amount':saved_amount,
+        'category_offer':category_offer
     }

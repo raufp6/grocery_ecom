@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User, Varient, VarientValue, ProductVarientConfigeration, ProductVarientLink,OrderCancellationReason,OrderCancellation,Coupon
+from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User, Varient, VarientValue, ProductVarientConfigeration, ProductVarientLink,OrderCancellationReason,OrderCancellation,Coupon,Offer
 from core.forms import CategoryForm, ProductForm, VarientForm,CouponForm
 from django.core.exceptions import ValidationError
 import itertools
@@ -377,6 +377,28 @@ def coupon_update(request,id):
         'form':form
     }
     return render(request, 'admin/offer/update_coupon.html', context)
+
+
+@login_required(login_url="superadmin:login")
+def category_offers(request):
+    if request.method == 'POST':
+        form = CouponForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, "Coupon added")
+        else:
+            messages.error(request, "Please check")
+
+        return redirect('superadmin:coupons')
+    
+    offers = Offer.objects.all().order_by('-id')
+    form = CouponForm()
+    context = {
+        'offers':offers,
+        'form':form
+    }
+    return render(request, 'admin/offer/list.html', context)
 
 # Product Variations
 @login_required(login_url="superadmin:login")
