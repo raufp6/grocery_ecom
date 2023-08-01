@@ -41,7 +41,7 @@
                                                         {{a.pincode}}
                                                         
                                                     </address>
-                                                    {% if p.is_default == true %}<p>Default</p>{% endif %}
+                                                    {% if a.is_default %}<p> Default</p>{% endif %}
                                                     <a href="{% url 'user:edit_address' a.id %}" class="btn-small">Edit</a> | 
                                                     <a onclick="return confirm('Are you sure?')" href="{% url 'user:delete_address' a.id %}" class="btn-small btn-danger">Delete</a>
                                                 </div>

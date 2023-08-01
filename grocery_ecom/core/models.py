@@ -523,6 +523,13 @@ class Address(models.Model):
     def __str__(self):
         return self.first_name
     
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            # If the current address is being set as default,
+            # unset 'is_default' for all other addresses of the same user.
+            Address.objects.filter(user=self.user).exclude(pk=self.pk).update(is_default=False)
+        super(Address, self).save(*args, **kwargs)
+    
 
 class Offer(models.Model):
     name = models.CharField(max_length=50)

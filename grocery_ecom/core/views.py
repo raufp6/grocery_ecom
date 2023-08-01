@@ -63,18 +63,18 @@ def product_detail(request,pid,slug):
     return render(request,'core/product-details.html',context)
 
 def cart(request):
-    try: 
-        cart = Cart.objects.get(cart_id = _session_id(request))
-        cart_items = CartItem.objects.filter(cart=cart,is_active = True)
-    except:
-        cart_items = None
+    # try: 
+    #     cart = Cart.objects.get(cart_id = _session_id(request))
+    #     cart_items = CartItem.objects.filter(cart=cart,is_active = True)
+    # except:
+    #     cart_items = None
+    cart = None
 
-    if not cart.coupon:
-        request.session['discount_amount'] = 0
-    print(request.session['discount_amount'])
+    # if not cart.coupon:
+    #     request.session['discount_amount'] = 0
+    # print(request.session['discount_amount'])
     context = { 
         'cart':cart,
-        'cart_items':cart_items
     }
     return render(request,'core/cart.html',context)
 

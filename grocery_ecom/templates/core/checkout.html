@@ -28,7 +28,7 @@
                         <div class="grid-wrapper grid-col-auto">
                             {% for address in addresses %}   
                           <label for="radio-card-{{address.id}}" class="radio-card">
-                            <input type="radio" name="shipping_address" id="radio-card-{{address.id}}" value="{{address.id}}" checked  onclick="set_delicery_address(this.value)"/>
+                            <input type="radio" name="shipping_address" id="radio-card-{{address.id}}" value="{{address.id}}" {% if address.is_default %}checked {% endif %}  onclick="set_delicery_address(this.value)"/>
                             <div class="card-content-wrapper">
                               <span class="check-icon"></span>
                               <div class="card-content">

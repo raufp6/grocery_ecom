@@ -68,7 +68,7 @@ def edit_address(request,id):
             'type':address.type,
             'line1':address.line1,
             'email':address.email,
-            'is_default':address.is_default,
+            'is_default':bool(address.is_default),
         }
     form = AddressForm(instance=address)
     if request.method == 'POST':  
