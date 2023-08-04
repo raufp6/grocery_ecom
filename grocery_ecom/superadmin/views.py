@@ -386,56 +386,6 @@ def category_offers(request):
     }
     return render(request, 'admin/offer/list.html', context)
 
-# Product Variations
-@login_required(login_url="superadmin:login")
-def product_variations(request, id):
-    product = Product.objects.get(pk=id)
-    varients = product.prd_varient.values()
-    products_items = product.items.filter(is_default=False)
-    product_variations_values = VarientValue.objects.values()
-    product_variations = Varient.objects.values()
-    product_variation_value_dic = {}
-    product_variations_dic = {}
-    for i in product_variations_values:
-        product_variation_value_dic[i['id']] = i['value']
-
-    for i in product_variations:
-        product_variations_dic[i['id']] = i['name']
-        
-    # print(product_variation_dic)
-    product_vs = ProductVarientConfigeration.objects.filter(product_item_id = 53)
-    # for kk in product_vs:
-    #     print(kk.product_item.title)
-    #     print(kk.varient_value.value)
-
-    for vv in varients:
-        varient = Varient.objects.get(id=int(vv['varient_id']))
-        vv['varientInfo'] = varient
-
-    for pvv in product.prd_varient.all():
-        print(pvv)
-
-    for p in products_items:
-        p_varients = ProductVarientConfigeration.objects.filter(product_item_id=p)
-        p_varients = p.prd_varient_values.all()
-
-        for pvv in p.product.prd_varient.all():
-            print(pvv.varient_id)
-        
-
-        # for pv in p_varients:
-        #     print(pv.varient_value_id)
-        # print("---")
-
-    context = {
-        'products': products_items,
-        'product': product,
-        'varients': varients,
-        'product_vs':product_vs,
-        'product_variation_value_dic':product_variation_value_dic,
-        'product_variations_dic':product_variations_dic
-    }
-    return render(request, 'admin/product/variations.html', context)
 
 
 
