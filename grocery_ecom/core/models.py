@@ -252,42 +252,6 @@ class Variation(models.Model):
         return self.variation_value
 
 
-class Varient(models.Model):
-    name = models.CharField(max_length=200,default=None,null=True,blank=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True,related_name="varient_category")
-    type = models.CharField(choices=VARIENT_CHOiCE, max_length=10, default="text")
-
-    class Meta:
-        verbose_name_plural = "Varients"
-
-    def __str__(self):
-        return self.name
-
-class VarientValue(models.Model):
-    varient = models.ForeignKey(Varient,on_delete=models.SET_NULL, null=True,related_name="varient")
-    value = models.CharField(max_length=200,default=None,null=True,blank=True)
-    color_code = models.CharField(max_length=200,default=None,null=True,blank=True)
-    image = models.ImageField(upload_to='varient-images', default=None,blank=True,null=True)
-
-    class Meta:
-        verbose_name_plural = "Varient Values"
-
-    def varient_image(self):
-        return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
-
-class ProductVarientLink(models.Model):
-    varient = models.ForeignKey(Varient,on_delete=models.SET_NULL,related_name="prd_varient_item", null=True)
-    product = models.ForeignKey(Product,on_delete=models.SET_NULL,related_name="prd_varient", null=True)
-
-    class Meta:
-        verbose_name_plural = "Product Varient Link"
-
-class ProductVarientConfigeration(models.Model):
-    varient_value = models.ForeignKey(VarientValue,on_delete=models.SET_NULL,related_name="prd_varient_values_label", null=True)
-    product_item = models.ForeignKey(ProductItem,on_delete=models.SET_NULL,related_name="prd_varient_values", null=True)
-
-    class Meta:
-        verbose_name_plural = "Product Varient Configerations"
 
 
 

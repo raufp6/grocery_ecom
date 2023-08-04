@@ -37,14 +37,14 @@
                     
                 </div>
             </li>
-            <li class="menu-item has-submenu {% is_active request 'superadmin:product_list' %} {% is_active request 'superadmin:product.create' %} {% is_active request 'superadmin:product_varients' %} ">
+            <li class="menu-item has-submenu {% is_active request 'superadmin:product_list' %} {% is_active request 'superadmin:product.create' %} ">
                 <a class="menu-link" href="#">
                     <i class="icon material-icons md-shopping_bag"></i>
                     <span class="text">Products Management</span>
                 </a>
                 <div class="submenu">
                     <a href="{% url 'superadmin:product_list'%}">Product List</a>
-                    <a href="{% url 'superadmin:product_varients'%}">Product Varients</a>
+                    <a href="#">Product Varients</a>
                 </div>
                 
             </li>
@@ -59,7 +59,7 @@
                     <a href="page-orders-detail.html">Order detail</a> -->
                 </div>
             </li>
-            <li class="menu-item has-submenu {% is_active request 'superadmin:product_list' %} {% is_active request 'superadmin:product.create' %} {% is_active request 'superadmin:product_varients' %} ">
+            <li class="menu-item has-submenu {% is_active request 'superadmin:product_list' %} ">
                 <a class="menu-link" href="#">
                     <i class="icon material-icons md-shopping_bag"></i>
                     <span class="text">Offer Management</span>
@@ -73,11 +73,11 @@
             <li class="menu-item has-submenu">
                 <a class="menu-link" href="page-sellers-cards.html">
                     <i class="icon material-icons md-store"></i>
-                    <span class="text">Sellers</span>
+                    <span class="text">Report</span>
                 </a>
                 <div class="submenu">
-                    <a href="page-sellers-cards.html">Sellers cards</a>
-                    <a href="page-sellers-list.html">Sellers list</a>
+                    
+                    <a href="{% url 'superadmin:sales_report'%}">Sales Report</a>
                     <a href="page-seller-detail.html">Seller profile</a>
                 </div>
             </li>

@@ -4,11 +4,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User, Varient, VarientValue, ProductVarientConfigeration, ProductVarientLink,OrderCancellationReason,OrderCancellation,Coupon,Offer
-from core.forms import CategoryForm, ProductForm, VarientForm,CouponForm
+from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User,OrderCancellationReason,OrderCancellation,Coupon,Offer
+from core.forms import CategoryForm, ProductForm,CouponForm
 from django.core.exceptions import ValidationError
 import itertools
-from django.template.defaulttags import register
+from django.core.paginator import Paginator,EmptyPage, PageNotAnInteger
 
 
 #############  Login ###############
@@ -140,23 +140,21 @@ def unblock_user(request, id):
 @login_required(login_url="superadmin:login")
 def product_list(request):
     products = Product.objects.filter(is_deleted=False).order_by('-id')
-    products_items = ProductItem.objects.filter(
-        is_deleted=False, is_default=True).order_by('-id')
-    # for p in products:
-    #     prd = Product.objects.get(id=p.id)
-    #     product_item = ProductItem(
-    #         title   = p.title,
-    #         product =   p,
-    #         price   =   0,
-    #         discount_price  =   0,
-    #         stock_count =   10,
-    #         image   =   p.image,
-    #         is_default  = True
-    #     )
-    #     product_item.save()
+    p = Paginator(products, 10) 
+    page_number = request.GET.get('page')
+    try:
+        page_obj = p.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        page_obj = p.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        page_obj = p.page(p.num_pages)
     context = {
         'products': products,
+        'page_obj':page_obj
     }
+    print(p.page_range)
     return render(request, 'admin/product/list.html', context)
 
 
@@ -192,25 +190,13 @@ def create_product(request):
             category=category_instance,
             user=request.user,
             description=description,
-            # price=price,
-            # discount_price=discount_price,
-            # stock_count=stock_count,
+            price=price,
+            discount_price=discount_price,
+            stock_count=stock_count,
             image=image
         )
         product.save()
 
-        prd = Product.objects.get(id=product.id)
-        product_item = ProductItem(
-            title=title,
-            product=prd,
-            price=price,
-            discount_price=discount_price,
-            stock_count=stock_count,
-            image=image,
-            user=request.user,
-            is_default=True
-        )
-        product_item.save()
         messages.success(request, 'Productcreated succefully')
         return redirect('superadmin:product.create')
 
@@ -451,151 +437,7 @@ def product_variations(request, id):
     }
     return render(request, 'admin/product/variations.html', context)
 
-# Product Varients
 
-
-@register.filter
-def get_item(dictionary, key):
-    varient = VarientValue.objects.get(id=key)
-    return dictionary.get(key)
-
-@register.filter
-def get_varient_name(id):
-    varient = varient.objects.get(id=id)
-    return varient.name
-    
-
-
-@login_required(login_url="superadmin:login")
-def product_varients(request):
-    form = VarientForm()
-    if request.method == 'POST':
-        form = VarientForm(request.POST)
-        if form.is_valid():
-            form.save()
-
-            messages.success(request, "Varient added")
-        else:
-            messages.error(request, "Please check")
-
-        return redirect('superadmin:product_varients')
-
-    varients = Varient.objects.all()
-    context = {
-        'varients': varients,
-        'form': form
-    }
-    return render(request, 'admin/product/varient/list.html', context)
-
-
-# Product Varient Values
-@login_required(login_url="superadmin:login")
-def varient_values(request, id):
-    varients = VarientValue.objects.filter(varient=id)
-    varient = Varient.objects.get(pk=id)
-    if request.method == 'POST':
-
-        if request.POST.get('value') == "":
-            messages.error(request, "Value field is required")
-        else:
-            value = request.POST.get('value')
-            data = VarientValue.objects.create(
-                value=value,
-                varient=varient
-            )
-            data.save()
-            messages.success(request, "Value added")
-
-        return redirect('superadmin:varient_values', id)
-
-    context = {
-        'varients': varients,
-        'varient': varient
-    }
-    return render(request, 'admin/product/varient/varient_values.html', context)
-
-# Product Varient Management
-
-
-@login_required(login_url="superadmin:login")
-def product_varients_manage(request, id):
-    varients = Varient.objects.all()
-    context = {
-        'varients': varients,
-        'product_id': id
-    }
-    return render(request, 'admin/product/varient_management.html', context)
-
-# Product Varient Management
-
-
-@login_required(login_url="superadmin:login")
-def varients_values_manage(request, id):
-
-    varient_values = []
-    if request.method == 'GET':
-        varients_ids = request.GET.getlist('varient')
-        varients = Varient.objects.filter(id__in=varients_ids)
-        # print(varients)
-        for id in varient_values:
-            varients = VarientValue.objects.values(varient=id)
-            varient_values[varients] = varients
-
-        # print(varient_values)
-
-        # for i in varients:
-        #     vv = i.varient.all()
-        #     for j in vv:
-        #         print(j.value)
-
-    context = {
-        'varients': varients,
-        'varient_values': varient_values,
-        'product_id': id
-    }
-    return render(request, 'admin/product/varient_values_manage.html', context)
-
-
-# Product Varient Value Combination
-@login_required(login_url="superadmin:login")
-def varients_values_combination(request, id):
-
-    varient_values = {}
-    varient_values_combinations = {}
-    if request.method == 'GET':
-        varients_ids = request.GET.getlist('varient[]')
-        for i in varients_ids:
-            varient_values[i] = request.GET.getlist('varient_value['+i+']')
-        # print(varients_ids)
-        # print(varient_values)
-
-    product = Product.objects.get(pk=id)
-    product_item = product.items.get(is_default=True)
-    combinations = list(itertools.product(
-        varient_values[varients_ids[0]], varient_values[varients_ids[1]]))
-    html = '<input type="hidden" name="selected_variations" value="' + \
-        convertTupleToString(varients_ids)+'">'
-    k = 0
-    # print(combinations)
-    for item in combinations:
-        k += 1
-        combo_values = convertTupleToString(item)
-
-        html += '<tr>'
-        html += '<input type="hidden" name="option_values_comb" value="'+combo_values+'">'
-        html += '<td><input type="text" class="form-control" name="product_item_title" value="'+product.title+'"></td><td><input type="text" class="form-control" name="product_item_price" value="' + \
-            str(product_item.price)+'"></td><td><input type="text" class="form-control" name="product_item_dicount_price" value="'+str(product_item.discount_price) + \
-            '"></td><td><input type="text" class="form-control" name="product_item_stock" value="' + \
-            str(product_item.stock_count)+'"></td>'
-        html += '</tr>'
-    context = {
-        'varient_values': varient_values,
-        'product_id': id,
-        'product': product,
-        'combinations': combinations,
-        'html': html
-    }
-    return render(request, 'admin/product/varient_values_combination_manage.html', context)
 
 
 def convertTupleToString(tup):
@@ -604,60 +446,6 @@ def convertTupleToString(tup):
     for item in tup:
         str = str + "," + item
     return str[1:]
-
-# Product Varient Value Combination
-
-
-@login_required(login_url="superadmin:login")
-def generate_varients(request, id):
-    if request.method == 'GET':
-        selected_variations = request.GET.get('selected_variations')
-        option_values_comb = request.GET.getlist('option_values_comb')
-        product_item_title = request.GET.getlist('product_item_title')
-        product_item_price = request.GET.getlist('product_item_price')
-        product_item_dicount_price = request.GET.getlist(
-            'product_item_dicount_price')
-        product_item_stock = request.GET.getlist('product_item_stock')
-
-    prd = Product.objects.get(id=id)
-    selected_variations_li = list(selected_variations.split(","))
-    for svi in selected_variations_li:
-        prd_variation_link_data = ProductVarientLink.objects.create(
-            product=prd,
-            varient_id=svi
-        )
-        prd_variation_link_data.save()
-    for i in range(len(option_values_comb)):
-        # print(option_values_comb[i])
-        # print(list(option_values_comb[i]))
-        varient_values_li = list(option_values_comb[i].split(","))
-        # print(type(varient_values_li))
-        # print(varient_values_li)
-
-        product_item = ProductItem(
-            title=product_item_title[i],
-            product=prd,
-            price=product_item_price[i],
-            discount_price=product_item_dicount_price[i],
-            stock_count=product_item_stock[i],
-            image=prd.image,
-            user=request.user,
-            is_default=False
-        )
-        product_item.save()
-        for k in varient_values_li:
-            # k = k.replace("'",'')
-            # print(k)
-            # print(type(int(k)))
-            # print(option_values_comb[i])
-            product_conf = ProductVarientConfigeration(
-                product_item=product_item,
-                varient_value_id=k
-            )
-            product_conf.save()
-
-    # print(type(option_values_comb[0]))
-    return HttpResponse(option_values_comb)
 
 
 # Order List
@@ -707,6 +495,17 @@ def order_cancel_request(request, id):
     }
 
     return render(request, 'admin/order/cancel_request.html', context)
+
+
+def sales_report(request):
+    orders = CartOrderItems.objects.filter(product_status='completed').order_by('-id')
+    context = {
+        'orders': orders,
+    }
+    context = {
+
+    }
+    return render(request, 'admin/report/sales.html', context)
 
 ############# Logout ###############
 

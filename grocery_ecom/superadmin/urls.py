@@ -32,15 +32,18 @@ urlpatterns = [
     path("product/images/<int:id>/", views.product_images, name="product_images"),
     path("product/image/delete/<int:id>/<int:product_id>/", views.delete_product_image, name="delete_product_image"),
 
-    path("product_variations/<int:id>/", views.product_variations, name="product_variations"),
-    path("product/varients/<int:id>/", views.product_varients_manage, name="product_varient_manage"),
-    path("product/varients/values/<int:id>/", views.varients_values_manage, name="varients_values_manage"),
-    path("product/varients/values/combination/<int:id>/", views.varients_values_combination, name="varients_values_combination"),
-    path("product/generate_varients/<int:id>/", views.generate_varients, name="generate_varients"),
+    # path("product_variations/<int:id>/", views.product_variations, name="product_variations"),
+    # path("product/varients/<int:id>/", views.product_varients_manage, name="product_varient_manage"),
+    # path("product/varients/values/<int:id>/", views.varients_values_manage, name="varients_values_manage"),
+    # path("product/varients/values/combination/<int:id>/", views.varients_values_combination, name="varients_values_combination"),
+    # path("product/generate_varients/<int:id>/", views.generate_varients, name="generate_varients"),
     # path("add_product/", views.add_product, name="add_product"),
 
-    path("product_varients/", views.product_varients, name="product_varients"),
-    path("varient_values/<int:id>/", views.varient_values, name="varient_values"),
+    # path("product_varients/", views.product_varients, name="product_varients"),
+    # path("varient_values/<int:id>/", views.varient_values, name="varient_values"),
+
+    # Reports
+    path("report/sales/", views.sales_report, name="sales_report"),
     path('logout/', views.admin_logout, name='logout'),
 
 ]

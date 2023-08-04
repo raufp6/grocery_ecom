@@ -1,6 +1,6 @@
 from django.db import models
 from django import forms
-from core.models import Category, Product, Address,ProductItem,Varient,Coupon
+from core.models import Category, Product, Address,ProductItem,Coupon
 from django.forms import fields
 from django.core.validators import FileExtensionValidator
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -22,11 +22,7 @@ STATUS = [
     ('true', 'Yes'), ('false', 'No')
 ]
 
-VARIENT_CHOiCE = (
-    ("text", "Text"),
-    ("color", "Color"),
-    ("image", "Image"),
-)
+
 
 
 class CategoryForm(forms.ModelForm):
@@ -50,22 +46,7 @@ class CategoryForm(forms.ModelForm):
             'is_available': forms.Select(attrs={'class': 'form-control', 'id': 'choicewa'}, choices=STATUS),
         }
 
-class VarientForm(forms.ModelForm):
-    name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'placeholder': "Varient Name", 'class': "form-control"}),
-        error_messages={
-            'required': "Please Enter Varient name"
-        },
-    )
-    type = forms.ChoiceField(choices=VARIENT_CHOiCE, widget=forms.Select(
-        attrs={'placeholder': "Select", 'class': 'form-control'}))
 
-    class Meta:
-        model = Varient
-        fields = ['name','type']
-
-        # fields = "__all__"
 
 class CouponForm(forms.ModelForm):
     code = forms.CharField(

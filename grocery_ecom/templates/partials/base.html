@@ -337,7 +337,7 @@
                                         <ul style="width: 100%;">
                                             {% for c in categories %}
                                             <li>
-                                                <a href="{% url 'core:search'%}?c={{c.id}}&query="> <img src="{{ c.image.url }}" alt="" />{{ c.title }}</a>
+                                                <a href="{% url 'core:search'%}?c={{c.id}}&query=&min_price=&max_price"> <img src="{{ c.image.url }}" alt="" />{{ c.title }}</a>
                                             </li>
                                             {% endfor %}
                                         </ul>
@@ -505,6 +505,8 @@
                         <form action="{% url 'core:search' %}" method="get">
                             <input type="text" name="query" placeholder="Search for items…" />
                             <input type="hidden" name="c" value="">
+                            <input type="hidden" name="min_price" value="">
+                            <input type="hidden" name="max_price" value="">
                             <button type="submit"><i class="fi-rs-search"></i></button>
                         </form>
                     </div>

@@ -45,7 +45,7 @@
         <!-- card-header end// -->
         <div class="card-body">
             {% if products is not None%}
-                {% for p in products %}
+                {% for p in page_obj.object_list %}
                 <article class="itemlist">
                     <div class="row align-items-center">
                         <div class="col col-check flex-grow-0">
@@ -79,8 +79,8 @@
                                 <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                 <div class="dropdown-menu">
                                     <a href="{% url 'superadmin:product_edit' p.id %}" class="dropdown-item link-edit-category"> <i class="material-icons md-edit"></i> Edit </a>        
-                                    <!-- <a href="{% url 'superadmin:product_varient_manage' p.id %}" class="dropdown-item link-edit-category"> Product Varients </a> -->
-                                    <a href="{% url 'superadmin:product_variations' p.id %}" class="dropdown-item link-edit-category"> Product Varients </a>
+                                    <a href="#" class="dropdown-item link-edit-category"> Product Varients </a>
+                                    
                                     <a href="{% url 'superadmin:product_images' p.id %}" class="dropdown-item link-edit-category"> Image Gallery </a>
                                     <a href="#" class="dropdown-item link-edit-category"> <i class="material-icons md-delete_forever"></i> Delete </a>
                                 </div>
@@ -108,14 +108,28 @@
     <div class="pagination-area mt-30 mb-50">
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-start">
-                <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                <li class="page-item"><a class="page-link" href="#">02</a></li>
-                <li class="page-item"><a class="page-link" href="#">03</a></li>
-                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                <li class="page-item"><a class="page-link" href="#">16</a></li>
+                
+                {%if page_obj.has_previous %} {# whether the previous page exists #}
                 <li class="page-item">
-                    <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                    <a class="btn float-end btn-light btn-sm rounded font-md" href="?page=1">First</a>
                 </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{page_obj.previous_page_number}}"><i class="material-icons md-chevron_left"></i></a>
+                </li>
+                {% endif %}
+                <!-- <li class="page-item active"><a class="page-link" href="#">01</a></li> -->
+                <li class="page-item"><a class="page-link" href="#"> <span>{{page_obj.number}}</span> {# the current page number #}</a></li>
+                <!-- <li class="page-item"><a class="page-link" href="#">03</a></li>
+                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                <li class="page-item"><a class="page-link" href="#">16</a></li> -->
+                {%if page_obj.has_next %} {# whether the next page exists #}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{page_obj.next_page_number}}"><i class="material-icons md-chevron_right"></i></a>
+                </li>
+                <li class="page-item">
+                    <a class="btn float-end btn-light btn-sm rounded font-md" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                </li>
+                {% endif %}
             </ul>
         </nav>
     </div>

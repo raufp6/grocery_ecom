@@ -30,13 +30,23 @@ def product_list(request):
 def search(request):
     products = Product.objects.filter(product_status="published")
     query = request.GET['query']
+    c = request.GET['c']
+    min_price = request.GET['min_price']
+    max_price = request.GET['max_price']
     if query:
         products = Product.objects.filter(Q(description__icontains = query) | Q(title__icontains = query))
     if request.GET['c']:
         products = Product.objects.filter(category=request.GET['c'])
+    
+    if request.GET['min_price'] and request.GET['max_price']:
+        products = Product.objects.filter(discount_price__range=(min_price, max_price))
     context = { 
         'products':products,
-        'query':query
+        'query':query,
+        'max_price':max_price,
+        'min_price':min_price,
+        'c':c
+
     }
     return render(request,'core/products.html',context)
 
