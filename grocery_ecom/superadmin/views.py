@@ -9,6 +9,8 @@ from core.forms import CategoryForm, ProductForm,CouponForm
 from django.core.exceptions import ValidationError
 import itertools
 from django.core.paginator import Paginator,EmptyPage, PageNotAnInteger
+from django.db.models import Sum
+from django.db.models.functions import TruncDate
 
 
 #############  Login ###############
@@ -417,6 +419,11 @@ def order_details(request, id):
 
         order.product_status = status
         order.save()
+        if status == 'completed':
+            order_items = order.order_items.all()
+            for item in order_items:
+                item.product_status = status
+                item.save()
         messages.success(request, "Order updated")
 
     context = {
@@ -448,13 +455,21 @@ def order_cancel_request(request, id):
 
 
 def sales_report(request):
-    orders = CartOrderItems.objects.filter(product_status='completed').order_by('-id')
+    orders = CartOrder.objects.filter(product_status='completed').order_by('-id')
+    # sales_data = CartOrder.objects.values('user').annotate(Sum('price'))
+    start_date = request.GET.get('from')
+    end_date = request.GET.get('to')
+    print(start_date)
+    if start_date is not None or end_date is not None:
+        order_items = CartOrderItems.objects.filter(order__order_date__gte=start_date, order__order_date__lte=end_date,order__product_status='completed')
+    else:
+        order_items = CartOrderItems.objects.filter(order__product_status='completed')
+    print(order_items)
     context = {
         'orders': orders,
+        'order_items':order_items
     }
-    context = {
-
-    }
+    
     return render(request, 'admin/report/sales.html', context)
 
 ############# Logout ###############
