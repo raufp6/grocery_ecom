@@ -11,23 +11,34 @@
     </div>
     <div class="card mb-4">
         <header class="card-header">
+            <form action="" method="get">
             <div class="row gx-3">
-                <form action="" method="get">
                 
-                    <div class="col-lg-2 col-6">
+                
+                    <div class="col-lg-2 col-6 col-md-3">
                         <label for="">From</label>
                         <input type="date" name="from" class="form-control" >
                     </div>
-                    <div class="col-lg-2 col-6">
+                    <div class="col-lg-2 col-6 col-md-3">
                         <label for="">To</label>
                         <input type="date" name="to" class="form-control" >
                     </div>
-                    <div class="col-lg-2 col-6">
+                    <div class="col-lg-2 col-6 col-md-3">
                         <br>
                         <button type="submit" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Filter</button>
+                        
                     </div>
-                </form>
+                    <div class="col-lg-3 col-6 col-md-3">
+                        <br>
+                        <a href="{% url 'superadmin:sales_report_pdf'%}?from={{request.GET.from}}&to={{request.GET.to}}" class="btn btn-primary">Download pdf</a>
+                    </div>
+                    <div class="col-lg-3 col-6 col-md-3">
+                        <br>
+                        <a href="{% url 'superadmin:sales_report_excel'%}?from={{request.GET.from}}&to={{request.GET.to}}" class="btn btn-primary">Download Exel</a>
+                    </div>
+                
             </div>
+            </form>
         </header>
         <!-- card-header end// -->
         <div class="card-body">

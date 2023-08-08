@@ -63,6 +63,8 @@
         <!-- toastr -->
         <script src="{% static 'assets/js/toastr.js' %}" type="text/javascript"></script>
         <script src="{% static 'admin/assets/js/app_script.js' %}" type="text/javascript"></script>
+        {% block extrascript %}
+        {% endblock extrascript %}
         {% if messages %}
             {% for message in messages %}
                 {% if 'success' in message.tags %}

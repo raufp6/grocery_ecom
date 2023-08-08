@@ -54,7 +54,11 @@
                                                 <td>
                                                     <div class="item-desc-1">
                                                         <span>{{ item.product.title }}</span>
-                                                        <!-- <small>SKU: FWM15VKT</small> -->
+                                                        {% if item.variations.all %}
+                                                            {% for v in item.variations.all %}
+                                                                {{v.variation_category | capfirst }} : {{v.variation_value | capfirst}} <br>
+                                                            {% endfor %}
+                                                        {% endif %}
                                                     </div>
                                                 </td>
                                                 <td class="text-center">₹{{item.price}}</td>

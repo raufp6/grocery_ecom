@@ -6,8 +6,7 @@
 <section class="content-main">
     <div class="content-header">
         <div>
-            <h2 class="content-title card-title">Coupons</h2>
-            <p>Add, edit or delete a Coupons</p>
+            <h2 class="content-title card-title">Category Offer</h2>
         </div>
         <div>
             <input type="text" placeholder="Search Categories" class="form-control bg-white" />
@@ -16,11 +15,53 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-2 right">
-                    <a class="btn btn-primary right" href="">Add New</a>
+                
+                <div class="col-md-3">
+                    
+                    <form action="" method="POSt" >
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            
+                            <label for="product_name" class="form-label">Offer Name</label>
+                            {{ form.name }}
+                            {{ form.errors.name }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" name="category">
+                                <option value="">Select One</option>
+                                {% for c in categories %}
+                                    <option value="{{c.id}}">{{c.title}}</option>
+                                {% endfor %}
+                                
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Discount(%)</label>
+                            {{ form.off_percent }}
+                            {{ form.errors.off_percent }}
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Valid from</label>
+                            <input type="date" name="start_date">
+                            {{ form.errors.start_date }}
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Valid to</label>
+                            <input type="date" name="end_date">
+                            {{ form.errors.end_date }}
+                        </div>
+                        
+                        
+                        
+                        <div class="d-grid">
+                            <button class="btn btn-primary" type="submil">Create</button>
+                           
+                        </div>
+                    </form>
                 </div>
-
-                <div class="col-md-12">
+                <div class="col-md-9">
                     <div class="table-responsive">
                         <table class="table table-hover" id="table">
                             <thead>

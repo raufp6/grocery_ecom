@@ -5,12 +5,19 @@ from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User,OrderCancellationReason,OrderCancellation,Coupon,Offer
-from core.forms import CategoryForm, ProductForm,CouponForm
+from core.forms import CategoryForm, ProductForm,CouponForm,OfferForm
 from django.core.exceptions import ValidationError
 import itertools
 from django.core.paginator import Paginator,EmptyPage, PageNotAnInteger
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.db.models.functions import TruncDate
+from reportlab.pdfgen import canvas
+from io import BytesIO
+import openpyxl
+import calendar
+from django.utils import timezone
+from django.db.models.functions import TruncMonth
+from datetime import timedelta
 
 
 #############  Login ###############
@@ -36,9 +43,48 @@ def admin_login(request):
 
 @login_required(login_url="superadmin:login")
 def dashboard(request):
+    revenue = CartOrderItems.objects.filter(product_status='completed').aggregate(sum=Sum(F('price')*F('qty')))["sum"]
+    total_completed_order = CartOrder.objects.filter(product_status='completed').count()
+    product_count = Product.objects.count()
+    user_count = User.objects.count()
+    recent_sale = CartOrder.objects.all().order_by('-id')[:5]
+    
+    # sale report by month for graph
+    today = timezone.now().date()
+    five_months_ago = today - timedelta(days=150)
+    sales_report = (
+    CartOrder.objects
+    .annotate(month=TruncMonth('order_date'))
+    .filter(order_date__gte=five_months_ago, product_status='completed')
+    .values(month = F('month__month'))
+    .annotate(total_sales=Sum('price'))
+    .order_by('month')
+    )
 
-    return render(request, 'admin/dashboard.html')
+    for entry in sales_report:
+        entry['month_name'] = get_month_name(entry['month'])
 
+    print(sales_report)
+
+    context = {
+        'revenue':revenue,
+        'total_completed_order':total_completed_order,
+        'product_count':product_count,
+        'user_count':user_count,
+        'recent_sale':recent_sale
+    }
+    return render(request, 'admin/dashboard.html',context)
+
+
+# for getting month name--------------------------------------
+
+
+
+def get_month_name(month_number):
+    if 1 <= month_number <= 12:
+        return calendar.month_name[month_number]
+    else:
+        return None
 
 @login_required(login_url="superadmin:login")
 def category_list(request):
@@ -152,6 +198,7 @@ def product_list(request):
     except EmptyPage:
         # if page is empty then return last page
         page_obj = p.page(p.num_pages)
+
     context = {
         'products': products,
         'page_obj':page_obj
@@ -369,22 +416,25 @@ def coupon_update(request,id):
 
 @login_required(login_url="superadmin:login")
 def category_offers(request):
+    form = OfferForm()
     if request.method == 'POST':
-        form = CouponForm(request.POST)
+        form = OfferForm(request.POST)
         if form.is_valid():
             form.save()
 
-            messages.success(request, "Coupon added")
+            messages.success(request, "Category offer added")
         else:
-            messages.error(request, "Please check")
+            messages.error(request, form.errors)
 
-        return redirect('superadmin:coupons')
+        return redirect('superadmin:category_offers')
     
     offers = Offer.objects.all().order_by('-id')
-    form = CouponForm()
+    
+    categories = Category.objects.all().order_by('-id')
     context = {
         'offers':offers,
-        'form':form
+        'form':form,
+        'categories':categories
     }
     return render(request, 'admin/offer/list.html', context)
 
@@ -459,18 +509,87 @@ def sales_report(request):
     # sales_data = CartOrder.objects.values('user').annotate(Sum('price'))
     start_date = request.GET.get('from')
     end_date = request.GET.get('to')
-    print(start_date)
+    
     if start_date is not None or end_date is not None:
         order_items = CartOrderItems.objects.filter(order__order_date__gte=start_date, order__order_date__lte=end_date,order__product_status='completed')
     else:
         order_items = CartOrderItems.objects.filter(order__product_status='completed')
-    print(order_items)
     context = {
         'orders': orders,
         'order_items':order_items
     }
     
     return render(request, 'admin/report/sales.html', context)
+
+
+def sales_report_pdf(request):
+    start_date = request.GET.get('from')
+    end_date = request.GET.get('to')
+    
+    if start_date is not None or end_date is not None:
+        order_items = CartOrderItems.objects.filter(order__order_date__gte=start_date, order__order_date__lte=end_date,order__product_status='completed')
+    else:
+        order_items = CartOrderItems.objects.filter(order__product_status='completed')
+    
+    
+    # Generate PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
+
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer)
+
+    pdf.drawString(72, 800, "Sales Report")
+    pdf.drawString(72, 770, "OrderNo")
+    pdf.drawString(200, 770, "Product")
+    pdf.drawString(500, 770, "Total")
+    pdf.drawString(600, 770, "Date")
+
+    y = 750
+    for entry in order_items:
+        
+        date_str = entry.order.order_date.strftime('%Y-%m-%d')
+        pdf.drawString(72, y, str(entry.order.orderno))
+        pdf.drawString(200, y, str(entry.product.title))
+        pdf.drawString(500, y, str(entry.price))
+        pdf.drawString(600, y, date_str)
+        
+        y -= 20
+
+    pdf.save()
+    pdf_buffer = buffer.getvalue()
+    buffer.close()
+    response.write(pdf_buffer)
+    return response
+
+
+def sales_report_excel(request):
+    start_date = request.GET.get('from')
+    end_date = request.GET.get('to')
+    
+    if start_date is not None or end_date is not None:
+        order_items = CartOrderItems.objects.filter(order__order_date__gte=start_date, order__order_date__lte=end_date,order__product_status='completed')
+    else:
+        order_items = CartOrderItems.objects.filter(order__product_status='completed')
+
+    # Generate Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="sales_report.xlsx"'
+
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+
+    worksheet.append(["Order No","Product","Price", "Date"])
+    for entry in order_items:
+        date_str = entry.order.order_date.strftime('%Y-%m-%d')
+        worksheet.append([entry.order.orderno,entry.product.title,entry.price,date_str])
+
+    excel_file = BytesIO()
+    workbook.save(excel_file)
+    excel_file.seek(0)
+    response.write(excel_file.getvalue())
+    excel_file.close()
+    return response
 
 ############# Logout ###############
 
