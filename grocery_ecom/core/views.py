@@ -10,6 +10,7 @@ import razorpay,json
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.utils import timezone
+from django.core import serializers
 
 def index(request):
     products = Product.objects.filter(featured=True,product_status="published")
@@ -63,14 +64,38 @@ def category_list(request):
 def product_detail(request,pid,slug):
     product = Product.objects.get(pid=pid)
     p_images = product.p_images.all()
-    # wishlist = WhishList.objects.get(user=request.user)
-    # wishlist_products = wishlist.products.filter(product_id = product.id)
-    # print(wishlist_products)
+    
     context = { 
         'product':product,
         'p_images': p_images,
     }
     return render(request,'core/product-details.html',context)
+
+def get_variation_price(request):
+    if request.GET['id']:
+        
+        try:
+            if request.GET['id']:
+                variation = Variation.objects.get(id=int(request.GET['id']))
+                
+                data = {
+                    'price':float(variation.product.get_base_selling_price()+ variation.price),
+                    'mrp_price':variation.mrp_price if variation.mrp_price !=0.00 else variation.product.price,
+                }
+                print(data["mrp_price"])
+                new_off = ((float(data["price"]) / float(data["mrp_price"])) * 100)-100
+                data.update({'off':round(new_off,2)})
+                print(data)
+                response = {
+                    'status':True,
+                    'data':data
+                }
+        except:
+            response = {
+                'status':False,
+                'data':None
+            }
+    return JsonResponse(response)
 
 def cart(request):
     # try: 
@@ -143,9 +168,11 @@ def add_cart_(request):
     else:
         size = None
     # color       = request.GET['color']
+    
 
     product = Product.objects.get(id = product_id)
     if size is not None:
+        print("product have variations...")
         try:
             variation = Variation.objects.get(product=product,variation_category__iexact = 'package_size',variation_value__iexact = size)
             product_variation.append(variation)
@@ -183,6 +210,8 @@ def add_cart_(request):
 
         if size is not None:
             if product_variation in ex_var_list:
+                print("product have variations...")
+                print(existing_varaiation)
                 # increase the item quanity
                 index = ex_var_list.index(product_variation) 
                 item_id = id[index]

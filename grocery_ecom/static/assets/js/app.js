@@ -182,3 +182,37 @@ function order_cancel_reason_change(val,item_id){
         $('#cancel_order_item_cancel_button_'+item_id).hide()   
     }
 }
+function get_vaarient_price(val){
+    var current_price = parseInt($(".product-base-price").val());
+    
+    var data = {
+        'id':val
+    }
+    $.ajax({
+        url:"/get_variation_price/",
+        type:'GET',
+        data:data,
+        dataType:'json',
+        
+        beforeSend:function(){
+            console.log("Getting product variation price..");
+        },
+        success:function(resp){
+            if(resp.status){
+                console.log(resp.data)
+                $(".product-selleing-price").val(resp.data.price)
+                $(".current-price").html("₹"+resp.data.price)
+                if(resp.data.mrp_price != 0){
+                    $(".old-price").html("₹"+resp.data.mrp_price)
+                }
+                
+                
+                
+            }else{
+                alerts(resp.message,'error')
+            }
+        },error:function(resp){
+            alerts("Error Occured",'error');
+        }
+    });
+}

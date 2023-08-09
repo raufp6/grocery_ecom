@@ -87,10 +87,10 @@
                                 {% if product.variation_set.all %}
                                 <div class="attr-detail attr-size mb-30">
                                     <strong class="mr-10">Package Size: </strong>
-                                    <select class="form-control package_size-{{ product.id }}" name="size" id="size" required>
+                                    <select class="form-control package_size-{{ product.id }}" data-link="{% url 'core:get_variation_price' %}" onchange="get_vaarient_price(this.value)" name="size" id="size" required>
                                         <option value="" disabled selected>Choose package size</option>
                                         {% for i in product.variation_set.sizes %}
-                                            <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+                                            <option value="{{ i.id | lower }}">{{ i.variation_value | capfirst }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -109,7 +109,9 @@
                                     <div class="product-extra-link2">
                                         <input type="hidden" class="product-id" value="{{ product.id }}" name="product_id">
                                         <input type="hidden" class="product-qty-{{ product.id }}" value="1" name="qty">
-                                        <input type="hidden" class="product-selleing-price" value="{{ product.discount_price }}" name="product_price">
+                                        <input type="hidden" class="product-discount-price" value="{{ product.discount_price }}" name="product_price">
+                                        <input type="hidden" class="product-base-price" value="{{ product.get_base_selling_price }}" name="product_base_price">
+                                        <input type="hidden" class="product-selleing-price" value="{{ product.get_offer_price_by_category }}" name="product_selling_price">
                                         <input type="hidden" class="product-image" value="{{ product.image.url }}" name="product_image">
                                         <input type="hidden" class="product-title" value="{{ product.title }}" name="product_title">
                                         

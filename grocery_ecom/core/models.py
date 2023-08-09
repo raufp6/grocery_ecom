@@ -173,11 +173,17 @@ class Product(models.Model):
         return self.title
 
     def get_percentage(self):
-        new_price = (self.discount_price / self.price) * 100
+        new_price = (self.get_base_selling_price() / self.price) * 100
         return new_price - 100
     
     def get_offer_price_by_category(self):
         return int(self.discount_price - (self.discount_price * self.category.offer.off_percent / 100))
+    
+    def get_base_selling_price(self):
+        if self.category.offer.off_percent:
+            return int(self.discount_price - (self.discount_price * self.category.offer.off_percent / 100))
+        else:
+            return self.discount_price
 
 class ProductItem(models.Model):
     piid = ShortUUIDField(unique=True, length=10, max_length=20)
@@ -240,6 +246,10 @@ class Variation(models.Model):
     variation_category = models.CharField(max_length=100,choices=variation_category_choice)
     variation_value = models.CharField(max_length=100,null=True)
     is_active = models.BooleanField(default=True)
+    price = models.DecimalField(max_digits=100, decimal_places=2, default=0.00,null=True,blank=True)
+    mrp_price = models.DecimalField(max_digits=100, decimal_places=2, default=0.00,null=True,blank=True)
+    in_stock = models.BooleanField(default=True)
+    stock_count = models.IntegerField(default=10)
     created_date = models.DateTimeField(auto_created=True,null=True)
 
     objects = VariationManager()
@@ -250,6 +260,9 @@ class Variation(models.Model):
 
     def __str__(self):
         return self.variation_value
+    
+    def get_variation_price(self):
+        return int(self.product.discount_price + self.price)
 
 
 
