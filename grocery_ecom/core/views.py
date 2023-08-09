@@ -174,7 +174,7 @@ def add_cart_(request):
     if size is not None:
         print("product have variations...")
         try:
-            variation = Variation.objects.get(product=product,variation_category__iexact = 'package_size',variation_value__iexact = size)
+            variation = Variation.objects.get(product=product,variation_category__iexact = 'package_size',pk = size)
             product_variation.append(variation)
         except:
             pass
