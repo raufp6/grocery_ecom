@@ -12,16 +12,24 @@ def default(request):
     if request.user.is_authenticated:
         try:
             cart = Cart.objects.get(user_id = request.user)
-            cart_items = CartItem.objects.filter(cart = cart)
-            # total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
-            for item in  cart_items:
+            cart_items = CartItem.objects.filter(cart = cart).order_by('-id')
+            for item in cart_items:
                 try:
-                    if item.product.category.offer:
-                        total_amount += item.qty * item.product.get_offer_price_by_category()
-                        category_offer += item.product.discount_price - item.product.get_offer_price_by_category()
+                    if item.variations.all():
+                        for v in item.variations.all():
+                            total_amount += v.get_variation_product_price()
+                            total_mrp_amount += v.mrp_price
+                    else:
+                        if item.product.category.offer:
+                            total_amount += item.qty * item.product.get_offer_price_by_category()
+                            category_offer += item.product.discount_price - item.product.get_offer_price_by_category()
+                        total_mrp_amount += item.product.price * item.qty 
                 except:
                     total_amount += item.product.discount_price * item.qty
-            total_mrp_amount = sum(item.product.price * item.qty for item in cart_items)
+                    total_mrp_amount += item.product.price * item.qty 
+                    
+                    
+            
         except:
             cart = None
             cart_items = None

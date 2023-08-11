@@ -453,7 +453,7 @@ def convertTupleToString(tup):
 # Order List
 @login_required(login_url="superadmin:login")
 def order_list(request):
-    orders = CartOrder.objects.all().order_by('-id')
+    orders = CartOrder.objects.filter(is_ordered = True).order_by('-id')
     context = {
         'orders': orders,
     }

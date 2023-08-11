@@ -79,13 +79,12 @@ def get_variation_price(request):
                 variation = Variation.objects.get(id=int(request.GET['id']))
                 
                 data = {
-                    'price':float(variation.product.get_base_selling_price()+ variation.price),
+                    'price':variation.get_variation_product_price(),
                     'mrp_price':variation.mrp_price if variation.mrp_price !=0.00 else variation.product.price,
                 }
-                print(data["mrp_price"])
+    
                 new_off = ((float(data["price"]) / float(data["mrp_price"])) * 100)-100
                 data.update({'off':round(new_off,2)})
-                print(data)
                 response = {
                     'status':True,
                     'data':data
@@ -435,41 +434,52 @@ def placeorder(request):
             messages.error(request, "Please Select Delivery Address")
             return redirect('core:checkout')
         
+        # Fetch user address 
         address = Address.objects.get(pk = shipping_address)
-
         
-        # total_amount = sum(item.product.discount_price * item.qty for item in cart_items)
+        # Calculating Cart Total
         total_amount = 0
-        for item in  cart_items:
+        total_mrp_amount = 0
+        category_offer = 0
+        for item in cart_items:
             try:
-                if item.product.category.offer:
-                    total_amount += item.qty * item.product.get_offer_price_by_category()
+                if item.variations.all():
+                    for v in item.variations.all():
+                        total_amount += v.get_variation_product_price()
+                        total_mrp_amount += v.mrp_price
+                else:
+                    if item.product.category.offer:
+                        total_amount += item.qty * item.product.get_offer_price_by_category()
+                        category_offer += item.product.discount_price - item.product.get_offer_price_by_category()
+                    total_mrp_amount += item.product.price * item.qty 
             except:
                 total_amount += item.product.discount_price * item.qty
+                total_mrp_amount += item.product.price * item.qty 
 
         payment_type = request.POST.get('payment_option')
         order = CartOrder.objects.create(user=request.user, price=total_amount,payment_type=payment_type)
+        
         for i in cart_items:
             try:
-                if i.product.category.offer:
-                    product_price = i.product.get_offer_price_by_category()
+                if i.variations.all():
+                    for v in i.variations.all():
+                        product_price = v.get_variation_product_price()
+                else:
+                    if i.product.category.offer:
+                        product_price = i.product.get_offer_price_by_category()
             except:
                 product_price = i.product.discount_price
-            product_sub_total = product_price * i.qty
-            # print(type(product_price))
-            # return HttpResponse(type(product_sub_total))
             
-
+            product_sub_total = product_price * i.qty
             
             order_item = CartOrderItems(
-                order = order,
-                invoice_no = "OD-"+order.orderno,
-                product    = i.product,
-                qty     = i.qty,
-                price   = float(product_price),
-                total   = float(product_sub_total),
-                image   = i.product.image.url,                
-                
+                order       = order,
+                invoice_no  = "OD-"+order.orderno,
+                product     = i.product,
+                qty         = i.qty,
+                price       = float(product_price),
+                total       = float(product_sub_total),
+                image       = i.product.image.url,                
             )
             order_item.save()
             cart_item = CartItem.objects.get(id=i.id)
@@ -506,11 +516,16 @@ def placeorder(request):
         
         if payment_type == 'online':
             return redirect('core:payment',order.orderno)
+        else:
+            order.is_ordered = True
+            order.save()
             
         
         cart.coupon = None
         cart.save()
         cart_items.delete()
+        if 'discount_amount' in request.session and request.session['discount_amount']>0:
+            del request.session['discount_amount']
         messages.success(request, "Your Order placed successfully")
         return redirect('core:checkout_success',order.orderno)
     else:
@@ -617,6 +632,8 @@ def checkout_success(request,orderno):
     cart.coupon = None
     cart.save()
     cart_items.delete()
+    if 'discount_amount' in request.session and request.session['discount_amount']>0:
+        del request.session['discount_amount']
     order = CartOrder.objects.get(orderno=orderno)
     context = {
         'order':order
