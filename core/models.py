@@ -86,8 +86,8 @@ class Category(models.Model):
         #     ),
         # ]
 
-    def category_image(self):
-        return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
+    # def category_image(self):
+    #     return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
 
     def __str__(self):
         return self.title
