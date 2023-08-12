@@ -72,7 +72,7 @@ def validate_expiry_date(value):
 class Category(models.Model):
     cid = ShortUUIDField(unique=True, length=10, max_length=20,prefix="cat", alphabet="abcdefghi123456789")
     title = models.CharField(max_length=100, default=None)
-    image = models.FileField(upload_to="category",default='category-icon.png',validators=[FileExtensionValidator(['jpg', 'png','webp','jpeg', 'svg'])])
+    # image = models.FileField(upload_to="category",default='category-icon.png',validators=[FileExtensionValidator(['jpg', 'png','webp','jpeg', 'svg'])])
     is_featured = models.BooleanField(default=False)
     is_available = models.BooleanField(default=True,null=True)
     
