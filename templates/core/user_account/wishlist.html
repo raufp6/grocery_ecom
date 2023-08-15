@@ -18,7 +18,7 @@
                 <h1 class="heading-2 mb-10">Your Wishlist</h1>
                 <div class="d-flex justify-content-between">
                     <h6 class="text-body">There are <span class="text-brand">{{ products|length }}</span> products in your wishlist</h6>
-                    <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Wishlist</a></h6>
+                    <!-- <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Wishlist</a></h6> -->
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@
                         <thead>
                             <tr class="main-heading">
                                 
-                                <th scope="col" colspan="2">Product</th>
+                                <th scope="col" >Product</th>
                                 <th scope="col"> Price</th>
                                 <th scope="col" class="end">Remove</th>
                             </tr>
@@ -38,11 +38,11 @@
                             {% for item in products %}
                             <tr class="pt-30">
                                 
-                                <td class="image product-thumbnail pt-40"><img src="{{ item.product.image.url }}" alt="#"></td>
-                                <td class="product-des product-name">
-                                    <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="">{{item.product.title|truncatechars:20 }}</a></h6>
-                                    
+                                <td class="image product-thumbnail pt-40">
+                                    <a class="" href="{% url 'core:product_detail' item.product.pid item.product.title|slugify %}"><img src="{{ item.product.image.url }}" alt="#"></a>
+                                    <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="{% url 'core:product_detail' item.product.pid item.product.title|slugify %}">{{item.product.title|truncatechars:20 }}</a></h6>
                                 </td>
+                                
                                 <td class="price" data-title="Price">
                                     <h4 class="text-body">₹{{item.product.discount_price}} </h4>
                                 </td>
@@ -72,7 +72,7 @@
                         <div class="position-relative newsletter-inner">
                             <div class="newsletter-content">
                                 <h2 class="mb-20">
-                                    Let's fill the empty Basket
+                                    Let's fill the empty Wishlist
                                 </h2>
                                 <a class="btn" href="{% url 'core:index' %}">Continue Shopping</a>
                                 

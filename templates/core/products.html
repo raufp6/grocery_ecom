@@ -23,19 +23,19 @@
             <div class="col-lg-4-5">
                 <div class="shop-product-fillter">
                     <div class="totall-product">
-                        <p>We found <strong class="text-brand">29</strong> items for you!</p>
+                        <p>We found <strong class="text-brand">{{ products|length }}</strong> items for you!</p>
                     </div>
                     <div class="sort-by-product-area">
                         <div class="sort-by-cover mr-10">
-                            <div class="sort-by-product-wrap">
+                            <!-- <div class="sort-by-product-wrap">
                                 <div class="sort-by">
                                     <span><i class="fi-rs-apps"></i>Show:</span>
                                 </div>
                                 <div class="sort-by-dropdown-wrap">
                                     <span> 50 <i class="fi-rs-angle-small-down"></i></span>
                                 </div>
-                            </div>
-                            <div class="sort-by-dropdown">
+                            </div> -->
+                            <!-- <div class="sort-by-dropdown">
                                 <ul>
                                     <li><a class="active" href="#">50</a></li>
                                     <li><a href="#">100</a></li>
@@ -43,9 +43,9 @@
                                     <li><a href="#">200</a></li>
                                     <li><a href="#">All</a></li>
                                 </ul>
-                            </div>
+                            </div> -->
                         </div>
-                        <div class="sort-by-cover">
+                        <!-- <div class="sort-by-cover">
                             <div class="sort-by-product-wrap">
                                 <div class="sort-by">
                                     <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
@@ -63,7 +63,7 @@
                                     <li><a href="#">Avg. Rating</a></li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="row product-grid">
@@ -91,12 +91,12 @@
                                     <a href="{% url 'core:product_detail' product.pid product.title|slugify %}">{{ product.category.title }}</a>
                                 </div>
                                 <h2><a href="{% url 'core:product_detail' product.pid product.title|slugify %}">{{ product.title }}</a></h2>
-                                <div class="product-rate-cover">
+                                <!-- <div class="product-rate-cover">
                                     <div class="product-rate d-inline-block">
                                         <div class="product-rating" style="width: 90%"></div>
                                     </div>
                                     <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                </div> -->
                                 
                                 <div class="product-card-bottom">
                                     <div class="product-price">
@@ -108,9 +108,9 @@
                                         
                                         <span class="old-price">₹{{ product.price }}</span>
                                     </div>
-                                    <div class="add-cart">
+                                    <!-- <div class="add-cart">
                                         <a class="add" href=""><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -128,7 +128,7 @@
                     <ul>
                         {% for c in categories %}
                         <li>
-                            <a href="{% url 'core:search'%}?c={{c.id}}&query="> <img src="{{ c.image.url }}" alt="" />{{c.title}}</a><span class="count">30</span>
+                            <a href="{% url 'core:search'%}?c={{c.id}}&query={{query}}&min_price={{min_price}}&max_price={{max_price}}"> <img src="{{ c.image.url }}" alt="" />{{c.title}}</a>
                         </li>
                         {% endfor %}
                         

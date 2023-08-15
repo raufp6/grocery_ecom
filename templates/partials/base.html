@@ -231,6 +231,8 @@
                             <div class="search-style-2">
                                 <form action="{% url 'core:search' %}" method="get">
                                     <input type="hidden" name="c" value="">
+                                    <input type="hidden" name="min_price" value="">
+                                    <input type="hidden" name="max_price" value="">
                                     <input type="text" name="query" value="{{ query }}" placeholder="Search for items..." />
                                 </form>
                             </div>
@@ -292,13 +294,13 @@
                                                     <a href="{% url 'user:account' %}"><i class="fi fi-rs-user mr-10"></i>My Account</a>
                                                 </li>
                                                 <li>
-                                                    <a href="#"><i class="fi fi-rs-location-alt mr-10"></i>Order Tracking</a>
+                                                    <a href="{% url 'user:orders' %}"><i class="fi fi-rs-location-alt mr-10"></i> My Orders</a>
                                                 </li>
                                                 <li>
-                                                    <a href="#"><i class="fi fi-rs-label mr-10"></i>My Voucher</a>
+                                                    <a href="{% url 'user:address' %}"><i class="fi fi-rs-label mr-10"></i>My Address</a>
                                                 </li>
                                                 <li>
-                                                    <a href="#"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a>
+                                                    <a href="{% url 'core:wishlist' %}"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a>
                                                 </li>
                                                 <li>
                                                     <a href="{% url 'userauths:logout' %}"><i class="fi fi-rs-sign-out mr-10"></i>Log out</a>
