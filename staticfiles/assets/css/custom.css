@@ -1,0 +1,119 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&display=swap");
+
+
+.address-container {
+  max-width: 99vw;
+  margin: 15px auto;
+  padding: 0 15px;
+}
+
+.top-text-wrapper {
+  margin: 20px 0 30px 0;
+}
+
+.top-text-wrapper h4 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.top-text-wrapper code {
+  font-size: 0.85em;
+  background: linear-gradient(90deg, #fce3ec, #ffe8cc);
+  color: #ff2200;
+  padding: 0.1rem 0.3rem 0.2rem;
+  border-radius: 0.2rem;
+}
+
+.tab-section-wrapper {
+  padding: 30px 0;
+}
+
+.grid-wrapper {
+  display: grid;
+  grid-gap: 30px;
+  place-items: center;
+  place-content: center;
+}
+
+.grid-col-auto {
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+}
+
+/* ******************* Main Styeles : Radio Card */
+label.radio-card {
+  cursor: pointer;
+}
+label.radio-card .card-content-wrapper {
+  background: #fff;
+  border-radius: 5px;
+  max-width: 280px;
+  /* min-height: 330px; */
+  padding: 15px;
+  display: grid;
+  box-shadow: 0 2px 4px 0 rgba(219, 215, 215, 0.04);
+  transition: 200ms linear;
+  border: solid 1px #616161;
+}
+label.radio-card .check-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  border: solid 2px #e3e3e3;
+  border-radius: 50%;
+  transition: 200ms linear;
+  position: relative;
+}
+label.radio-card .check-icon:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: 12px;
+  background-position: center center;
+  transform: scale(1.6);
+  transition: 200ms linear;
+  opacity: 0;
+}
+  
+label.radio-card input[type=radio] {
+  appearance: none !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border: none;
+}
+label.radio-card input[type=radio]:checked + .card-content-wrapper {
+  box-shadow: 0 2px 4px 0 rgba(219, 215, 215, 0.5), 0 0 0 2px #3bb77e;
+}
+label.radio-card input[type=radio]:checked + .card-content-wrapper .check-icon {
+  background: #3bb77e;
+  border-color: #3bb77e;
+  transform: scale(1.2);
+}
+label.radio-card input[type=radio]:checked + .card-content-wrapper .check-icon:before {
+  transform: scale(1);
+  opacity: 1;
+}
+label.radio-card input[type=radio]:focus + .card-content-wrapper .check-icon {
+  box-shadow: 0 0 0 4px rgba(48, 86, 213, 0.2);
+  border-color: #3bb77e;
+}
+label.radio-card .card-content img {
+  margin-bottom: 10px;
+}
+label.radio-card .card-content h4 {
+  font-size: 16px;
+  letter-spacing: -0.24px;
+  text-align: center;
+  color: #1f2949;
+  margin-bottom: 10px;
+}
+label.radio-card .card-content h5 {
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+  color: #686d73;
+}
+
+/**/
