@@ -22,31 +22,42 @@
             <div class="col-lg-7">
                 
                 <div class="row">
+                    {% if addresses %}
                     <h4 class="mb-30">Select Delivery Address</h4>
                     <div class="address-">
                         
                         <div class="grid-wrapper grid-col-auto">
                             {% for address in addresses %}   
-                          <label for="radio-card-{{address.id}}" class="radio-card">
-                            <input type="radio" name="shipping_address" id="radio-card-{{address.id}}" value="{{address.id}}" {% if address.is_default %}checked {% endif %}  onclick="set_delicery_address(this.value)"/>
-                            <div class="card-content-wrapper">
-                              <span class="check-icon"></span>
-                              <div class="card-content">
+                            <label for="radio-card-{{address.id}}" class="radio-card">
+                                <input type="radio" name="shipping_address" id="radio-card-{{address.id}}" value="{{address.id}}" {% if address.is_default %}checked {% endif %}  onclick="set_delicery_address(this.value)"/>
+                                <div class="card-content-wrapper">
+                                    <span class="check-icon"></span>
+                                    <div class="card-content">
+                                        
+                                        <h4>{{ address.first_name }} {{ address.last_name }}</h4>
+                                        <h5>{{ address.email }} | {{ address.mobile }}</h5>
+                                        <h5>{{ address.line }} - {{ address.pincode }}</h5>
+                                        <a href="{% url 'user:edit_address' address.id %}?r=checkout">Edit</a>
+                                    </div>
+                                </div>
+                            </label>
+                            {% endfor %}
+                            <label for="" class="radio-card">
                                 
-                                <h4>{{ address.first_name }} {{ address.last_name }}</h4>
-                                <h5>{{ address.email }} | {{ address.mobile }}</h5>
-                                <h5>{{ address.line }} - {{ address.pincode }}</h5>
-                              </div>
-                            </div>
-                          </label>
-                          {% endfor %}
-                          <!-- /.radio-card -->
-        
-                          <!-- /.radio-card -->
+                                <div class="card-content-wrapper">
+                                    
+                                    <div class="card-content">
+                                        
+                                        
+                                        <a href="{% url 'user:add_address' %}?r=checkout">Add New Address</a>
+                                    </div>
+                                </div>
+                            </label>
                         </div>
-                        <!-- /.grid-wrapper -->
-                      </div>
-                      <!-- /.container -->
+                    </div>
+                    {% else %}
+                        <a href="{% url 'user:add_address' %}?r=checkout"><h4 class="mb-30">Add Address</h4></a>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-lg-5">
