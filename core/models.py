@@ -120,8 +120,8 @@ class Vendor(models.Model):
         return self.title
 
 
-class Tags(models.Model):
-    pass
+# class Tags(models.Model):
+#     pass
 
 
 class Brand(models.Model):
@@ -145,7 +145,6 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True,related_name="category")
     title = models.CharField(max_length=100, default=None)
     image = models.ImageField(upload_to="products", default='product-icon.png')
-    # description = models.TextField(null=True, default=None,blank = True)
     description = RichTextUploadingField(null=True, default=None,blank = True)
     price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
     discount_price = models.DecimalField(max_digits=100, decimal_places=2, default=None)

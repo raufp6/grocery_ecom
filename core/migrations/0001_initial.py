@@ -91,12 +91,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Tags',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-            ],
-        ),
-        migrations.CreateModel(
             name='WhishList',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -166,11 +160,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name_plural': 'Product Images',
             },
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='tags',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='core.tags'),
         ),
         migrations.AddField(
             model_name='product',

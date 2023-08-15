@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse
-from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderCancellationReason,OrderCancellation,Wallet,WalletTransaction
+from core.models import Category,Vendor,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderCancellationReason,OrderCancellation,Wallet,WalletTransaction
 from userauths.models import User
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required

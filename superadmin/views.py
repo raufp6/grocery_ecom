@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from core.models import Category, Vendor, Tags, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User,OrderCancellationReason,OrderCancellation,Coupon,Offer
+from core.models import Category, Vendor, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User,OrderCancellationReason,OrderCancellation,Coupon,Offer
 from core.forms import CategoryForm, ProductForm,CouponForm,OfferForm
 from django.core.exceptions import ValidationError
 import itertools
