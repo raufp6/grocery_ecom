@@ -5,6 +5,8 @@
 __pycache__
 db.sqlite3
 media
+/grocery_ecom/settings.py
+grocery_ecom/settings.py
 
 # Backup files # 
 *.bak 
