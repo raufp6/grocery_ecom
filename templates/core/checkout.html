@@ -159,10 +159,16 @@
                                 <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Razorpay</label>
                             </div>
                             <div class="custome-radio">
-                                <input class="form-check-input" required="" type="radio" name="payment_option" value="cod" id="exampleRadios4" checked>
+                                <input class="form-check-input" required="" type="radio" name="payment_option" value="cod" id="exampleRadios4">
                                 <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Cash on delivery</label>
                             </div>
                             
+                            <div class="custome-radio">
+                                <input class="form-check-input" {% if wallet.balance <= final_amount %} disabled {% endif %} type="radio" name="payment_option" value="wallet" id="exampleRadios5">
+                                <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Pay with wallet ( Available Balance: {{wallet.balance}} {% if wallet.balance <= final_amount %} {% endif %})</label>
+                            </div>
+                            
+
                             
                         </div>
                         <div class="payment-logo d-flex">

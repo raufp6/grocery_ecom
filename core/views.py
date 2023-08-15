@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse,HttpResponseBadRequest
-from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress,Variation,Coupon
+from core.models import Category,Vendor,Tags,Brand,Product,ProductItem,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderAddress,Variation,Coupon,Wallet,WalletTransaction
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -403,15 +403,19 @@ def checkout(request):
     try:
         cart = Cart.objects.get(user_id = request.user)
         cart_items = CartItem.objects.filter(cart = cart)
+        
     except:
         messages.error(request, "Your cart is empty")
         return redirect('core:index')
+    
+    wallet, created = Wallet.objects.get_or_create(user=request.user)
     
     if len(cart_items) > 0:
         addresses = Address.objects.filter(user=request.user)
         # merge_carts(request)  # Merge the session cart with the user's cart
         context = { 
-            'addresses':addresses
+            'addresses':addresses,
+            'wallet':wallet
         }
         return render(request, 'core/checkout.html', context)
     else:
@@ -516,6 +520,13 @@ def placeorder(request):
         
         if payment_type == 'online':
             return redirect('core:payment',order.orderno)
+        elif payment_type == 'wallet':
+            user_wallet, created = Wallet.objects.get_or_create(user=order.user)
+            user_wallet.balance -= order.price
+            user_wallet.save()
+
+            user_wallet_transaction = WalletTransaction.objects.create(wallet=user_wallet,amount=order.price,type="debited",description = 'order_placed')
+            user_wallet_transaction.save()
         else:
             order.is_ordered = True
             order.save()

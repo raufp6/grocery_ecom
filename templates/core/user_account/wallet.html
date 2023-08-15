@@ -1,0 +1,71 @@
+{% extends 'partials/base.html' %}
+{% load mathfilters %}
+{% load static %}
+{% block content %}
+<main class="main pages">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> Pages <span></span> My Account
+            </div>
+        </div>
+    </div>
+    <div class="page-content pt-150 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 m-auto">
+                    <div class="row">
+                        <div class="col-md-3">
+                            {% include "core/user_account/left_menu.html" %}
+                        </div>
+                        <div class="col-md-9">
+                            <div class="tab-content account dashboard-content pl-50">
+                                
+                                <div class="tab-pane fade active show" id="address" role="tabpanel" aria-labelledby="address-tab">
+                                    <div class="row">
+                                        <div class="card-header">
+                                            <h3 class="mb-0">Balance Amount: {{wallet.balance}}</h3>
+                                            
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th></th>
+                                                            <th>Description</th>
+                                                            <th>Amount</th>
+                                                            
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for i in wallet_transaction %}
+                                                        <tr>
+                                                            <td>{{i.date|date:"M,d ,Y"}}</td>
+                                                            <td>{{i.type}}</td>
+                                                            <td>{{i.description}}</td>
+                                                            <td> {% if i.type == 'debited' %}-{% endif %}₹{{i.amount}}</td>
+                                                            
+                                                            
+                                                        </tr>
+                                                        {% endfor %}
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content %}

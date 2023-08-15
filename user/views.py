@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse
-from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderCancellationReason,OrderCancellation
+from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderCancellationReason,OrderCancellation,Wallet,WalletTransaction
 from userauths.models import User
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
@@ -186,7 +186,18 @@ def cancel_order_item(request,id):
         cancel_request.save()
         order.price -= order_item.total
         order.save()
-    messages.success(request,"Your order was successfully canceled!")
+            
+    if order_item.order.payment_type == 'online':
+        user_wallet, created = Wallet.objects.get_or_create(user=order.user)
+        user_wallet.balance += order_item.total
+        user_wallet.save()
+
+        user_wallet_transaction = WalletTransaction.objects.create(wallet=user_wallet,amount=order_item.total,type="credited",description = 'order_cancel')
+        user_wallet_transaction.save()
+        messages.success(request,"Your order was successfully canceled! Amount refunded to your wallet")
+    else:
+        messages.success(request,"Your order was successfully canceled!")
+
     return redirect("user:cancel_order_status",id)
     context = { 
         'order':order_item
@@ -264,3 +275,18 @@ def reset_password_change(request):
     }
             
     return render(request,'core/user_account/password_change.html',context)
+
+
+@login_required(login_url="userauths:login")
+def wallet(request):
+    try:
+        wallet = Wallet.objects.get(user=request.user)
+        wallet_transaction = WalletTransaction.objects.filter(wallet=wallet).order_by('-id')
+    except:
+        wallet = 0
+        wallet_transaction = None
+    context = { 
+        'wallet':wallet,
+        'wallet_transaction':wallet_transaction
+    }
+    return render(request,'core/user_account/wallet.html',context)
