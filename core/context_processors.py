@@ -1,4 +1,4 @@
-from core.models import Category,Vendor,Tags,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem
+from core.models import Category,Vendor,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem
 from .cart import add_to_cart, remove_from_cart, get_cart
 from core.views import _session_id,merge_carts
 
