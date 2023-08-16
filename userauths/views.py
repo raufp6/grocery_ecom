@@ -87,6 +87,32 @@ def register_view(request):
     return render(request,'userauths/sign-up.html',context)
 
 
+def send_otp(request,email):
+    user = User.objects.get(username = email)
+    otp = int(random.randint(1000,9999))
+    print("Otp")
+    print(otp)
+    # Send the OTP to the user via email
+    msg = f'OTP Verification, Your OTP is: {otp}' 
+    send_mail(
+        'Veify Email',
+        msg,
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+
+    # Store the OTP in the session for verification
+    request.session['otp'] = otp
+    request.session['email'] = user.username
+
+    # Redirect the user to the OTP verification page
+    messages.success(request, "OTP sent!")
+    return redirect('userauths:verify_otp')
+
+
+
+
 def verify_otp(request):
     if request.method == 'POST':
         user_otp = int(request.POST['otp'])
@@ -104,6 +130,8 @@ def verify_otp(request):
             user = User.objects.get(username = email)
             messages.success(request,f"Hey {user.first_name} your account was created successfully.")
             login(request,user)
+            user.is_verified = True
+            user.save()
 
             return redirect("core:index")
 
@@ -116,14 +144,82 @@ def verify_otp(request):
 
 def password_reset(request):
     if request.method == 'POST':
-        email = request.session.get('email')
+        email = request.POST.get('email')
         try:
             user = User.objects.get(username=email)
+            request.session['reset_email'] = email
+            return redirect("userauths:send_otp_for_reset",email)
         except:
             messages.warning(request,f"User with {email} dose not exist.")
             return redirect("userauths:forgot_password")
             
     return render(request,'userauths/forgot_password.html')
+
+
+def send_otp_for_reset(request,email):
+    user = User.objects.get(username = email)
+    otp = int(random.randint(1000,9999))
+    print("Otp")
+    print(otp)
+    # Send the OTP to the user via email
+    msg = f'OTP Verification, Your OTP is: {otp}' 
+    send_mail(
+        'Veify Email',
+        msg,
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+
+    # Store the OTP in the session for verification
+    request.session['otp'] = otp
+    request.session['email'] = user.username
+
+    # Redirect the user to the OTP verification page
+    messages.success(request, "OTP sent!")
+    return redirect('userauths:verify_otp_reset')
+
+def verify_otp_reset(request):
+    if request.method == 'POST':
+        user_otp = int(request.POST['otp'])
+        saved_otp = request.session.get('otp')
+        if user_otp == saved_otp:
+            # Verification successful
+            email = request.session.get('reset_email')
+            # Create the user account or perform any other necessary actions
+            # ...
+
+            # Clear the session data
+            
+
+            
+            messages.success(request, "Your email verified!.")
+            return redirect("userauths:change_password")
+
+        else:
+            # Verification failed
+            messages.error(request,"Invalid OTP")
+            # return redirect('userauths:verify_otp')
+    return render(request,'userauths/verify_otp_reset.html')
+
+def change_password(request):
+    if request.method == 'POST':
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        email = request.session.get('reset_email')
+        if password1 == password2:
+            user = User.objects.get(username = email)
+            user.set_password(password1)
+            user.save()
+            del request.session['otp']
+            del request.session['reset_email']
+            messages.success(request, 'Password succesfully changed')
+            return redirect('userauths:login')
+        else:
+            messages.error(request, 'Passwords not matching')
+
+
+    return render(request,'userauths/change_password.html')
 
 
 def user_logout(request):
