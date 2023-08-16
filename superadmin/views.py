@@ -71,7 +71,8 @@ def dashboard(request):
         'total_completed_order':total_completed_order,
         'product_count':product_count,
         'user_count':user_count,
-        'recent_sale':recent_sale
+        'recent_sale':recent_sale,
+        'sales_report':sales_report
     }
     return render(request, 'admin/dashboard.html',context)
 
@@ -462,7 +463,7 @@ def update_category_offer(request,id):
             messages.success(request, "Category offer updated")
         else:
             print(form.errors)
-            
+
             messages.error(request, form.errors)
 
         # return redirect('superadmin:coupons')

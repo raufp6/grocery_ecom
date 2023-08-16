@@ -56,7 +56,19 @@
                         </div>
                     </div>
                     {% else %}
-                        <a href="{% url 'user:add_address' %}?r=checkout"><h4 class="mb-30">Add Address</h4></a>
+                    <input type="hidden" name="shipping_address" value="">
+                        <a href="{% url 'user:add_address' %}?r=checkout"><h4 class="mb-30">No address added</h4></a>
+                        <label for="" class="radio-card">
+                                
+                            <div class="card-content-wrapper">
+                                
+                                <div class="card-content">
+                                    
+                                    
+                                    <a href="{% url 'user:add_address' %}?r=checkout">Add New Address</a>
+                                </div>
+                            </div>
+                        </label>
                     {% endif %}
                 </div>
             </div>

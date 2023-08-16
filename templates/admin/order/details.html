@@ -27,7 +27,9 @@
                             <option value="completed" {% if order.product_status == 'completed' %}selected {% endif %}>Completed</option>
                             <option value="canceled" {% if order.product_status == 'canceled' %}selected {% endif %}>Canceled</option>
                         </select>
+                        {% if order.product_status != 'completed' and order.product_status != 'canceled'%}
                         <button class="btn btn-primary" type="submit">Save</button>
+                        {% endif %}
                         <!-- <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a> -->
                     </div>
                 </form>
