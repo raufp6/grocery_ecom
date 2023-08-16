@@ -64,6 +64,8 @@
                                     </th>
                                     <th>ID </th>
                                     <th>Name</th>
+                                    <th>From</th>
+                                    <th>To</th>
                                     <th>Discount</th>
                                     
                                     
@@ -80,6 +82,8 @@
                                     </td>
                                     <td>{{ c.id }}</td>
                                     <td><b>{{ c.code }}</b></td>
+                                    <td><b>{{ c.valid_from|date:"M, d, Y" }}</b></td>
+                                    <td><b>{{ c.valid_to|date:"M, d, Y" }}</b></td>
                                     <td><b>{{ c.discount }}%</b></td>
                                     
                                     

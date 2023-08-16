@@ -382,23 +382,25 @@ def coupons(request):
 
 @login_required(login_url="superadmin:login")
 def coupon_update(request,id):
+    print(id)
     coupon = Coupon.objects.get(id=id)
     if request.method == 'POST':
         form = CouponForm(request.POST)
         if form.is_valid():
+            
             coupon.code = form.cleaned_data['code']
             coupon.discount = form.cleaned_data['discount']
             coupon.valid_from = form.cleaned_data['valid_from']
             coupon.valid_to = form.cleaned_data['valid_to']
             coupon.active = form.cleaned_data['active']
             coupon.save()
-            print(form.cleaned_data['code'])
+            # print(form.cleaned_data['code'])
 
-            messages.success(request, "Coupon added")
+            messages.success(request, "Coupon updated")
         else:
-            messages.error(request, "Please check")
+            messages.error(request, "Check all field")
 
-        return redirect('superadmin:coupons')
+        # return redirect('superadmin:coupons')
     data = {
         'code':coupon.code,
         'discount':coupon.discount,
@@ -409,7 +411,8 @@ def coupon_update(request,id):
     form = CouponForm(initial=data)
     context = {
         'coupon':coupon,
-        'form':form
+        'form':form,
+        'data':data
     }
     return render(request, 'admin/offer/update_coupon.html', context)
 

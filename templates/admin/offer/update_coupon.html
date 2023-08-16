@@ -18,30 +18,33 @@
             <div class="row">
                 <div class="col-md-3">
                     
-                    <form action="" method="POSt" enctype="multipart/form-data">
+                    <form action="" method="post">
                         {% csrf_token %}
                         <div class="mb-4">
                             
-                            <label for="product_name" class="form-label">Coupon Code</label>
+                            <label for="id_code" class="form-label">Coupon Code</label>
                             {{ form.code }}
                             {{ form.errors.code }}
                         </div>
                         
                         
                         <div class="mb-4">
-                            <label for="product_slug" class="form-label">Discount(%)</label>
+                            <label for="id_discount" class="form-label">Discount(%)</label>
                             {{ form.discount }}
+                            <input type="hidden" name="old_code" value="{{data.code}}">
                         </div>
                         <div class="mb-4">
-                            <label for="product_slug" class="form-label">Valid from</label>
-                            <input type="date" name="valid_from">
+                            <label for="id_valid_from" class="form-label">Valid from</label>
+                            <!-- <input type="date" name="valid_from"> -->
+                            {{ form.valid_from }}
                         </div>
                         <div class="mb-4">
-                            <label for="product_slug" class="form-label">Valid to</label>
-                            <input type="date" name="valid_to" value="{{coupon.valid_to}}">
+                            <label for="id_valid_to" class="form-label">Valid to</label>
+                            {{ form.valid_to }}
+                            
                         </div>
                         <div class="mb-4">
-                            <label for="product_slug" class="form-label">Is Active</label>
+                            <label for="id_active" class="form-label">Is Active</label>
                             {{ form.active }}
                         </div>
                         

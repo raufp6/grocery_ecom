@@ -63,9 +63,26 @@ class CouponForm(forms.ModelForm):
             'required': "Please Enter Discount"
         },
     )
+    
+    valid_from = forms.DateField(
+        widget=forms.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={'placeholder': "Valid from", 'class': "form-control","type":'date'}),
+        error_messages={
+            'required': "Please Enter valid from date"
+        },
+    )
+    valid_to = forms.DateField(
+        widget=forms.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={'placeholder': "Valid from", 'class': "form-control","type":'date'}),
+        error_messages={
+            'required': "Please Enter valid from date"
+        },
+    )
     class Meta:
         model = Coupon
-        fields = ['code', 'discount', 'valid_from', 'valid_to','active']
+        fields = "__all__"
 
         
 
