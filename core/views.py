@@ -157,7 +157,7 @@ def delete_wishlist_item(request,id):
     
 
 
-
+@login_required(login_url="userauths:login")
 def add_cart_(request):
     product_variation = []
     product_id  = request.GET['id']
@@ -264,6 +264,35 @@ def add_cart_(request):
         'totalcartitems':CartItem.objects.filter(cart=cart).count()
     }
     return JsonResponse(response)    
+
+@login_required(login_url="userauths:login")
+def increment_cart_item(request):
+    qty = 1
+    
+    try:
+        id  = request.GET['cart_id']
+        cart_item = CartItem.objects.get(pk=id)
+        if ((cart_item.product.stock_count)- int(cart_item.qty+qty)) < 0:
+            response = {
+                'status':False,
+                'message':'Out of Stock'
+            }
+            return JsonResponse(response)
+        cart_item.qty += int(qty)
+        cart_item.save()
+
+        response = {
+            'status':True,
+            'message':'Product added to Cart',
+            'totalcartitems':1
+        }
+        
+    except:
+        response = {
+                'status':False,
+                'message':'Error occured'
+            }
+    return JsonResponse(response)
 
 def add_cart(request, product_id,qty=1):
     product = Product.objects.get(id=product_id)
