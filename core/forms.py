@@ -101,9 +101,26 @@ class OfferForm(forms.ModelForm):
             'required': "Please Enter Discount"
         },
     )
+    start_date = forms.DateField(
+        widget=forms.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={'placeholder': "Valid from", 'class': "form-control","type":'date'}),
+        error_messages={
+            'required': "Please Enter valid from date"
+        },
+    )
+    end_date = forms.DateField(
+        widget=forms.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={'placeholder': "Valid from", 'class': "form-control","type":'date'}),
+        error_messages={
+            'required': "Please Enter valid from date"
+        },
+    )
     class Meta:
         model = Offer
-        fields = ['name', 'off_percent', 'start_date', 'end_date','category']
+        fields = "__all__"
+        # fields = ['name', 'off_percent', 'start_date', 'end_date','category']
 
 
         

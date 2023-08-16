@@ -219,7 +219,13 @@
                                         </div> -->
                                         <div class="product-card-bottom">
                                             <div class="product-price">
-                                                <span>₹{{ p.discount_price }}</span>
+
+                                                {% if p.category.offer %}
+                                                    <span>₹{{ p.get_offer_price_by_category }}</span>
+                                                {% else %}
+                                                    <span>₹{{ p.discount_price }}</span>
+                                                {% endif %}
+                                                
                                                 <span class="old-price">₹{{ p.price }}</span>
                                             </div>
                                             <!-- <div class="add-cart">

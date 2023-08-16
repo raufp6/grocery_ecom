@@ -18,7 +18,9 @@
                 
                 <div class="col-md-3">
                     
-                    <form action="" method="POSt" >
+                    
+                    
+                    <form action="" method="post" >
                         {% csrf_token %}
                         <div class="mb-4">
                             
@@ -36,6 +38,7 @@
                                 {% endfor %}
                                 
                             </select>
+                            {{ form.errors.category }}
                         </div>
                         <div class="mb-4">
                             <label for="product_slug" class="form-label">Discount(%)</label>
@@ -43,13 +46,15 @@
                             {{ form.errors.off_percent }}
                         </div>
                         <div class="mb-4">
-                            <label for="product_slug" class="form-label">Valid from</label>
-                            <input type="date" name="start_date">
+                            <label for="id_start_date" class="form-label">Valid from</label>
+                            <!-- <input type="date" name="start_date"> -->
+                            {{ form.start_date }}
                             {{ form.errors.start_date }}
                         </div>
                         <div class="mb-4">
-                            <label for="product_slug" class="form-label">Valid to</label>
-                            <input type="date" name="end_date">
+                            <label for="id_end_date" class="form-label">Valid to</label>
+                            <!-- <input type="date" name="end_date"> -->
+                            {{ form.end_date }}
                             {{ form.errors.end_date }}
                         </div>
                         
@@ -73,6 +78,7 @@
                                     </th>
                                     <th>ID </th>
                                     <th>Name</th>
+                                    <th>Category</th>
                                     <th>Discount</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
@@ -90,6 +96,7 @@
                                     </td>
                                     <td>{{ c.id }}</td>
                                     <td><b>{{ c.name }}</b></td>
+                                    <td><b>{{ c.category.title }}</b></td>
                                     <td><b>{{ c.off_percent }}%</b></td>
                                     <td>{{c.start_date|date:"M, d, Y"}}</td>
                                     <td>{{c.end_date|date:"M, d, Y"}}</td>
@@ -100,7 +107,7 @@
                                         <div class="dropdown">
                                             <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                             <div class="dropdown-menu">
-                                                <a class="dropdown-item"  href="{% url 'superadmin:update_coupon' c.id %}">Edit info</a>
+                                                <a class="dropdown-item"  href="{% url 'superadmin:update_category_offer' c.id %}">Edit info</a>
                                             </div>
                                         </div>
                                         <!-- dropdown //end -->

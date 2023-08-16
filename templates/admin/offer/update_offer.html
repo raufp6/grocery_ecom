@@ -1,0 +1,77 @@
+{% extends 'admin/partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Update Offer</h2>
+            
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            
+                            <label for="id_code" class="form-label">Offer name</label>
+                            {{ form.name }}
+                            {{ form.errors.name }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label" for="category">Category</label>
+                            <select class="form-select" name="category" id="category">
+                                <option value="">Select One</option>
+                                {% for c in categories %}
+                                    <option value="{{c.id}}" {% if c.id == offer.category_id %} selected="selected" {% endif %}>{{c.title}}</option>
+                                {% endfor %}
+                                
+                            </select>
+                            {{ form.errors.category }}
+                        </div>
+                        <div class="mb-4">
+                            <label for="id_discount" class="form-label">Discount(%)</label>
+                            {{ form.off_percent }}
+        
+                        </div>
+                        <div class="mb-4">
+                            <label for="id_valid_from" class="form-label">Valid from</label>
+                            <!-- <input type="date" name="valid_from"> -->
+                            {{ form.start_date }}
+                        </div>
+                        <div class="mb-4">
+                            <label for="id_valid_to" class="form-label">Valid to</label>
+                            {{ form.end_date }}
+                            
+                        </div>
+                        <div class="mb-4">
+                            <label for="id_active" class="form-label">Is Active</label>
+                            {{ form.active }}
+                        </div>
+                        
+                        
+                        <div class="d-grid">
+                            <button class="btn btn-primary" type="submil">Update</button>
+                           
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- .col// -->
+            </div>
+            <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+    </div>
+    <!-- card .// -->
+</section>
+{% endblock %}

@@ -427,9 +427,11 @@ def category_offers(request):
 
             messages.success(request, "Category offer added")
         else:
+            
             messages.error(request, form.errors)
 
-        return redirect('superadmin:category_offers')
+
+        # return redirect('superadmin:category_offers')
     
     offers = Offer.objects.all().order_by('-id')
     
@@ -440,6 +442,48 @@ def category_offers(request):
         'categories':categories
     }
     return render(request, 'admin/offer/list.html', context)
+
+
+@login_required(login_url="superadmin:login")
+def update_category_offer(request,id):
+    offer = Offer.objects.get(id=id)
+    if request.method == 'POST':
+        form = OfferForm(request.POST)
+        if form.is_valid():
+            
+            offer.name = form.cleaned_data['name']
+            offer.off_percent = form.cleaned_data['off_percent']
+            offer.start_date = form.cleaned_data['start_date']
+            offer.category = form.cleaned_data['category']
+            offer.end_date = form.cleaned_data['end_date']
+            offer.active = form.cleaned_data['active']
+            offer.save()
+
+            messages.success(request, "Category offer updated")
+        else:
+            print(form.errors)
+            
+            messages.error(request, form.errors)
+
+        # return redirect('superadmin:coupons')
+    data = {
+        'name':offer.name,
+        'off_percent':offer.off_percent,
+        'start_date':offer.start_date,
+        'category':offer.category,
+        'end_date':offer.end_date,
+        'active':offer.active
+    }
+    form = OfferForm(initial=data)
+    categories = Category.objects.all().order_by('-id')
+    
+    context = {
+        'offer':offer,
+        'form':form,
+        'data':data,
+        'categories':categories
+    }
+    return render(request, 'admin/offer/update_offer.html', context)
 
 
 

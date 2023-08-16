@@ -518,6 +518,7 @@ class Offer(models.Model):
     start_date = models.DateField(validators=[validate_expiry_date])
     category = models.OneToOneField(Category, on_delete=models.SET_NULL,blank=True,null=True)
     end_date = models.DateField()
+    active = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return self.name
