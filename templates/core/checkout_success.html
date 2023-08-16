@@ -88,7 +88,7 @@
                             <div class="invoice-bottom pb-80">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <h6 class="mb-15">Payment Type:COD</h6>
+                                        <h6 class="mb-15">Payment Type:{{order.payment_type}}</h6>
                                         
                                     </div>
                                     <div class="col-md-6 text-end">
@@ -105,10 +105,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="invoice-btn-section clearfix d-print-none">
+                        <!-- <div class="invoice-btn-section clearfix d-print-none">
                             <a href="javascript:window.print()" class="btn btn-lg btn-custom btn-print hover-up"> <img src="{% static 'assets/imgs/theme/icons/icon-print.svg' %}" alt="" /> Print </a>
                             <a id="invoice_download_btn" class="btn btn-lg btn-custom btn-download hover-up"> <img src="{% static 'assets/imgs/theme/icons/icon-download.svg' %}" alt="" /> Download </a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

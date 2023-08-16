@@ -263,9 +263,13 @@ class Variation(models.Model):
         return int(self.product.discount_price + self.price)
     
     def get_variation_product_price(self):
-        if self.product.category.offer.off_percent:
-            return self.price - (self.price * self.product.category.offer.off_percent / 100)
-        
+        try:
+            if self.product.category.offer.off_percent:
+                return self.price - (self.price * self.product.category.offer.off_percent / 100)
+            else:
+                return self.price
+        except:
+            return self.price
         return self.price
 
 

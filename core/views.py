@@ -74,12 +74,12 @@ def product_detail(request,pid,slug):
 def get_variation_price(request):
     if request.GET['id']:
         
-        try:
+        # try:
             if request.GET['id']:
                 variation = Variation.objects.get(id=int(request.GET['id']))
                 
                 data = {
-                    'price':variation.get_variation_product_price(),
+                    'price':round(variation.get_variation_product_price(),2),
                     'mrp_price':variation.mrp_price if variation.mrp_price !=0.00 else variation.product.price,
                 }
     
@@ -89,11 +89,11 @@ def get_variation_price(request):
                     'status':True,
                     'data':data
                 }
-        except:
-            response = {
-                'status':False,
-                'data':None
-            }
+        # except:
+        #     response = {
+        #         'status':False,
+        #         'data':None
+        #     }
     return JsonResponse(response)
 
 def cart(request):
