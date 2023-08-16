@@ -568,7 +568,8 @@ def payment(request,orderno):
     oreder.razorpay_order_id = razorpay_order_id
     oreder.save()
 
-    callback_url = "http://" + "127.0.0.1:8000" + "/paymenthandler/",
+    # callback_url = "http://" + "127.0.0.1:8000" + "/paymenthandler/",
+    callback_url = "https://" + "groceryecom.live" + "/paymenthandler/",
 
     # we need to pass these details to frontend.
     context['razorpay_order_id'] = razorpay_order_id
