@@ -178,9 +178,12 @@ class Product(models.Model):
         return self.discount_price - (self.discount_price * self.category.offer.off_percent / 100)
     
     def get_base_selling_price(self):
-        if self.category.offer.off_percent:
-            return self.discount_price - (self.discount_price * self.category.offer.off_percent / 100)
-        else:
+        try:
+            if self.category.offer.off_percent:
+                return self.discount_price - (self.discount_price * self.category.offer.off_percent / 100)
+            else:
+                return self.discount_price
+        except:
             return self.discount_price
 
 class ProductItem(models.Model):
@@ -270,7 +273,7 @@ class Variation(models.Model):
                 return self.price
         except:
             return self.price
-        return self.price
+        
 
 
 
