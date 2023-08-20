@@ -352,13 +352,14 @@ class CartOrder(models.Model):
     orderno = ShortUUIDField(unique=True, length=10,max_length=20, prefix="od", alphabet="1234567890")
     payment = models.ForeignKey(Payment,on_delete=models.SET_NULL,null=True,blank=True)
     price = models.DecimalField(max_digits=100, decimal_places=2, default=None)
+    cart_total = models.DecimalField(max_digits=100, decimal_places=2, default=0.00,null=True,blank=True)
     paid_status = models.BooleanField(default=False)
     order_date = models.DateTimeField(auto_now_add=True)
     product_status = models.CharField(choices=STATUS_CHOCE, max_length=30, default="processing")
     payment_type = models.CharField(choices=PAYMENT_CHOiCE, max_length=30, default="cod")
     razorpay_order_id = models.CharField(max_length=100,blank=True)
     coupon = models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True,blank=True)
-    coupon_discount = models.DecimalField(null=True,blank=True,max_digits=100,decimal_places=2,)
+    coupon_discount = models.DecimalField(null=True,blank=True,max_digits=100,decimal_places=2)
     is_ordered = models.BooleanField(default=False)
 
     class Meta:

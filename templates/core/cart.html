@@ -18,7 +18,7 @@
                 <h1 class="heading-2 mb-10">Your Cart</h1>
                 <div class="d-flex justify-content-between">
                     <h6 class="text-body">There are <span class="text-brand">{{ cart_data|length }}</span> products in your cart</h6>
-                    <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Cart</a></h6>
+                    <!-- <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Cart</a></h6> -->
                 </div>
             </div>
         </div>
@@ -61,18 +61,18 @@
                                         
                                         {% endfor %}
                                     {% else %}
-                                        <h4 class="text-body">₹{{item.product.discount_price}} </h4>
+                                        <h4 class="text-body">₹{{item.product.get_base_selling_price}} </h4>
                                         <del>₹{{item.product.price}}</del>
                                     {% endif %}
                                 </td>
                                 <td class="text-center detail-info" data-title="Stock">
                                     <div class="detail-extralink mr-15">
                                         <div class="detail-qty border radius">
-                                            <a href="#" data-link="{% url 'core:remove_cart' %}"  data-cartid="{{item.id}}" data-id="{{ item.product_id }}" class="qty-down button-remove-to-cart"><i class="fi-rs-angle-small-down"></i></a>
+                                            <a href="#" data-link="{% url 'core:remove_cart' %}" data-cartid="{{item.cart.id}}" data-cartitemid="{{item.id}}"  data-id="{{ item.product_id }}" class="qty-down button-remove-to-cart"><i class="fi-rs-angle-small-down"></i></a>
                                             <input type="hidden" class="product-qty-{{ item.product_id }}" value="{{item.qty}}" name="qty">
                                             <input type="hidden" class="package_size-{{ item.product_id }}" value="{{v.id}}" name="package_size">
                                             <span class="qty-val">{{item.qty}}</span>
-                                            <a href="#" class="qty-up button-increment-cart" data-qty="1" data-hasvariation="{% if item.variations.all %}1{%else%}0{%endif%}" data-cartid="{{item.id}}" data-price="{{item.product.items.price}}" data-sellingprice="{{item.discount_price}}" data-id="{{ item.product_id }}" data-image="{{ item.product.image.url }}" data-title="{{ item.product.title }}" data-link="{% url 'core:increment_cart_item' %}"><i class="fi-rs-angle-small-up"></i></a>
+                                            <a href="#" class="qty-up button-increment-cart" data-qty="1" data-hasvariation="{% if item.variations.all %}1{%else%}0{%endif%}" data-cartid="{{item.cart.id}}" data-cartitemid="{{item.id}}" data-price="{{item.product.items.price}}" data-sellingprice="{{item.discount_price}}" data-id="{{ item.product_id }}" data-image="{{ item.product.image.url }}" data-title="{{ item.product.title }}" data-link="{% url 'core:increment_cart_item' %}"><i class="fi-rs-angle-small-up"></i></a>
                                         </div>
                                     </div>
                                 </td>
@@ -82,7 +82,7 @@
                                         <h4 class="text-brand">₹{{ v.get_variation_product_price|mul:item.qty }} </h4>
                                         {% endfor %}
                                     {% else %}
-                                        <h4 class="text-brand">₹{{ item.product.discount_price|mul:item.qty }} </h4>
+                                        <h4 class="text-brand">₹{{ item.product.get_base_selling_price|mul:item.qty }} </h4>
                                     {% endif %}
                                     
                                 </td>
@@ -94,10 +94,10 @@
                     </table>
                 </div>
                 <div class="divider-2 mb-30"></div>
-                <div class="cart-action d-flex justify-content-between">
+                <!-- <div class="cart-action d-flex justify-content-between">
                     <a class="btn "><i class="fi-rs-arrow-left mr-10"></i>Continue Shopping</a>
                     <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-refresh mr-10"></i>Update Cart</a>
-                </div>
+                </div> -->
                 <div class="row mt-50">
                     
                     <div class="col-lg-6">
@@ -107,7 +107,7 @@
                             <form action="{% url 'core:apply_coupon' %}" method="post">
                                 {% csrf_token %}
                                 <div class="d-flex justify-content-between">
-                                    <input class="font-medium mr-15 coupon" name="coupon_code" value="{% if cart.coupon %} {{ cart.coupon }}{%endif%}" placeholder="Enter Your Coupon">
+                                    <input class="font-medium mr-15 coupon" name="coupon_code" {% if cart.coupon %} disabled {% endif %} value="{% if cart.coupon %} {{ cart.coupon }}{%endif%}" placeholder="Enter Your Coupon">
                                     {% if not cart.coupon %}
                                     <button class="btn" type="submit"><i class="fi-rs-label mr-10"></i>Apply</button>
                                     {% endif %}
@@ -148,11 +148,15 @@
                                     <tr>
                                         <td class="cart_total_label">
                                             <h6 class="text-muted">Coupon Discount({{cart.coupon.discount}}%)</h6>
+                                            <p>Applied coupon : {{cart.coupon}} <a href="{% url 'core:remove_coupon' cart.id %}" style="color: brown;">X</a></p>
                                         </td>
                                         <td class="cart_total_amount">
-                                            <h5 class="text-heading text-end">₹{{discount_amount | floatformat:2}}</h4></td> </tr> <tr>
+                                            <h5 class="text-heading text-end">₹{{discount_amount | floatformat:2}}</h4>
+                                        </td> 
+                                    </tr> 
+                                    <tr>
                                         
-                                        
+
                                     </tr>
                                 {% endif %}
                                 <tr>

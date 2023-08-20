@@ -188,16 +188,16 @@ def cancel_order_item(request,id):
             reason = reason
         )
         cancel_request.save()
-        order.price -= order_item.total
-        order.save()
+        # order.price -= order_item.total
+        # order.save()
             
     if order_item.order.payment_type == 'online':
-        user_wallet, created = Wallet.objects.get_or_create(user=order.user)
-        user_wallet.balance += order_item.total
-        user_wallet.save()
+        # user_wallet, created = Wallet.objects.get_or_create(user=order.user)
+        # user_wallet.balance += order_item.total
+        # user_wallet.save()
 
-        user_wallet_transaction = WalletTransaction.objects.create(wallet=user_wallet,amount=order_item.total,type="credited",description = 'order_cancel')
-        user_wallet_transaction.save()
+        # user_wallet_transaction = WalletTransaction.objects.create(wallet=user_wallet,amount=order_item.total,type="credited",description = 'order_cancel')
+        # user_wallet_transaction.save()
         messages.success(request,"Your order was successfully canceled! Amount refunded to your wallet")
     else:
         messages.success(request,"Your order was successfully canceled!")

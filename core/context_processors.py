@@ -17,8 +17,8 @@ def default(request):
                 try:
                     if item.variations.all():
                         for v in item.variations.all():
-                            total_amount += v.get_variation_product_price()
-                            total_mrp_amount += v.mrp_price
+                            total_amount += item.qty * v.get_variation_product_price()
+                            total_mrp_amount += item.qty * v.mrp_price
                     else:
                         if item.product.category.offer:
                             total_amount += item.qty * item.product.get_offer_price_by_category()
@@ -52,10 +52,8 @@ def default(request):
             total_mrp_amount = 0
             total_amount = 0
 
-    try:
-        address = Address.objects.get(user = request.user)
-    except:
-        address = None
+    
+
     final_amount = float(total_amount)
     discount_amount = 0
     if 'discount_amount' in request.session and request.session['discount_amount']>0:

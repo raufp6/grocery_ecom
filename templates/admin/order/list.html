@@ -56,7 +56,7 @@
                             <td><b>{{order.user.first_name}} {{order.user.last_name}}</b></td>
                             <td>{{order.user.mobile}}</td>
                             <td>₹{{order.price}}</td>
-                            <td><span class="badge rounded-pill alert-warning">{{order.product_status}}</span></td>
+                            <td><span class="badge rounded-pill {% if order.product_status == 'canceled' %} alert-danger {% else %} alert-warning {% endif %}">{{order.product_status}}</span></td>
                             <td>{{order.order_date|date:"M, d, Y"}}</td>
                             <td class="text-end">
                                 <a href="{% url 'superadmin:order_details' order.id %}" class="btn btn-md rounded font-sm">Detail</a>

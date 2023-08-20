@@ -142,12 +142,18 @@
                                         <article class="float-end">
                                             <dl class="dlist">
                                                 <dt>Subtotal:</dt>
-                                                <dd>₹{{order.price}}</dd>
+                                                <dd>₹{{order.cart_total}}</dd>
                                             </dl>
                                             <dl class="dlist">
                                                 <dt>Shipping cost:</dt>
                                                 <dd>0</dd>
                                             </dl>
+                                            {% if order.coupon_discount %}
+                                                <dl class="dlist">
+                                                    <dt>Coupon discount:</dt>
+                                                    <dd>-₹{{ order.coupon_discount }}</dd>
+                                                </dl>
+                                            {% endif %}
                                             <dl class="dlist">
                                                 <dt>Grand total:</dt>
                                                 <dd><b class="h5">₹{{order.price}}</b></dd>

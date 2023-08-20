@@ -19,6 +19,7 @@ urlpatterns = [
     path("delete_cart/<int:product_id>/<int:cart_item_id>/",views.delete_cart,name="delete_cart"),
     path("cart/",views.cart,name="cart"),
     path("increment_cart_item/",views.increment_cart_item,name="increment_cart_item"),
+    path("remove_coupon/<int:coupon_id>",views.remove_coupon,name="remove_coupon"),
 
     # Whishlist
     path("add_to_wishlist/",views.add_to_wishlist,name="add-to-whishlist"),

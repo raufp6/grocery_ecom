@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from core.models import Category, Vendor, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User,OrderCancellationReason,OrderCancellation,Coupon,Offer
+from core.models import Category, Vendor, Brand, Product, ProductItem, ProductImages, CartOrder, CartOrderItems, ProductReview, WhishList, Countrty, State, City, Address, User,OrderCancellationReason,OrderCancellation,Coupon,Offer,Wallet,WalletTransaction
 from core.forms import CategoryForm, ProductForm,CouponForm,OfferForm
 from django.core.exceptions import ValidationError
 import itertools
@@ -18,6 +18,7 @@ import calendar
 from django.utils import timezone
 from django.db.models.functions import TruncMonth
 from datetime import timedelta
+import decimal
 
 
 #############  Login ###############
@@ -535,12 +536,66 @@ def order_details(request, id):
 @login_required(login_url="superadmin:login")
 def order_cancel_request(request, id):
     request_item = OrderCancellation.objects.get(pk=id)
-
+    order = CartOrder.objects.get(pk = request_item.order_item.order.pk)
+    order_item_count  = CartOrderItems.objects.filter(order=order).count()
     if request.method == 'POST':
         status = request.POST.get('status')
         request_item.status = status
         request_item.save()
-        messages.success(request, "Order updated")
+        # return HttpResponse("sdsd")
+        if status != 'canceled':
+            return redirect('superadmin:order_cancel_request',id)
+        orderitem = CartOrderItems.objects.get(pk = request_item.order_item.pk)
+        orderitem.product_status = 'canceled'
+        orderitem.save()
+        if order.payment_type == 'online':
+            user_wallet, created = Wallet.objects.get_or_create(user=order.user)
+            if order_item_count == 1:
+                print("start canceleation")
+                user_wallet.balance += order.price
+                user_wallet.save()
+
+                user_wallet_transaction = WalletTransaction.objects.create(wallet=user_wallet,amount=order.price,type="credited",description = 'order_cancel')
+                user_wallet_transaction.save()
+
+                order.price -= order.price
+                order.cart_total -= request_item.order_item.price
+                order.product_status = 'canceled'
+                order.save()
+            else:
+                if order.coupon_discount > 0:
+                    
+                    refund_amound = float(request_item.order_item.price) - (float(request_item.order_item.price) * float(order.coupon.discount)/100)
+
+                    user_wallet.balance += decimal.Decimal(refund_amound)
+                    user_wallet.save()    
+
+                    user_wallet_transaction = WalletTransaction.objects.create(wallet=user_wallet,amount=refund_amound,type="credited",description = 'order_cancel')
+                    user_wallet_transaction.save()  
+
+                    order.price -= decimal.Decimal(refund_amound)
+                    order.cart_total -= request_item.order_item.price
+                    order.save()        
+                else:
+                    user_wallet.balance += request_item.order_item.total  
+                    user_wallet.save()    
+
+                    user_wallet_transaction = WalletTransaction.objects.create(wallet=user_wallet,amount=request_item.order_item.total,type="credited",description = 'order_cancel')
+                    user_wallet_transaction.save()    
+
+                    order.price -= request_item.order_item.total  
+                    order.cart_total -= request_item.order_item.price
+                    order.save()        
+
+            messages.success(request, "Order updated")
+            return redirect('superadmin:order_cancel_request',id)  
+
+
+                    
+
+
+
+        
         
 
         

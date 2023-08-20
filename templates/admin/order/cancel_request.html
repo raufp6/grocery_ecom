@@ -23,9 +23,13 @@
                             <option value="">Change status</option>
                             
                             <option value="pending" {% if request_item.status == 'pending' %}selected {% endif %}>Pending</option>
+                            
                             <option value="canceled" {% if request_item.status == 'canceled' %}selected {% endif %}>Canceled</option>
+                            
                         </select>
-                        <button class="btn btn-primary" type="submit">Save</button>
+                        {% if request_item.status == 'pending' %}
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        {% endif %}
                         <a class="btn btn-secondary print ms-2" href="{% url 'superadmin:order_details' request_item.order_item.order.id %}">Back</a>
                     </div>
                 </form>

@@ -6,9 +6,6 @@ const base_url = window.location.origin;
     $(".button-add-to-cart").on('click',function(e){
         let $this = $(this);
         var product_has_variation = $('#product_has_variation').val()
-        if(product_has_variation = ""){
-            var product_has_variation = $this.data("hasvariation");
-        }
         var product_id = $this.data("id");
         if($this.data("qty") == 1){
             var product_quantity = $this.data("qty");
@@ -54,10 +51,12 @@ const base_url = window.location.origin;
     });
     $(".button-increment-cart").on('click',function(e){
         let $this = $(this);
+        var cart_item_id = $this.data("cartitemid");
         var cart_id = $this.data("cartid");
         var data = {
             'quantity':1,
             'cart_id':cart_id,
+            'cart_item_id':cart_item_id,
         };
         $.ajax({
             url:$this.data("link"),
@@ -72,6 +71,7 @@ const base_url = window.location.origin;
                 if(resp.status){
                     alerts(resp.message)
                     // $this.html("Item added to cart")
+                    location.reload();
                     $(".cart-items-count").html(resp.totalcartitems)
                     
                 }else{
@@ -86,6 +86,7 @@ const base_url = window.location.origin;
         let $this = $(this);
         var product_id = $this.data("id");
         var cart_id = $this.data("cartid");
+        var cart_item_id = $this.data("cartitemid");
         // var product_quantity = $('.product-qty-'+product_id).val();
         
         console.log(cart_id);
@@ -93,7 +94,8 @@ const base_url = window.location.origin;
         var data = {
             'quantity':1,
             'id':product_id,
-            'cart_item_id':cart_id
+            'cart_id':cart_id,
+            'cart_item_id':cart_item_id
         };
         $.ajax({
             url:$this.data("link"),

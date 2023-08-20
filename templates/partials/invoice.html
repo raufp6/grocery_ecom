@@ -81,6 +81,7 @@
           </th>
         </tr>
         {% for p in invoice.order_items.all %}
+        {% if p.product_status != 'canceled'%}
         <tr>
           <td>
             {{p.product.title}}
@@ -102,6 +103,7 @@
           </td>
           
         </tr>
+        {% endif %}
         {% endfor %}
       </table>
       

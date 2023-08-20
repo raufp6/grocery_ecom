@@ -105,10 +105,10 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="invoice-btn-section clearfix d-print-none">
-                            <a href="javascript:window.print()" class="btn btn-lg btn-custom btn-print hover-up"> <img src="{% static 'assets/imgs/theme/icons/icon-print.svg' %}" alt="" /> Print </a>
-                            <a id="invoice_download_btn" class="btn btn-lg btn-custom btn-download hover-up"> <img src="{% static 'assets/imgs/theme/icons/icon-download.svg' %}" alt="" /> Download </a>
-                        </div> -->
+                        <div class="invoice-btn-section clearfix d-print-none">
+                            <!-- <a href="javascript:window.print()" class="btn btn-lg btn-custom btn-print hover-up"> <img src="{% static 'assets/imgs/theme/icons/icon-print.svg' %}" alt="" /> Print </a> -->
+                            <a href="{% url 'user:generate_invoice_pdf' order.id %}" class="btn btn-lg btn-custom btn-download hover-up"> <img src="{% static 'assets/imgs/theme/icons/icon-download.svg' %}" alt="" /> Download Invoice</a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -13,6 +13,7 @@ const base_url = window.location.origin;
             var product_quantity = $('.product-qty-'+product_id).val();
         }
         var size = $('.package_size-'+product_id).val();
+        alert("sdsdsd")
         if(product_has_variation == 1 && size == null){
             alerts('Please Select Package Size','error')
             return false

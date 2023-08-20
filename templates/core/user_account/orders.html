@@ -45,7 +45,7 @@
                                                             <td>{{order.order_date|date:"M,d ,Y"}}</td>
                                                             <td>{{order.product_status}}</td>
                                                             {% if order.coupon_discount %}
-                                                            <td>₹ {{order.price | sub:order.coupon_discount}}</td>
+                                                            <td>₹ {{order.price}}</td>
                                                             {% else %}
                                                                 <td>₹ {{order.price}}</td>
                                                             {% endif %}

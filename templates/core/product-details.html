@@ -88,7 +88,7 @@
                                 <div class="attr-detail attr-size mb-30">
                                     <strong class="mr-10">Package Size: </strong>
                                     <select class="form-control package_size-{{ product.id }}" data-link="{% url 'core:get_variation_price' %}" onchange="get_vaarient_price(this.value)" name="size" id="size" required>
-                                        <option value="" disabled selected>Choose package size</option>
+                                        <option value="null" disabled selected>Choose package size</option>
                                         {% for i in product.variation_set.sizes %}
                                             <option value="{{ i.id | lower }}">{{ i.variation_value | capfirst }}</option>
                                         {% endfor %}
