@@ -205,7 +205,6 @@ def product_list(request):
         'products': products,
         'page_obj':page_obj
     }
-    print(p.page_range)
     return render(request, 'admin/product/list.html', context)
 
 
@@ -503,8 +502,19 @@ def convertTupleToString(tup):
 @login_required(login_url="superadmin:login")
 def order_list(request):
     orders = CartOrder.objects.filter(is_ordered = True).order_by('-id')
+    p = Paginator(orders, 10) 
+    page_number = request.GET.get('page')
+    try:
+        page_obj = p.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        page_obj = p.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        page_obj = p.page(p.num_pages)
     context = {
         'orders': orders,
+        'page_obj':page_obj
     }
     return render(request, 'admin/order/list.html', context)
 
@@ -629,7 +639,7 @@ def sales_report_pdf(request):
     start_date = request.GET.get('from')
     end_date = request.GET.get('to')
     
-    if start_date is not None or end_date is not None:
+    if start_date != "" and end_date != "":
         order_items = CartOrderItems.objects.filter(order__order_date__gte=start_date, order__order_date__lte=end_date,order__product_status='completed')
     else:
         order_items = CartOrderItems.objects.filter(order__product_status='completed')
@@ -670,7 +680,7 @@ def sales_report_excel(request):
     start_date = request.GET.get('from')
     end_date = request.GET.get('to')
     
-    if start_date is not None or end_date is not None:
+    if start_date != "" and end_date != "":
         order_items = CartOrderItems.objects.filter(order__order_date__gte=start_date, order__order_date__lte=end_date,order__product_status='completed')
     else:
         order_items = CartOrderItems.objects.filter(order__product_status='completed')

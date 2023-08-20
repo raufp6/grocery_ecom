@@ -7,12 +7,12 @@
         <div>
             <h2 class="content-title card-title">Order List</h2>
         </div>
-        <div>
+        <!-- <div>
             <input type="text" placeholder="Search order ID" class="form-control bg-white" />
-        </div>
+        </div> -->
     </div>
     <div class="card mb-4">
-        <header class="card-header">
+        <!-- <header class="card-header">
             <div class="row gx-3">
                 <div class="col-lg-4 col-md-6 me-auto">
                     <input type="text" placeholder="Search..." class="form-control" />
@@ -33,7 +33,7 @@
                     </select>
                 </div>
             </div>
-        </header>
+        </header> -->
         <!-- card-header end// -->
         <div class="card-body">
             <div class="table-responsive">
@@ -50,7 +50,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in orders%}
+                        {% for order in page_obj.object_list%}
                         <tr>
                             <td>{{order.orderno}}</td>
                             <td><b>{{order.user.first_name}} {{order.user.last_name}}</b></td>
@@ -80,17 +80,31 @@
         <!-- card-body end// -->
     </div>
     <!-- card end// -->
-    <div class="pagination-area mt-15 mb-50">
+    <div class="pagination-area mt-30 mb-50">
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-start">
-                <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                <li class="page-item"><a class="page-link" href="#">02</a></li>
-                <li class="page-item"><a class="page-link" href="#">03</a></li>
-                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                <li class="page-item"><a class="page-link" href="#">16</a></li>
+                
+                {%if page_obj.has_previous %} {# whether the previous page exists #}
                 <li class="page-item">
-                    <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                    <a class="btn float-end btn-light btn-sm rounded font-md" href="?page=1">First</a>
                 </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{page_obj.previous_page_number}}"><i class="material-icons md-chevron_left"></i></a>
+                </li>
+                {% endif %}
+                <!-- <li class="page-item active"><a class="page-link" href="#">01</a></li> -->
+                <li class="page-item"><a class="page-link" href="#"> <span>{{page_obj.number}}</span> {# the current page number #}</a></li>
+                <!-- <li class="page-item"><a class="page-link" href="#">03</a></li>
+                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                <li class="page-item"><a class="page-link" href="#">16</a></li> -->
+                {%if page_obj.has_next %} {# whether the next page exists #}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{page_obj.next_page_number}}"><i class="material-icons md-chevron_right"></i></a>
+                </li>
+                <li class="page-item">
+                    <a class="btn float-end btn-light btn-sm rounded font-md" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                </li>
+                {% endif %}
             </ul>
         </nav>
     </div>
