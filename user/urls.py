@@ -22,6 +22,7 @@ urlpatterns = [
     path("accounts/password_change/",views.password_change, name="password_change"),
 
     path("wallet/",views.wallet, name="wallet"),
+    path('invoice/<int:order_id>/', views.generate_invoice_pdf, name='generate_invoice_pdf'),
     
     
 ]

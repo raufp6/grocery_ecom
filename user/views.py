@@ -1,12 +1,14 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse
-from core.models import Category,Vendor,Brand,Product,ProductImages,CartOrder,CartOrderItems,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderCancellationReason,OrderCancellation,Wallet,WalletTransaction
+from core.models import Category,Vendor,Brand,Product,ProductImages,CartOrder,CartOrderItems,OrderAddress,ProductReview,WhishList,Countrty,State,City,Address,Cart,CartItem,OrderCancellationReason,OrderCancellation,Wallet,WalletTransaction
 from userauths.models import User
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from core.forms import AddressForm
 from userauths.forms import UserPasswordSetForm
+from xhtml2pdf import pisa
+from django.template.loader import render_to_string
 
 @login_required(login_url="userauths:login")
 def account(request):
@@ -145,8 +147,10 @@ def orders(request):
 def order_details(request,id):
     
     order = CartOrder.objects.get(pk = id)
+    address = OrderAddress.objects.get(order_id = id)
     context = { 
-        'order':order
+        'order':order,
+        'address':address
     }
 
     return render(request,'core/user_account/order_details.html',context)
@@ -290,3 +294,24 @@ def wallet(request):
         'wallet_transaction':wallet_transaction
     }
     return render(request,'core/user_account/wallet.html',context)
+
+@login_required(login_url="userauths:login")
+def generate_invoice_pdf(request, order_id):
+    # Retrieve the invoice data based on the invoice_id
+    invoice = CartOrder.objects.get(pk = order_id)
+    address = OrderAddress.objects.get(order_id = invoice.pk)
+
+    
+    context = {'invoice': invoice,'address':address}
+    # return render(request,'partials/invoice.html',context)
+    template = render_to_string('partials/invoice.html', context)
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="invoice_{invoice.id}.pdf"'
+    
+    # Generate PDF
+    pisa_status = pisa.CreatePDF(template, dest=response)
+    
+    if pisa_status.err:
+        return HttpResponse('PDF generation error')
+    return response

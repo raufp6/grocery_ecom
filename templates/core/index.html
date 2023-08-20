@@ -221,12 +221,12 @@
                                             <div class="product-price">
 
                                                 {% if p.category.offer %}
-                                                    <span>₹{{ p.get_offer_price_by_category }}</span>
+                                                    <span>₹{{ p.get_offer_price_by_category|floatformat:2 }}</span>
                                                 {% else %}
-                                                    <span>₹{{ p.discount_price }}</span>
+                                                    <span>₹{{ p.discount_price|floatformat:2 }}</span>
                                                 {% endif %}
                                                 
-                                                <span class="old-price">₹{{ p.price }}</span>
+                                                <span class="old-price">₹{{ p.price|floatformat:2 }}</span>
                                             </div>
                                             <!-- <div class="add-cart">
                                                 <a class="add" href="#"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>

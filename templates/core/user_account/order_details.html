@@ -65,7 +65,7 @@
                                                     <div class="text">
                                                         <h6 class="mb-1">Order info</h6>
                                                         <p class="mb-1">
-                                                            Shipping: Fargo express <br />
+                                                            <!-- Shipping: Fargo express <br /> -->
                                                             Pay method:{{order.payment_type}} <br />
                                                         </p>
                                                         
@@ -81,9 +81,8 @@
                                                     <div class="text">
                                                         <h6 class="mb-1">Deliver to</h6>
                                                         <p class="mb-1">
-                                                            {{order.order_address.line1}}<br />
-                                                            City: Tashkent, Uzbekistan <br />Block A, House 123, Floor 2 <br />
-                                                            Po Box 10000
+                                                            {{address.first_name}} {{address.last_name}}<br />
+                                                            {{address.line1}}
                                                         </p>
                                                         
                                                     </div>
@@ -91,7 +90,10 @@
                                             </div>
                                             {% if order.price != 0 %}
                                             <div class="col-md-12">
+                                                {% if order.product_status != 'completed' and order.product_status != 'canceled' %}
                                                 <a href="{% url 'user:cancel_order' order.id %}" class="btn btn-fill-out submit submit-auto-width">I want Cancel this order</a>
+                                                {% endif %}
+                                                <a href="{% url 'user:generate_invoice_pdf' order.id %}" class="btn btn-fill-out submit submit-auto-width">Download Invoice</a>
                                             </div>
                                             {% endif %}
                                             <!-- col// -->

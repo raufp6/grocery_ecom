@@ -387,7 +387,7 @@ class CartOrderItems(models.Model):
         return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.image))
     
 class OrderAddress(models.Model):
-    order = models.ForeignKey(CartOrder,on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey(CartOrder,on_delete=models.SET_NULL,related_name="order_address", null=True)
     first_name = models.CharField(max_length=100,null=True,blank=True)
     last_name = models.CharField(max_length=100,null=True,blank=True)
     email = models.EmailField(max_length=100,null=True,blank=True)

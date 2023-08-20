@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title> Invoice</title>
+    <style>
+        .invoice-footer {
+            text-align: right;
+            margin-top: 20px;
+        }
+    </style>
+  </head>
+  <body>
+    <div style="padding: 10px;">
+      <table style="width: 100%;">
+        <tr style="width: 100%;">
+          <td style="width: 50%;">
+            <label style="font-size: 40px; font-weight: bold;">INV-{{invoice.orderno}}</label>
+            <p>Date : {{invoice.order_date|date:"M,d ,Y"}}</p>
+          </td>
+          <td style="width: 50%; text-align: right;">
+            <img style="max-width: 200px;" src="{% static 'assets/imgs/theme/logo.svg' %}" />
+          </td>
+        </tr>
+      </table>
+      <table style="width: 100%; margin: 10px 0px;">
+        <tr style="width: 100%;">
+          <td style="width: 33%; line-height: 25px;">
+            <label>From</label><br />
+            <label style="font-weight: bold; font-size: 20px;"
+              >Grocery Ecom</label
+            >
+            <br />
+            Kerala,India <br />
+          </td>
+          <td style="width: 33%; line-height: 25px;">
+            <label>To</label><br />
+            <label style="font-weight: bold; font-size: 20px;"
+              >{{address.first_name}} {{address.last_name}}</label
+            ><br />
+            {{address.line1}} <br />
+            {{address.mobile}} <br />
+          </td>
+          <td style="width: 33%; margin: auto;">
+            <span
+              style="
+                background: #e1e1e1;
+                font-size: 30px;
+                font-weight: bold;
+                padding: 10px;
+                color: #343a40;
+              "
+            >
+            {% if invoice.paid_status%}
+              PAID
+              {% else %}
+              DUE
+              {% endif %}
+            </span>
+          </td>
+        </tr>
+      </table>
+      <table style="width: 100%;">
+        <tr style="background: #343a40; color: white;">
+          <th style="padding: 10px;">
+            Product
+          </th>
+          
+          <th>
+            Quantity
+          </th>
+          <th>
+            Amount
+          </th>
+          
+          <th>
+            Total
+          </th>
+        </tr>
+        {% for p in invoice.order_items.all %}
+        <tr>
+          <td>
+            {{p.product.title}}
+            <br>
+            {% if p.variations.all %}
+                {% for v in p.variations.all %}
+                    {{v.variation_category | capfirst }} : {{v.variation_value | capfirst}} <br>
+                {% endfor %}
+            {% endif %}
+          </td>
+          <td>
+            {{p.qty}}
+          </td>
+          <td>
+            INR {{p.price}}
+          </td>
+          <td>
+            INR {{p.total}}
+          </td>
+          
+        </tr>
+        {% endfor %}
+      </table>
+      
+      <div class="invoice-footer">
+        <p><strong>Total:</strong> INR {{ invoice.price }}</p>
+    </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .invoice {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .invoice-title {
+            font-size: 24px;
+            margin: 0;
+        }
+        .invoice-details {
+            margin-bottom: 20px;
+        }
+        .invoice-details p {
+            margin: 5px 0;
+        }
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .invoice-table th, .invoice-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        .invoice-footer {
+            text-align: right;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice">
+        <div class="invoice-header">
+            <h1 class="invoice-title">Invoice</h1>
+        </div>
+        <div class="invoice-details">
+            <p><strong>Invoice Number:</strong> {{ invoice.id }}</p>
+            <p><strong>Date:</strong> {{ invoice.order_date }}</p>
+            <p><strong>Customer:</strong> {{ invoice.user.first_name }}</p>
+        </div>
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Item 1</td>
+                    <td>1</td>
+                    <td>$100</td>
+                    <td>$100</td>
+                </tr>
+                <!-- Add more rows for other items -->
+            </tbody>
+        </table>
+        <div class="invoice-footer">
+            <p><strong>Total:</strong> ${{ invoice.price }}</p>
+        </div>
+    </div>
+</body>
+</html>
