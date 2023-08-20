@@ -13,7 +13,6 @@ const base_url = window.location.origin;
             var product_quantity = $('.product-qty-'+product_id).val();
         }
         var size = $('.package_size-'+product_id).val();
-        alert("sdsdsd")
         if(product_has_variation == 1 && size == null){
             alerts('Please Select Package Size','error')
             return false
@@ -50,10 +49,44 @@ const base_url = window.location.origin;
             });
         }
     });
+    $(".button-increment-cart").on('click',function(e){
+        let $this = $(this);
+        var cart_item_id = $this.data("cartitemid");
+        var cart_id = $this.data("cartid");
+        var data = {
+            'quantity':1,
+            'cart_id':cart_id,
+            'cart_item_id':cart_item_id,
+        };
+        $.ajax({
+            url:$this.data("link"),
+            type:'GET',
+            data:data,
+            dataType:'json',
+            
+            beforeSend:function(){
+                console.log("Adding product to cart..");
+            },
+            success:function(resp){
+                if(resp.status){
+                    alerts(resp.message)
+                    // $this.html("Item added to cart")
+                    location.reload();
+                    $(".cart-items-count").html(resp.totalcartitems)
+                    
+                }else{
+                    alerts(resp.message,'error')
+                }
+            },error:function(resp){
+                alerts("Error Occured",'error');
+            }
+        });
+    });
     $(".button-remove-to-cart").on('click',function(e){
         let $this = $(this);
         var product_id = $this.data("id");
         var cart_id = $this.data("cartid");
+        var cart_item_id = $this.data("cartitemid");
         // var product_quantity = $('.product-qty-'+product_id).val();
         
         console.log(cart_id);
@@ -61,7 +94,8 @@ const base_url = window.location.origin;
         var data = {
             'quantity':1,
             'id':product_id,
-            'cart_item_id':cart_id
+            'cart_id':cart_id,
+            'cart_item_id':cart_item_id
         };
         $.ajax({
             url:$this.data("link"),
