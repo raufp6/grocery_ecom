@@ -126,34 +126,71 @@ class OfferForm(forms.ModelForm):
         
 
 class ProductForm(forms.ModelForm):
-    description = forms.CharField(widget=CKEditorUploadingWidget())
-    title = forms.CharField(widget=forms.TextInput(
-        attrs={'placeholder': "Title", 'class': "form-control"}))
-    price = forms.CharField(widget=forms.TextInput(
-        attrs={'placeholder': "Prodcut Price", 'class': "form-control"}))
-    discount_price = forms.CharField(widget=forms.TextInput(
-        attrs={'placeholder': "Prodcut Price", 'class': "form-control"}))
-    stock_count = forms.IntegerField(widget=forms.TextInput(
-        attrs={'placeholder': "Prodcut Stock", 'class': "form-control"}))
-    image = forms.ImageField()
+    description = forms.CharField(
+        widget=CKEditorUploadingWidget(
+            attrs={'placeholder': "Description", 'class': "form-control"}),
+        error_messages={
+            'required': "Please Enter Product Description"
+        },
+    )   
+    title = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'placeholder': "Product Title", 'class': "form-control"}),
+        error_messages={
+            'required': "Please Enter Product Name"
+        },
+    )    
+    price = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'placeholder': "Product MRP", 'class': "form-control"}),
+        error_messages={
+            'required': "Please Enter Product MRP"
+        },
+    )   
+    discount_price = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'placeholder': "Discount Price", 'class': "form-control"}),
+        error_messages={
+            'required': "Please Enter Discount Price"
+        },
+    )    
+    stock_count = forms.IntegerField(
+        widget=forms.TextInput(
+            attrs={'placeholder': "Product Stock", 'class': "form-control"}),
+        error_messages={
+            'required': "Please Enter Product Stock"
+        },
+    )    
+    # image = forms.ImageField(
+    #     widget=forms.FileInput(
+    #         attrs={'placeholder': "Product Image", 'class': "form-control"}),
+        
+    # )    
+    
+    # image = forms.ImageField()
     life = forms.CharField(widget=forms.TextInput(
         attrs={'placeholder': "Prodcut Life", 'class': "form-control"}))
-    category = forms.ChoiceField(choices=categories)
+    # category = forms.ChoiceField(choices=categories)
     # mfd = forms.DateField()
+    mfd = forms.DateField(
+        widget=forms.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={'placeholder': "Valid from", 'class': "form-control","type":'date'}),
+    )
 
     class Meta:
         model = Product
         fields = ['title', 'stock_count', 'image',
-                  'description', 'category', 'mfd', 'life']
+                  'description', 'category', 'mfd', 'life','status','product_status','price','discount_price']
         # fields = "__all__"
-        widgets = {
-            'mfd': forms.DateInput(
-                format=('%d/%m/%Y'),
-                attrs={'class': 'form-control',
-                       'placeholder': 'Select a date',
-                       'type': 'date'  # <--- IF I REMOVE THIS LINE, THE INITIAL VALUE IS DISPLAYED
-                       }),
-        }
+        # widgets = {
+        #     'mfd': forms.DateInput(
+        #         format=('%d/%m/%Y'),
+        #         attrs={'class': 'form-control',
+        #                'placeholder': 'Select a date',
+        #                'type': 'date'  # <--- IF I REMOVE THIS LINE, THE INITIAL VALUE IS DISPLAYED
+        #                }),
+        # }
 
 class ProductItemForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(

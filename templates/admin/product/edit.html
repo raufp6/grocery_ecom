@@ -29,32 +29,41 @@
                     
                             
                             <div class="mb-4">
-                                <label for="product_name" class="form-label">Product title</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="title" name="title" value="{{product.title}}"/>
+                                <label for="id_title" class="form-label">Product title</label>
+                                {{ form.title }}
+                                {{ form.errors.title }}
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Full description</label>
                                 <textarea placeholder="Type here" class="form-control ckeditor" name="description" rows="4">{{product.description}}</textarea>
+                                
+                                
+                                {{ form.errors.description }}
                             </div>
                             <div class="row">
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Regular price</label>
                                         <div class="row gx-2">
-                                            <input placeholder="" type="text" name="price" class="form-control" value="{{product_item.price}}"/>
+                                            {{ form.price }}
+                                            {{ form.errors.price }}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Discount price</label>
-                                        <input placeholder="" type="text" name="discount_price" class="form-control" value="{{product_item.discount_price}}" />
+                                        <!-- <input placeholder="" type="text" name="discount_price" class="form-control" value="{{product_item.discount_price}}" /> -->
+                                        {{ form.discount_price }}
+                                        {{ form.errors.discount_price }}
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Product Stock</label>
-                                        <input placeholder="" type="number" name="stock_count" class="form-control" value="{{product_item.stock_count}}" />
+                                        <!-- <input placeholder="" type="number" name="stock_count" class="form-control" value="{{product_item.stock_count}}" /> -->
+                                        {{ form.stock_count }}
+                                        {{ form.errors.stock_count }}
                                     </div>
                                 </div>
                                 
@@ -74,25 +83,31 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-4">
-                                        <label for="mfd" class="form-label">Manufacture Date</label>
-                                        <input type="date" name="mfd" id="mfd" class="form-control" value="{{ product.mfd }}">
+                                        <label for="id_mfd" class="form-label">Manufacture Date</label>
+                                        <!-- <input type="date" name="mfd" id="mfd" class="form-control" value="{{ product.mfd }}"> -->
+                                        {{ form.mfd }}
+                                        {{ form.errors.mfd }}
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-4">
                                         <label for="life" class="form-label">Life</label>
-                                        <input type="text" name="life" id="life" class="form-control" value="{{ product.life }}">
+                                        {{ form.life }}
+                                        {{ form.errors.life }}
+                                        <!-- <input type="text" name="life" id="life" class="form-control" value="{{ product.life }}"> -->
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div class="mb-4">
-                                <label for="product_name" class="form-label">Weight</label>
-                                <input type="text" placeholder="gam" class="form-control" id="product_name" />
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Active</label>
+                                {{form.status}}
+                                {{ form.errors.status }}
                             </div>
                             <div class="mb-4">
-                                <label for="product_name" class="form-label">Shipping fees</label>
-                                <input type="text" placeholder="$" class="form-control" id="product_name" />
-                            </div> -->
+                                <label for="product_name" class="form-label">Product Status</label>
+                                {{form.product_status}}
+                                {{ form.errors.product_status }}
+                            </div>
                         
                     </div>
                 </div>

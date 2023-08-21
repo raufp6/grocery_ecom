@@ -13,7 +13,7 @@
                 <div class="content-header">
                     <h2 class="content-title">Add New Product</h2>
                     <div>
-                        <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                        <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> -->
                         <button type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button>
                     </div>
                 </div>
@@ -29,32 +29,41 @@
                     
                             
                             <div class="mb-4">
-                                <label for="product_name" class="form-label">Product title</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="title" name="title" />
+                                <label for="id_title" class="form-label">Product title</label>
+                                {{ form.title }}
+                                {{ form.errors.title }}
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Full description</label>
-                                <textarea placeholder="Type here" class="form-control ckeditor" name="description" rows="4"></textarea>
+                                <textarea placeholder="Type here" class="form-control ckeditor" name="description" rows="4">
+                                    {{request.post.description}}
+                                </textarea>
+                                {{ form.errors.description }}
                             </div>
                             <div class="row">
                                 <div class="col-lg-4">
                                     <div class="mb-4">
-                                        <label class="form-label">Regular price</label>
+                                        <label class="form-label">MRP</label>
                                         <div class="row gx-2">
-                                            <input placeholder="" type="text" name="price" class="form-control" />
+                                            {{ form.price }}
+                                            {{ form.errors.price }}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Discount price</label>
-                                        <input placeholder="" type="text" name="discount_price" class="form-control" />
+                                        
+                                        {{ form.discount_price }}
+                                        {{ form.errors.discount_price }}
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Product Stock</label>
-                                        <input placeholder="" type="text" name="stock_count" class="form-control" />
+                                        <!-- <input placeholder="" type="text" name="stock_count" class="form-control" /> -->
+                                        {{ form.stock_count }}
+                                        {{ form.errors.stock_count }}
                                     </div>
                                 </div>
                                 
@@ -76,23 +85,27 @@
                                     <div class="mb-4">
                                         <label for="product_name" class="form-label">Manufacture Date</label>
                                         {{form.mfd}}
+                                        {{ form.errors.mfd }}
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-4">
                                         <label for="product_name" class="form-label">Life</label>
                                         {{form.life}}
+                                        {{ form.errors.life }}
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div class="mb-4">
-                                <label for="product_name" class="form-label">Weight</label>
-                                <input type="text" placeholder="gam" class="form-control" id="product_name" />
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Active</label>
+                                {{form.status}}
+                                {{ form.errors.status }}
                             </div>
                             <div class="mb-4">
-                                <label for="product_name" class="form-label">Shipping fees</label>
-                                <input type="text" placeholder="$" class="form-control" id="product_name" />
-                            </div> -->
+                                <label for="product_name" class="form-label">Product Status</label>
+                                {{form.product_status}}
+                                {{ form.errors.product_status }}
+                            </div>
                         
                     </div>
                 </div>
@@ -106,7 +119,9 @@
                     <div class="card-body">
                         <div class="input-upload">
                             <img src="{% static 'admin/assets/imgs/theme/upload.svg' %}" alt="" />
-                            <input class="form-control" type="file" name="image" />
+                            <!-- <input class="form-control" type="file" name="image" /> -->
+                            {{ form.image }}
+                            {{ form.errors.image }}
                         </div>
                     </div>
                 </div>
@@ -119,13 +134,15 @@
                         <div class="row gx-2">
                             <div class="col-sm-12 mb-3">
                                 <label class="form-label">Category</label>
-                                <select class="form-select" name="category">
+                                <!-- <select class="form-select" name="category">
                                     <option value="">Select One</option>
                                     {% for c in categories %}
                                         <option value="{{c.id}}">{{c.title}}</option>
                                     {% endfor %}
                                     
-                                </select>
+                                </select> -->
+                                {{ form.category }}
+                                {{ form.errors.category }}
                             </div>
                             
                             

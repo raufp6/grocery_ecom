@@ -16,7 +16,7 @@ from django.core import serializers
 
 def index(request):
     products = Product.objects.filter(
-        featured=True, product_status="published")
+        featured=True, product_status="published",status = True,is_deleted = False)
 
     context = {
         'products': products
@@ -25,7 +25,7 @@ def index(request):
 
 
 def product_list(request):
-    products = Product.objects.filter(product_status="published")
+    products = Product.objects.filter(product_status="published",status = True,is_deleted = False)
 
     context = {
         'products': products

@@ -82,7 +82,7 @@
                                     <a href="#" class="dropdown-item link-edit-category"> Product Varients </a>
                                     
                                     <a href="{% url 'superadmin:product_images' p.id %}" class="dropdown-item link-edit-category"> Image Gallery </a>
-                                    <a href="#" class="dropdown-item link-edit-category"> <i class="material-icons md-delete_forever"></i> Delete </a>
+                                    <a onclick="return confirm('Are you suare?')" href="{% url 'superadmin:product_delete' p.id %}" class="dropdown-item link-edit-category"> <i class="material-icons md-delete_forever"></i> Delete </a>
                                 </div>
                             </div>
                         </div>

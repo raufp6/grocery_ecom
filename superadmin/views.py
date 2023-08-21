@@ -210,48 +210,55 @@ def product_list(request):
 
 @login_required(login_url="superadmin:login")
 def create_product(request):
-
+    form = ProductForm()
     if request.method == 'POST':
-        image = ''
-        try:
-            image = request.FILES['image']
-        except:
-            image == 'product.jpg'
+        
+        form = ProductForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Productcreated succefully')
+            return redirect('superadmin:product.create')
+        # else:
+            # messages.error(request, form.errors)
 
-        title = request.POST['title']
-        category = request.POST['category']
-        # brand = request.POST['brand']
-        description = request.POST['description']
-        price = request.POST['price']
-        discount_price = request.POST['discount_price']
-        stock_count = request.POST['stock_count']
+        # image = ''
+        # try:
+        #     image = request.FILES['image']
+        # except:
+        #     image == 'product.jpg'
 
-        check = [title, description, price,
-                 discount_price, category, stock_count]
-        for values in check:
-            if values == '':
-                messages.error(request, 'some fields are empty')
-                return redirect('superadmin:product.create')
-        category_instance = Category.objects.get(id=category)
+        # title = request.POST['title']
+        # category = request.POST['category']
+        # # brand = request.POST['brand']
+        # description = request.POST['description']
+        # price = request.POST['price']
+        # discount_price = request.POST['discount_price']
+        # stock_count = request.POST['stock_count']
 
-        product = Product(
-            title=title,
-            # brand=brand_instance,
-            category=category_instance,
-            user=request.user,
-            description=description,
-            price=price,
-            discount_price=discount_price,
-            stock_count=stock_count,
-            image=image
-        )
-        product.save()
+        # check = [title, description, price,
+        #          discount_price, category, stock_count]
+        # for values in check:
+        #     if values == '':
+        #         messages.error(request, 'some fields are empty')
+        #         return redirect('superadmin:product.create')
+        # category_instance = Category.objects.get(id=category)
 
-        messages.success(request, 'Productcreated succefully')
-        return redirect('superadmin:product.create')
+        # product = Product(
+        #     title=title,
+        #     # brand=brand_instance,
+        #     category=category_instance,
+        #     user=request.user,
+        #     description=description,
+        #     price=price,
+        #     discount_price=discount_price,
+        #     stock_count=stock_count,
+        #     image=image
+        # )
+        # product.save()
+
+        
 
     categories = Category.objects.filter(is_available=True).order_by('-id')
-    form = ProductForm()
     context = {
         'categories': categories,
         'form': form
@@ -266,48 +273,75 @@ def create_product(request):
 def product_edit(request, id):
 
     product = Product.objects.get(pk=id)
-    # product = Product.objects.get(pk=id,items__is_default=True)
-    
-    # print(product.items)
-
+    print(product)
+    data = {
+        'title':product.title,
+        'description':product.description,
+        'price':product.price,
+        'discount_price':product.discount_price,
+        'life':product.life,
+        'stock_count':product.stock_count,
+        'status':product.status,
+        'category':product.category,
+        'image':product.image,
+        'mfd':product.mfd,
+        'product_status':product.product_status,
+    }
+    form = ProductForm(initial=data)
     if request.method == 'POST':
+        print("product updating")
+        form = ProductForm(request.POST,request.FILES)
         try:
             image = request.FILES['image']
         except:
             image = product.image
+        if form.is_valid():
+            product.title = form.cleaned_data['title']
+            product.description = form.cleaned_data['description']
+            product.price = form.cleaned_data['price']
+            product.discount_price = form.cleaned_data['discount_price']
+            product.life = form.cleaned_data['life']
+            product.stock_count = form.cleaned_data['stock_count']
+            product.status = form.cleaned_data['status']
+            product.category = form.cleaned_data['category']
+            product.image = image
+            product.mfd = form.cleaned_data['mfd']
+            product.product_status = form.cleaned_data['product_status']
+            product.save()
 
-        title = request.POST['title']
-        category = request.POST['category']
-        # brand = request.POST['brand']
-        description = request.POST['description']
-        price = request.POST['price']
-        discount_price = request.POST['discount_price']
-        stock_count = request.POST['stock_count']
+        
 
-        check = [title, description, price,
-                 discount_price, category, stock_count]
-        for values in check:
-            if values == '':
-                messages.error(request, 'some fields are empty')
-                return redirect('superadmin:product.create')
-        category_instance = Category.objects.get(id=category)
+        # title = request.POST['title']
+        # category = request.POST['category']
+        # # brand = request.POST['brand']
+        # description = request.POST['description']
+        # price = request.POST['price']
+        # discount_price = request.POST['discount_price']
+        # stock_count = request.POST['stock_count']
 
-        product.title = title
-        # brand=brand_instance,
-        product.category = category_instance
-        product.description = description
-        price=price,
-        discount_price=discount_price,
-        stock_count=stock_count,
-        product.image = image
+        # check = [title, description, price,
+        #          discount_price, category, stock_count]
+        # for values in check:
+        #     if values == '':
+        #         messages.error(request, 'some fields are empty')
+        #         return redirect('superadmin:product.create')
+        # category_instance = Category.objects.get(id=category)
 
-        product.save()
+        # product.title = title
+        # # brand=brand_instance,
+        # product.category = category_instance
+        # product.description = description
+        # price=price,
+        # discount_price=discount_price,
+        # stock_count=stock_count,
+        # product.image = image
+
+        # product.save()
 
         messages.success(request, 'Product updated succefully')
-        return redirect('superadmin:product_edit', id)
+        # return redirect('superadmin:product_edit', id)
 
     categories = Category.objects.filter(is_available=True).order_by('-id')
-    form = ProductForm()
     context = {
         'categories': categories,
         'form': form,
@@ -358,6 +392,20 @@ def delete_product_image(request, id, product_id):
         messages.error(request, 'Image not found')
 
     return redirect('superadmin:product_images', product_id)
+
+
+@login_required(login_url="superadmin:login")
+def product_delete(request, id):
+    try:
+        product = Product.objects.get(pk=id)
+        product.is_deleted = True
+        product.save()
+        messages.success(request, 'Product deleted succefully')
+    except:
+        messages.error(request, 'Product not found')
+
+    return redirect('superadmin:product_list')
+
 
 # Coupon Management
 @login_required(login_url="superadmin:login")
